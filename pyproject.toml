@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "claude-vertex-tool"
+version = "0.1.0"
+description = "Offline-installable wrapper to call Claude on Vertex AI from Workbench."
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "anthropic[vertex]==0.100.0",
+    "google-auth==2.52.0",
+]
+
+[project.scripts]
+claude-vertex = "claude_vertex_tool.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["claude_vertex_tool*"]
+exclude = ["wheels*", "examples*", "scripts*", "docs*", "kiohp_sample*"]
