@@ -1,0 +1,6 @@
+[
+  {"type":"bg","src":"bg_school"},
+  {"type":"chara","src":"akari_shy","pos":"center"},
+  {"type":"text","chara":"あかり","text":"…最終ステージだね。ここまで一緒に来てくれて、本当にありがとう。"},
+  {"type":"text","chara":"あかり","text":"このパズルを一緒に解き終えたら、ちゃんと…気持ちを伝えるから。最後まで、よろしくね。"}
+]

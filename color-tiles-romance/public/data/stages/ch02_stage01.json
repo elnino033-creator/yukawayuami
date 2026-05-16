@@ -1,0 +1,19 @@
+{
+  "id": "ch02_stage01",
+  "title": "第2章 ステージ1：氷タイルの洗礼",
+  "chapter": 2,
+  "boardWidth": 8,
+  "boardHeight": 6,
+  "timeLimitSec": 130,
+  "missPenaltySec": 1,
+  "hintCount": 3,
+  "tilesLayout": [
+    [{"color":"red","type":"ice"}, null, null, {"color":"red","type":"ice"}, null, "blue", null, "blue"],
+    [null, null, null, null, null, null, null, null],
+    ["green", null, null, "green", null, {"color":"yellow","type":"ice"}, null, {"color":"yellow","type":"ice"}],
+    [null, null, null, null, null, null, null, null],
+    [{"color":"red","type":"ice"}, null, {"color":"red","type":"ice"}, null, "blue", null, "blue", null],
+    ["green", null, "green", null, {"color":"yellow","type":"ice"}, null, {"color":"yellow","type":"ice"}, null]
+  ],
+  "preScenario": "ch02_s01_pre.json"
+}

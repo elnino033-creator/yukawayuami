@@ -1,0 +1,19 @@
+{
+  "id": "ch02_stage02",
+  "title": "第2章 ステージ2：氷の深み",
+  "chapter": 2,
+  "boardWidth": 8,
+  "boardHeight": 6,
+  "timeLimitSec": 120,
+  "missPenaltySec": 1,
+  "hintCount": 3,
+  "tilesLayout": [
+    [{"color":"blue","type":"ice"}, null, null, {"color":"blue","type":"ice"}, null, {"color":"red","type":"ice"}, null, {"color":"red","type":"ice"}],
+    [null, null, null, null, null, null, null, null],
+    [{"color":"green","type":"ice"}, null, null, {"color":"green","type":"ice"}, null, "yellow", null, "yellow"],
+    [null, null, null, null, null, null, null, null],
+    [{"color":"blue","type":"ice"}, null, {"color":"blue","type":"ice"}, null, {"color":"red","type":"ice"}, null, {"color":"red","type":"ice"}, null],
+    ["green", null, "green", null, "yellow", null, "yellow", null]
+  ],
+  "preScenario": "ch02_s02_pre.json"
+}

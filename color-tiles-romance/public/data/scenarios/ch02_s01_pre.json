@@ -1,0 +1,6 @@
+[
+  {"type":"bg","src":"bg_school"},
+  {"type":"chara","src":"akari_normal","pos":"center"},
+  {"type":"text","chara":"あかり","text":"ねえ、知ってる？氷のタイルは一回じゃ消えないんだよ。二回合わせないとね！"},
+  {"type":"text","chara":"あかり","text":"最初はとまどうかもしれないけど、慣れればぜったい大丈夫！一緒にがんばろ♪"}
+]

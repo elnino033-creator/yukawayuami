@@ -1,0 +1,19 @@
+{
+  "id": "ch04_stage02",
+  "title": "第4章 ステージ2：氷の連鎖",
+  "chapter": 4,
+  "boardWidth": 8,
+  "boardHeight": 6,
+  "timeLimitSec": 130,
+  "missPenaltySec": 1,
+  "hintCount": 2,
+  "tilesLayout": [
+    [{"color":"red","type":"linked","linkGroupId":"lg1"}, null, null, {"color":"red","type":"linked","linkGroupId":"lg1"}, null, {"color":"blue","type":"ice"}, null, {"color":"blue","type":"ice"}],
+    [null, null, null, null, null, null, null, null],
+    [{"color":"red","type":"linked","linkGroupId":"lg1"}, null, null, {"color":"red","type":"linked","linkGroupId":"lg1"}, null, {"color":"blue","type":"ice"}, null, {"color":"blue","type":"ice"}],
+    [null, null, null, null, null, null, null, null],
+    [{"color":"green","type":"linked","linkGroupId":"lg2"}, null, null, {"color":"green","type":"linked","linkGroupId":"lg2"}, null, {"color":"yellow","type":"ice"}, null, {"color":"yellow","type":"ice"}],
+    [{"color":"green","type":"linked","linkGroupId":"lg2"}, null, {"color":"green","type":"linked","linkGroupId":"lg2"}, null, "yellow", null, "yellow", null]
+  ],
+  "preScenario": "ch04_s02_pre.json"
+}

@@ -1,0 +1,6 @@
+[
+  {"type":"bg","src":"bg_school"},
+  {"type":"chara","src":"akari_smile","pos":"center"},
+  {"type":"text","chara":"あかり","text":"今回は連結タイルと時間タイルの組み合わせ！連結を使えばサクサク消せちゃう♪"},
+  {"type":"text","chara":"あかり","text":"時間タイルで時間を延ばして、じっくり連結タイルのチャンスを狙おう！"}
+]

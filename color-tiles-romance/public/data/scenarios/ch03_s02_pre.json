@@ -1,0 +1,6 @@
+[
+  {"type":"bg","src":"bg_school"},
+  {"type":"chara","src":"akari_angry","pos":"center"},
+  {"type":"text","chara":"あかり","text":"また氷とブロックの両方だよ！なんかどんどん難しくなってきてる！"},
+  {"type":"text","chara":"あかり","text":"でも時間タイルもあるから、うまく消してタイムを確保してね。絶対クリアできる！"}
+]

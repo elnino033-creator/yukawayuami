@@ -1,0 +1,20 @@
+{
+  "id": "ch05_stage02",
+  "title": "第5章 ステージ2：混沌の嵐",
+  "chapter": 5,
+  "boardWidth": 8,
+  "boardHeight": 6,
+  "timeLimitSec": 140,
+  "missPenaltySec": 2,
+  "hintCount": 1,
+  "tilesLayout": [
+    [{"color":"red","type":"ice"}, null, null, {"color":"red","type":"ice"}, {"color":null,"type":"block"}, {"color":"blue","type":"linked","linkGroupId":"lg1"}, null, {"color":"blue","type":"linked","linkGroupId":"lg1"}],
+    [null, null, null, null, null, null, null, null],
+    [{"color":"green","type":"linked","linkGroupId":"lg2"}, null, null, {"color":"green","type":"linked","linkGroupId":"lg2"}, {"color":null,"type":"block"}, {"color":"blue","type":"linked","linkGroupId":"lg1"}, null, {"color":"blue","type":"linked","linkGroupId":"lg1"}],
+    [null, null, null, null, null, null, null, null],
+    [{"color":"green","type":"linked","linkGroupId":"lg2"}, null, null, {"color":"green","type":"linked","linkGroupId":"lg2"}, null, {"color":"yellow","type":"time"}, null, {"color":"yellow","type":"time"}],
+    [{"color":"red","type":"ice"}, null, {"color":"red","type":"ice"}, null, {"color":"yellow","type":"time"}, null, {"color":"yellow","type":"time"}, null]
+  ],
+  "blockReleaseRule": {"type": "afterPairs", "count": 3},
+  "preScenario": "ch05_s02_pre.json"
+}

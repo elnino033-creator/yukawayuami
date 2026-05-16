@@ -1,0 +1,6 @@
+[
+  {"type":"bg","src":"bg_school"},
+  {"type":"chara","src":"akari_surprise","pos":"center"},
+  {"type":"text","chara":"あかり","text":"時間タイルって知ってる？消すと時間が増えるんだよ！すごいよね！"},
+  {"type":"text","chara":"あかり","text":"でも制限時間が短いから、早めに時間タイルを消してコントロールしてね！"}
+]

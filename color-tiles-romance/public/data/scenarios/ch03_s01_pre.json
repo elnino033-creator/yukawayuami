@@ -1,0 +1,6 @@
+[
+  {"type":"bg","src":"bg_school"},
+  {"type":"chara","src":"akari_normal","pos":"center"},
+  {"type":"text","chara":"あかり","text":"障害ブロックが出てきたよ！邪魔に見えるけど、数ペア消せば消えるから大丈夫！"},
+  {"type":"text","chara":"あかり","text":"まずはブロックを無視して消せるタイルから消していこ。そうすればブロックも消えるよ！"}
+]

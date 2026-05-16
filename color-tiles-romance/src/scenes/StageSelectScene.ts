@@ -63,9 +63,41 @@ const CHAPTERS: ChapterInfo[] = [
     ]
   },
   {
+    id: 2,
+    label: '第2章 氷雪の洗礼',
+    stageIds: [
+      'ch02_stage01',
+      'ch02_stage02',
+      'ch02_stage03'
+    ]
+  },
+  {
     id: 3,
-    label: '第3章 翠葉の階層',
-    stageIds: ['ch03_ice_demo']
+    label: '第3章 翠葉の迷宮',
+    stageIds: [
+      'ch03_stage01',
+      'ch03_stage02',
+      'ch03_stage03',
+      'ch03_ice_demo'
+    ]
+  },
+  {
+    id: 4,
+    label: '第4章 連鎖の宮殿',
+    stageIds: [
+      'ch04_stage01',
+      'ch04_stage02',
+      'ch04_stage03'
+    ]
+  },
+  {
+    id: 5,
+    label: '第5章 混沌の頂点',
+    stageIds: [
+      'ch05_stage01',
+      'ch05_stage02',
+      'ch05_stage03'
+    ]
   }
 ];
 
