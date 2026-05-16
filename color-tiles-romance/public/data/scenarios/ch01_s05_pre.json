@@ -1,0 +1,15 @@
+[
+  { "bg": "bg_ch01_crimson" },
+  { "bgm": "bgm_ch01" },
+  { "chara": { "id": "akari", "expr": "normal", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "……来たね。ついにここまで来た。" } },
+  { "text": { "name": "???", "body": "ここがラストか？" } },
+  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "そう。このパズルをクリアすれば、私はここを出られる。だから……お願い。" } },
+  { "text": { "name": "???", "body": "任せておけ。" } },
+  { "chara": { "id": "akari", "expr": "surprise", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "……っ。うん！　一緒に、外の世界を見ようね！" } },
+  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "タイルの配置は今まで一番複雑。でも焦らないで。一歩ずつ、確実に消していって。" } },
+  { "text": { "name": "あかり", "body": "私も、旅人さんのこと、信じてるから。" } }
+]

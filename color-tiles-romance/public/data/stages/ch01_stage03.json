@@ -1,0 +1,21 @@
+{
+  "id": "ch01_stage03",
+  "title": "第1章 ステージ3：緋色の試練",
+  "chapter": 1,
+  "boardWidth": 8,
+  "boardHeight": 6,
+  "timeLimitSec": 110,
+  "missPenaltySec": 1,
+  "hintCount": 3,
+  "tilesLayout": [
+    [null, "red",   null, "red",   null, "blue",  null, "blue"  ],
+    [null, "green", null, "green", null, "yellow",null, "yellow"],
+    ["red",  null, "red",  null, "blue",  null, "blue",  null  ],
+    ["green",null, "green",null, "yellow",null, "yellow",null  ],
+    [null, "blue",  null, "blue",  null, "red",   null, "red"  ],
+    [null, "yellow",null, "yellow",null, "green", null, "green"]
+  ],
+  "blockReleaseRule": { "type": "never" },
+  "preScenario": "scenarios/ch01_s03_pre.json",
+  "postScenario": "scenarios/ch01_s03_post.json"
+}

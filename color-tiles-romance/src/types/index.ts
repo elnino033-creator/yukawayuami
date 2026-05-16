@@ -1,0 +1,104 @@
+/**
+ * Color Tiles ゲームの型定義
+ * 仕様書 §6.3 に準拠
+ */
+
+/** タイルの種類 */
+export type TileType =
+  | 'normal'  // 通常タイル
+  | 'ice'     // 同色マッチ2回で消える（1回目はヒビ状態に変化）
+  | 'time'    // 消去で +10秒
+  | 'linked'  // 連結タイル（同色チェーン消去）※Phase 0では未実装、型のみ予約
+  | 'shadow'  // 色マスク ※Phase 0では未実装
+  | 'paired'  // ペア固定 ※Phase 0では未実装
+  | 'block';  // 障害ブロック（消去対象外）
+
+/** タイルの状態 */
+export type TileState = 'normal' | 'cracked'; // crackedは氷タイル1回目マッチ後
+
+/** タイル */
+export interface Tile {
+  /** 列インデックス */
+  x: number;
+  /** 行インデックス */
+  y: number;
+  /** タイルの色。block時は null */
+  color: string | null;
+  /** タイルの種類 */
+  type: TileType;
+  /** タイルの状態 */
+  state: TileState;
+  /** ペア固定タイルの相方ID（typeが'paired'のときのみ意味を持つ） */
+  pairId?: string;
+  /** 連結タイルのグループID（typeが'linked'のときのみ意味を持つ） */
+  linkGroupId?: string;
+}
+
+/** ステージのタイルレイアウトのセル */
+export type LayoutCell =
+  | null               // 空マス
+  | string             // 色名のみ（通常タイル）
+  | TileSpec;          // 詳細指定
+
+/** タイルの詳細指定 */
+export interface TileSpec {
+  color: string | null;
+  type?: TileType;
+  pairId?: string;
+  linkGroupId?: string;
+}
+
+/** ブロック解除ルール（仕様書 §6.4） */
+export type BlockReleaseRule =
+  | { type: 'afterPairs'; count: number }   // n ペア消去で全ブロック消滅
+  | { type: 'afterTime'; sec: number }      // 開始 n 秒経過で消滅
+  | { type: 'onLastTile' }                  // 最後の色付きタイル消去と同時
+  | { type: 'never' };                      // 消滅しない（演出のみ）
+
+/** ステージ定義 */
+export interface StageDefinition {
+  id: string;
+  title: string;
+  chapter: number;
+  boardWidth: number;
+  boardHeight: number;
+  timeLimitSec: number;
+  /** 誤クリック1回あたりのペナルティ秒数。0なら無効 */
+  missPenaltySec: number;
+  /** ヒント使用可能回数 */
+  hintCount: number;
+  /** 2次元タイルレイアウト [y][x] */
+  tilesLayout: LayoutCell[][];
+  /** 障害ブロック解除ルール */
+  blockReleaseRule?: BlockReleaseRule;
+  /** パズル前シナリオのJSONパス（public/data/scenarios/以下） */
+  preScenario?: string;
+  /** パズル後シナリオのJSONパス（public/data/scenarios/以下） */
+  postScenario?: string;
+  /** 失敗時シナリオのJSONパス（任意） */
+  failScenario?: string;
+  /** クリア報酬 */
+  rewards?: { S?: string[]; A?: string[]; B?: string[]; C?: string[] };
+}
+
+/** クリック結果 */
+export type ClickResult =
+  | { type: 'success'; removed: Tile[]; bonusSec?: number }
+  | { type: 'miss' }
+  | { type: 'noop' }; // 障害ブロック上などのクリック
+
+/** マッチ結果（LineCheckerが返す） */
+export interface MatchResult {
+  a: Tile;
+  b: Tile;
+  /** 結ぶ直線の方向 */
+  direction: 'horizontal' | 'vertical';
+}
+
+/** ヒント結果 */
+export interface HintResult {
+  a: Tile;
+  b: Tile;
+  /** クリックすべき空マスの座標 */
+  clickPoint: { x: number; y: number };
+}

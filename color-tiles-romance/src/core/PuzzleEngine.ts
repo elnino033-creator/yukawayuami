@@ -1,0 +1,407 @@
+import type {
+  StageDefinition,
+  Tile,
+  LayoutCell,
+  ClickResult,
+  HintResult,
+  BlockReleaseRule
+} from '@/types';
+import { LineChecker } from './LineChecker';
+import { TimerSystem } from './TimerSystem';
+
+/** スコア情報 */
+export interface ScoreSnapshot {
+  score: number;
+  combo: number;
+  maxCombo: number;
+  pairsCleared: number;
+  missCount: number;
+  hintUsed: number;
+}
+
+type EngineEvent =
+  | { type: 'tilesRemoved'; tiles: Tile[]; bonusSec?: number }
+  | { type: 'iceCracked'; tiles: Tile[] }
+  | { type: 'miss'; clickPoint: { x: number; y: number }; penaltySec: number }
+  | { type: 'shuffle' }
+  | { type: 'blocksReleased'; tiles: Tile[] }
+  | { type: 'cleared' }
+  | { type: 'gameOver' };
+
+type EventListener = (e: EngineEvent) => void;
+
+/**
+ * パズル全体の状態と振る舞いを管理する。
+ * 仕様書 §6.3 B.
+ */
+export class PuzzleEngine {
+  board: (Tile | null)[][] = [];
+  width = 0;
+  height = 0;
+
+  private checker!: LineChecker;
+  readonly timer = new TimerSystem();
+
+  private score = 0;
+  private combo = 0;
+  private maxCombo = 0;
+  private lastClearAt = 0;
+  private pairsCleared = 0;
+  private missCount = 0;
+  private hintUsed = 0;
+  private hintRemain = 0;
+  private missPenaltySec = 0;
+  private blockRule: BlockReleaseRule = { type: 'never' };
+  private blocksReleased = false;
+  private startedAtMs = 0;
+
+  private listeners: EventListener[] = [];
+
+  /** コンボ継続の判定窓（ms）*/
+  static readonly COMBO_WINDOW_MS = 3000;
+
+  /**
+   * ステージをロードして開始する。
+   */
+  loadStage(stage: StageDefinition): void {
+    this.board = this.layoutToBoard(stage.tilesLayout);
+    this.width = stage.boardWidth;
+    this.height = stage.boardHeight;
+    this.checker = new LineChecker(this.board);
+
+    this.score = 0;
+    this.combo = 0;
+    this.maxCombo = 0;
+    this.lastClearAt = 0;
+    this.pairsCleared = 0;
+    this.missCount = 0;
+    this.hintUsed = 0;
+    this.hintRemain = stage.hintCount;
+    this.missPenaltySec = stage.missPenaltySec;
+    this.blockRule = stage.blockReleaseRule ?? { type: 'never' };
+    this.blocksReleased = false;
+    this.startedAtMs = Date.now();
+
+    this.timer.start(stage.timeLimitSec);
+    this.timer.onTimeUp(() => this.emit({ type: 'gameOver' }));
+  }
+
+  /**
+   * 空マス (cx, cy) のクリック処理。
+   * パズル中の主たる入力エントリーポイント。
+   */
+  onCellClick(cx: number, cy: number): ClickResult {
+    if (!this.timer.isRunning) return { type: 'noop' };
+    if (cx < 0 || cy < 0 || cx >= this.width || cy >= this.height) {
+      return { type: 'noop' };
+    }
+    if (this.board[cy][cx] !== null) {
+      return { type: 'noop' }; // タイル上のクリックは無効
+    }
+
+    const match = this.checker.checkClick(cx, cy);
+    if (!match) {
+      // 誤クリック
+      this.missCount++;
+      this.combo = 0;
+      if (this.missPenaltySec > 0) {
+        this.timer.subtract(this.missPenaltySec);
+      }
+      this.emit({
+        type: 'miss',
+        clickPoint: { x: cx, y: cy },
+        penaltySec: this.missPenaltySec
+      });
+      return { type: 'miss' };
+    }
+
+    const { a, b } = match;
+
+    // 氷タイル処理：少なくとも片方が ice の場合
+    if (a.type === 'ice' || b.type === 'ice') {
+      return this.handleIceMatch(a, b);
+    }
+
+    // 通常消去
+    return this.applyRemoval(a, b);
+  }
+
+  /**
+   * 氷タイルがマッチした際の処理。
+   * - 両方が cracked でなければ両方を cracked に変える（消えない）
+   * - どちらかが既に cracked なら通常通り消える
+   */
+  private handleIceMatch(a: Tile, b: Tile): ClickResult {
+    const aIsIce = a.type === 'ice';
+    const bIsIce = b.type === 'ice';
+
+    const aReady = !aIsIce || a.state === 'cracked';
+    const bReady = !bIsIce || b.state === 'cracked';
+
+    if (aReady && bReady) {
+      // 両方が消える条件を満たす
+      return this.applyRemoval(a, b);
+    }
+
+    // 状態を進める
+    const cracked: Tile[] = [];
+    if (aIsIce && a.state === 'normal') {
+      a.state = 'cracked';
+      cracked.push(a);
+    }
+    if (bIsIce && b.state === 'normal') {
+      b.state = 'cracked';
+      cracked.push(b);
+    }
+    // 通常タイルがある場合はそれだけ消す…のは仕様矛盾になるので
+    // 「両方残してヒビを入れる」だけにとどめる（コンボは継続させない）
+    this.combo = 0;
+    this.emit({ type: 'iceCracked', tiles: cracked });
+    // ペアの消去自体は成功扱い：手数を進めたとみなす
+    return { type: 'success', removed: [] };
+  }
+
+  private applyRemoval(a: Tile, b: Tile): ClickResult {
+    const now = Date.now();
+
+    // コンボ判定
+    if (now - this.lastClearAt <= PuzzleEngine.COMBO_WINDOW_MS) {
+      this.combo++;
+    } else {
+      this.combo = 1;
+    }
+    this.lastClearAt = now;
+    if (this.combo > this.maxCombo) this.maxCombo = this.combo;
+
+    // 時間タイル：消去で +10秒
+    let bonusSec = 0;
+    if (a.type === 'time') bonusSec += 10;
+    if (b.type === 'time') bonusSec += 10;
+
+    // コンボボーナス（連鎖回数 × 2秒）
+    if (this.combo >= 2) {
+      bonusSec += this.combo * 2;
+    }
+
+    if (bonusSec > 0) this.timer.add(bonusSec);
+
+    // 盤面から削除
+    this.board[a.y][a.x] = null;
+    this.board[b.y][b.x] = null;
+
+    // スコア加算
+    this.score += 100; // ペア消去基本点
+    if (this.combo >= 2) this.score += this.combo * 50;
+
+    this.pairsCleared++;
+
+    this.emit({ type: 'tilesRemoved', tiles: [a, b], bonusSec });
+
+    // 障害ブロック解除条件チェック
+    this.checkBlockRelease();
+
+    // クリア判定
+    if (this.isCleared()) {
+      this.timer.stop();
+      // タイムボーナス・各種ボーナスを最終スコアに反映
+      this.score += this.timer.remain * 10;
+      if (this.hintUsed === 0) this.score += 1000;
+      if (this.missCount === 0) this.score += 500;
+      this.emit({ type: 'cleared' });
+    } else if (this.isStuck()) {
+      // 詰みなら自動シャッフル
+      this.shuffle();
+    }
+
+    return { type: 'success', removed: [a, b], bonusSec };
+  }
+
+  /** 障害ブロックの解除条件を確認 */
+  private checkBlockRelease(): void {
+    if (this.blocksReleased) return;
+
+    const rule = this.blockRule;
+    let shouldRelease = false;
+
+    switch (rule.type) {
+      case 'never':
+        return;
+      case 'afterPairs':
+        if (this.pairsCleared >= rule.count) shouldRelease = true;
+        break;
+      case 'afterTime': {
+        const elapsedSec = (Date.now() - this.startedAtMs) / 1000;
+        if (elapsedSec >= rule.sec) shouldRelease = true;
+        break;
+      }
+      case 'onLastTile':
+        // 最後の色付きタイルが消えるのと同時：クリア後に解除
+        return;
+    }
+
+    if (shouldRelease) this.releaseBlocks();
+  }
+
+  private releaseBlocks(): void {
+    const released: Tile[] = [];
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const t = this.board[y][x];
+        if (t && t.type === 'block') {
+          released.push(t);
+          this.board[y][x] = null;
+        }
+      }
+    }
+    this.blocksReleased = true;
+    if (released.length > 0) {
+      this.emit({ type: 'blocksReleased', tiles: released });
+    }
+  }
+
+  /** クリア判定：色付きタイルが残っていないこと */
+  isCleared(): boolean {
+    for (const row of this.board) {
+      for (const t of row) {
+        if (t === null) continue;
+        if (t.type === 'block') continue;
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /** 詰み判定 */
+  isStuck(): boolean {
+    return this.checker.findAnyValidPair() === null && !this.isCleared();
+  }
+
+  /** 残タイルをシャッフル（詰み時の救済） */
+  shuffle(): void {
+    const tiles: Tile[] = [];
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const t = this.board[y][x];
+        if (t !== null && t.type !== 'block') {
+          tiles.push(t);
+        }
+      }
+    }
+
+    // タイル配列をシャッフル
+    for (let i = tiles.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+    }
+
+    // シャッフルした順に空きマスへ詰めなおす（既存の位置を順に保ちつつ色だけ入れ替え）
+    let idx = 0;
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const cur = this.board[y][x];
+        if (cur === null || cur.type === 'block') continue;
+        const placed = tiles[idx++];
+        this.board[y][x] = { ...placed, x, y };
+      }
+    }
+
+    this.emit({ type: 'shuffle' });
+
+    // シャッフル後も詰みが続くなら再試行（最大5回まで、無限再帰を防ぐ）
+    let retries = 0;
+    while (this.isStuck() && !this.isCleared() && retries < 5) {
+      retries++;
+      // 再シャッフル（エミットなし）
+      const tiles2: Tile[] = [];
+      for (let y = 0; y < this.height; y++) {
+        for (let x = 0; x < this.width; x++) {
+          const t = this.board[y][x];
+          if (t !== null && t.type !== 'block') tiles2.push(t);
+        }
+      }
+      for (let i = tiles2.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [tiles2[i], tiles2[j]] = [tiles2[j], tiles2[i]];
+      }
+      let idx2 = 0;
+      for (let y = 0; y < this.height; y++) {
+        for (let x = 0; x < this.width; x++) {
+          const cur = this.board[y][x];
+          if (cur === null || cur.type === 'block') continue;
+          this.board[y][x] = { ...tiles2[idx2++], x, y };
+        }
+      }
+    }
+  }
+
+  /** ヒント取得 */
+  hint(): HintResult | null {
+    if (this.hintRemain <= 0) return null;
+    const result = this.checker.findAnyValidPair();
+    if (!result) return null;
+    this.hintRemain--;
+    this.hintUsed++;
+    this.timer.subtract(5); // ヒント使用ペナルティ
+    return result;
+  }
+
+  // ---------- ゲッター ----------
+
+  get hintsRemaining(): number {
+    return this.hintRemain;
+  }
+
+  getScoreSnapshot(): ScoreSnapshot {
+    return {
+      score: this.score,
+      combo: this.combo,
+      maxCombo: this.maxCombo,
+      pairsCleared: this.pairsCleared,
+      missCount: this.missCount,
+      hintUsed: this.hintUsed
+    };
+  }
+
+  /** プレビュー用：空マス (cx, cy) で消えるペアの情報を返す */
+  previewClick(cx: number, cy: number) {
+    return this.checker.checkClick(cx, cy);
+  }
+
+  // ---------- イベント ----------
+
+  on(listener: EventListener): void {
+    this.listeners.push(listener);
+  }
+
+  private emit(e: EngineEvent): void {
+    for (const l of this.listeners) l(e);
+  }
+
+  // ---------- 変換 ----------
+
+  private layoutToBoard(layout: LayoutCell[][]): (Tile | null)[][] {
+    return layout.map((row, y) =>
+      row.map((cell, x) => {
+        if (cell === null) return null;
+        if (typeof cell === 'string') {
+          return {
+            x,
+            y,
+            color: cell,
+            type: 'normal' as const,
+            state: 'normal' as const
+          };
+        }
+        return {
+          x,
+          y,
+          color: cell.color,
+          type: cell.type ?? 'normal',
+          state: 'normal' as const,
+          pairId: cell.pairId,
+          linkGroupId: cell.linkGroupId
+        };
+      })
+    );
+  }
+}

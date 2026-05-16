@@ -1,0 +1,13 @@
+[
+  { "bg": "bg_ch01_crimson" },
+  { "bgm": "bgm_ch01" },
+  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "やるじゃない！　やっぱり旅人さんはすごいね！" } },
+  { "text": { "name": "???", "body": "ありがとう。でも、まだ続きがあるんだろう？" } },
+  { "chara": { "id": "akari", "expr": "normal", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "うん。この階層にはまだパズルが残ってる。全部クリアしてくれたら……一緒に行けるかもしれない。" } },
+  { "text": { "name": "あかり", "body": "私、外の世界を見てみたいんだ。ずっとここにいるから。" } },
+  { "text": { "name": "???", "body": "（少し寂しそうな瞳だった）……必ず全部クリアする。" } },
+  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "頼りにしてるよ！　次もよろしくね！" } }
+]

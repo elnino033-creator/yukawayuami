@@ -1,0 +1,405 @@
+/**
+ * SceneManager.ts
+ * シーン遷移を管理するクラス。
+ * 各シーンのマウント・アンマウントと、シーン間のデータ受け渡しを担当する。
+ */
+
+import { SaveStore } from '@/store/saveStore';
+import { ProgressStore } from '@/store/progressStore';
+
+/** アプリ内のシーン種別 */
+export type SceneType = 'title' | 'novel' | 'stageSelect' | 'puzzle' | 'result';
+
+/** リザルトデータ */
+export interface ResultData {
+  /** ステージID */
+  stageId: string;
+  /** 最終スコア */
+  score: number;
+  /** レーティング */
+  rating: 'S' | 'A' | 'B' | 'C';
+  /** クリア成否 */
+  cleared: boolean;
+  /** タイムボーナス */
+  timeBonus: number;
+  /** 最大コンボ数 */
+  comboMax: number;
+}
+
+/** シーン遷移リクエスト */
+export interface SceneTransition {
+  /** 遷移先シーン */
+  to: SceneType;
+  /** ステージID（puzzle / result シーン用） */
+  stageId?: string;
+  /** チャプターID（stageSelect / novel シーン用） */
+  chapterId?: number;
+  /** リザルトデータ（result シーン用） */
+  resultData?: ResultData;
+  /** シナリオID（novel シーン用） */
+  scenarioId?: string;
+}
+
+/** 各シーンが実装するインターフェース */
+interface ManagedScene {
+  destroy(): void;
+}
+
+/**
+ * アプリ全体のシーン遷移を管理するクラス。
+ * appContainer の内容をクリアして各シーンを描画する。
+ */
+export class SceneManager {
+  private appContainer: HTMLElement;
+  /** セーブデータストア */
+  saveStore: SaveStore;
+  /** 進行状態ストア */
+  progressStore: ProgressStore;
+  /** 現在アクティブなシーン */
+  private currentScene: ManagedScene | null = null;
+
+  /**
+   * @param appContainer シーンを描画するルートDOM要素
+   */
+  constructor(appContainer: HTMLElement) {
+    this.appContainer = appContainer;
+    this.saveStore = new SaveStore();
+    this.progressStore = new ProgressStore();
+  }
+
+  /**
+   * アプリを起動してタイトル画面を表示する。
+   */
+  async start(): Promise<void> {
+    await this.transition({ to: 'title' });
+  }
+
+  /**
+   * 指定されたシーンへ遷移する。
+   * @param req 遷移リクエスト
+   */
+  async transition(req: SceneTransition): Promise<void> {
+    // 現在のシーンを破棄
+    if (this.currentScene) {
+      this.currentScene.destroy();
+      this.currentScene = null;
+    }
+
+    // コンテナをクリア
+    this.appContainer.innerHTML = '';
+    this.progressStore.setScene(req.to, req.stageId);
+
+    switch (req.to) {
+      case 'title':
+        await this.mountTitleScene();
+        break;
+      case 'novel':
+        await this.mountNovelScene(req.scenarioId ?? 'ch00_intro');
+        break;
+      case 'stageSelect':
+        await this.mountStageSelectScene();
+        break;
+      case 'puzzle':
+        await this.mountPuzzleScene(req.stageId ?? '');
+        break;
+      case 'result':
+        if (req.resultData) {
+          await this.mountResultScene(req.resultData);
+        }
+        break;
+    }
+  }
+
+  // ---------- 各シーンのマウント ----------
+
+  private async mountTitleScene(): Promise<void> {
+    // 動的インポートで循環依存を回避
+    const { TitleScene } = await import('@/scenes/TitleScene');
+
+    const canvas = this.createFullCanvas();
+    this.appContainer.appendChild(canvas);
+
+    const hasSave = this.saveStore.getData().currentChapter > 0 ||
+      Object.keys(this.saveStore.getData().stageRecords).length > 0;
+
+    const scene = new TitleScene(canvas, (choice) => {
+      switch (choice) {
+        case 'new':
+          this.saveStore.reset();
+          this.progressStore.resetScenarioContext();
+          this.transition({ to: 'novel', scenarioId: 'ch00_intro' });
+          break;
+        case 'continue':
+          this.transition({ to: 'stageSelect' });
+          break;
+        case 'stage':
+          this.transition({ to: 'stageSelect' });
+          break;
+      }
+    }, hasSave);
+
+    this.currentScene = scene;
+    scene.start();
+  }
+
+  private async mountNovelScene(scenarioId: string): Promise<void> {
+    const { NovelScene } = await import('@/scenes/NovelScene');
+
+    const div = document.createElement('div');
+    div.style.cssText = 'width:100%;height:100%;position:relative;';
+    this.appContainer.appendChild(div);
+
+    const scene = new NovelScene(
+      div,
+      scenarioId,
+      this.progressStore.scenarioContext,
+      () => {
+        // シナリオ終了後はステージセレクトへ
+        this.transition({ to: 'stageSelect' });
+      }
+    );
+
+    this.currentScene = scene;
+    await scene.start();
+  }
+
+  private async mountStageSelectScene(): Promise<void> {
+    const { StageSelectScene } = await import('@/scenes/StageSelectScene');
+
+    const canvas = this.createFullCanvas();
+    this.appContainer.appendChild(canvas);
+
+    const scene = new StageSelectScene(
+      canvas,
+      this.saveStore,
+      (stageId) => {
+        this.transition({ to: 'puzzle', stageId });
+      },
+      () => {
+        this.transition({ to: 'title' });
+      }
+    );
+
+    this.currentScene = scene;
+    scene.start();
+  }
+
+  private async mountPuzzleScene(stageId: string): Promise<void> {
+    if (!stageId) {
+      await this.transition({ to: 'stageSelect' });
+      return;
+    }
+
+    // ステージ定義を先にロードしてpreScenarioを確認する
+    let stageDef: import('@/types').StageDefinition;
+    try {
+      const url = `${import.meta.env.BASE_URL}data/stages/${stageId}.json`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Failed to load stage: ${stageId}`);
+      stageDef = await res.json() as import('@/types').StageDefinition;
+    } catch (e) {
+      console.error('[SceneManager] stage load error:', e);
+      await this.transition({ to: 'stageSelect' });
+      return;
+    }
+
+    // preScenarioが指定されており未プレイの場合は先にシナリオを表示する
+    if (stageDef.preScenario) {
+      const scenarioId = stageDef.preScenario.replace(/^scenarios\//, '').replace(/\.json$/, '');
+      const alreadyRead = this.progressStore.isRead(`pre:${stageId}`);
+      if (!alreadyRead) {
+        // シナリオ終了後にパズルを起動する
+        await this.mountNovelSceneWithCallback(
+          scenarioId,
+          () => {
+            this.progressStore.markLineRead(`pre:${stageId}`);
+            this.launchPuzzleWithDef(stageDef);
+          }
+        );
+        return;
+      }
+    }
+
+    await this.launchPuzzleWithDef(stageDef);
+  }
+
+  /** ステージ定義を受け取ってパズル画面を直接マウントする */
+  private async launchPuzzleWithDef(stageDef: import('@/types').StageDefinition): Promise<void> {
+    const { PuzzleScene } = await import('@/scenes/PuzzleScene');
+    const { StageValidator } = await import('@/core/StageValidator');
+
+    // コンテナをクリアして再構築
+    this.appContainer.innerHTML = '';
+
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;align-items:center;background:#1c1f2a;';
+
+    const hud = this.createPuzzleHud(wrapper);
+    const canvas = document.createElement('canvas');
+    canvas.style.cssText = 'margin:auto;display:block;';
+    wrapper.appendChild(canvas);
+    this.appContainer.appendChild(wrapper);
+
+    const scene = new PuzzleScene(canvas, hud);
+
+    // 解検証（24枚以下のみ）
+    let count = 0;
+    for (const row of stageDef.tilesLayout) {
+      for (const cell of row) {
+        if (cell !== null) count++;
+      }
+    }
+    if (count <= 24 && !StageValidator.hasSolution(stageDef)) {
+      console.warn(`[SceneManager] Stage ${stageDef.id} has no solution!`);
+    }
+
+    scene.loadStage(stageDef);
+    this.progressStore.currentStageId = stageDef.id;
+    this.currentScene = scene;
+
+    // クリア/ゲームオーバーイベントを監視してリザルト画面へ遷移する
+    this.watchPuzzleEnd(scene, stageDef);
+  }
+
+  /** シナリオ終了後にコールバックを呼ぶ一時的なノベル画面マウント */
+  private async mountNovelSceneWithCallback(scenarioId: string, onEnd: () => void): Promise<void> {
+    const { NovelScene } = await import('@/scenes/NovelScene');
+
+    this.appContainer.innerHTML = '';
+    const div = document.createElement('div');
+    div.style.cssText = 'width:100%;height:100%;position:relative;';
+    this.appContainer.appendChild(div);
+
+    const scene = new NovelScene(
+      div,
+      scenarioId,
+      this.progressStore.scenarioContext,
+      onEnd
+    );
+    this.currentScene = scene;
+    await scene.start();
+  }
+
+  private async mountResultScene(data: ResultData): Promise<void> {
+    const { ResultScene } = await import('@/scenes/ResultScene');
+
+    const canvas = this.createFullCanvas();
+    this.appContainer.appendChild(canvas);
+
+    // セーブ記録更新
+    this.saveStore.setRecord(data.stageId, {
+      bestScore: data.score,
+      bestRating: data.rating,
+      cleared: data.cleared
+    });
+
+    const scene = new ResultScene(
+      canvas,
+      data,
+      () => {
+        // リトライ
+        this.transition({ to: 'puzzle', stageId: data.stageId });
+      },
+      () => {
+        // 次のステージ（Phase 1: ステージセレクトへ）
+        this.transition({ to: 'stageSelect' });
+      },
+      () => {
+        this.transition({ to: 'title' });
+      }
+    );
+
+    this.currentScene = scene;
+    scene.start();
+  }
+
+  // ---------- ヘルパー ----------
+
+  /** ウィンドウサイズに合わせたCanvasを作成する */
+  private createFullCanvas(): HTMLCanvasElement {
+    const canvas = document.createElement('canvas');
+    canvas.width = this.appContainer.clientWidth || window.innerWidth;
+    canvas.height = this.appContainer.clientHeight || window.innerHeight;
+    canvas.style.cssText = 'width:100%;height:100%;display:block;';
+    return canvas;
+  }
+
+  /** パズルシーンのHUD要素を作成する */
+  private createPuzzleHud(parent: HTMLElement): {
+    timer: HTMLElement;
+    score: HTMLElement;
+    combo: HTMLElement;
+    hint: HTMLElement;
+    status: HTMLElement;
+  } {
+    const hudBar = document.createElement('div');
+    hudBar.style.cssText = 'display:flex;gap:16px;padding:8px 16px;background:#252938;width:100%;box-sizing:border-box;align-items:center;color:#fff;font-family:monospace;';
+
+    const makeEl = (label: string, id: string) => {
+      const span = document.createElement('span');
+      span.style.cssText = 'display:inline-flex;gap:4px;align-items:center;';
+      span.innerHTML = `<small style="color:#aaa;">${label}</small><strong id="${id}">--</strong>`;
+      hudBar.appendChild(span);
+      return span.querySelector('strong') as HTMLElement;
+    };
+
+    const timer = makeEl('TIME', 'hud-timer-sm');
+    const score = makeEl('SCORE', 'hud-score-sm');
+    const combo = makeEl('COMBO', 'hud-combo-sm');
+    const hint = makeEl('HINT', 'hud-hint-sm');
+    const status = makeEl('', 'hud-status-sm');
+    status.style.marginLeft = 'auto';
+
+    parent.appendChild(hudBar);
+    return { timer, score, combo, hint, status };
+  }
+
+  /**
+   * パズルエンジンのクリア/ゲームオーバーイベントを監視して、
+   * リザルト画面へ遷移するハンドラを登録する。
+   */
+  private watchPuzzleEnd(
+    scene: import('@/scenes/PuzzleScene').PuzzleScene,
+    stageDef: import('@/types').StageDefinition
+  ): void {
+    const calcRating = (score: number): 'S' | 'A' | 'B' | 'C' =>
+      score >= 5000 ? 'S' : score >= 3000 ? 'A' : score >= 1500 ? 'B' : 'C';
+
+    scene.engine.on((e) => {
+      if (e.type === 'cleared') {
+        const snap = scene.engine.getScoreSnapshot();
+        const score = snap.score;
+        const resultData: ResultData = {
+          stageId: stageDef.id,
+          score,
+          rating: calcRating(score),
+          cleared: true,
+          timeBonus: scene.engine.timer.remain * 10,
+          comboMax: snap.maxCombo
+        };
+        if (stageDef.postScenario) {
+          const sid = stageDef.postScenario
+            .replace(/^scenarios\//, '')
+            .replace(/\.json$/, '');
+          void this.mountNovelSceneWithCallback(sid, () => {
+            void this.transition({ to: 'result', resultData });
+          });
+        } else {
+          void this.transition({ to: 'result', resultData });
+        }
+      } else if (e.type === 'gameOver') {
+        const snap = scene.engine.getScoreSnapshot();
+        const score = snap.score;
+        const resultData: ResultData = {
+          stageId: stageDef.id,
+          score,
+          rating: calcRating(score),
+          cleared: false,
+          timeBonus: 0,
+          comboMax: snap.maxCombo
+        };
+        void this.transition({ to: 'result', resultData });
+      }
+    });
+  }
+}
