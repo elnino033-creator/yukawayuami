@@ -1,0 +1,18 @@
+[
+  { "bg": "bg_ch01_crimson" },
+  { "bgm": "bgm_ch01" },
+  { "chara": { "id": "akari", "expr": "normal", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "また来たんだ。もしかして、私に会いに来た？" } },
+  { "text": { "name": "???", "body": "パズルをクリアしに来ただけだよ。" } },
+  { "chara": { "id": "akari", "expr": "angry", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "ちょっと！　ひどくない！？　まあいいけど。" } },
+  { "chara": { "id": "akari", "expr": "normal", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "今回のパズルは前より少し難しいよ。タイルの数が増えてる。" } },
+  { "text": { "name": "あかり", "body": "でも大丈夫、あなたならできるって信じてる。……ちょっとだけね。" } },
+  { "choice": [
+    { "label": "任せておけ！", "flag": "akari_friendly+1" },
+    { "label": "やってみるよ", "flag": "akari_friendly+0" }
+  ]},
+  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "その頼もしさ、嫌いじゃないかも。さあ始めよう！" } }
+]

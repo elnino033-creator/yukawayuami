@@ -1,0 +1,21 @@
+{
+  "id": "ch01_stage02",
+  "title": "第1章 ステージ2：炎色のきずな",
+  "chapter": 1,
+  "boardWidth": 8,
+  "boardHeight": 6,
+  "timeLimitSec": 100,
+  "missPenaltySec": 1,
+  "hintCount": 3,
+  "tilesLayout": [
+    ["red",   null, "red",   "blue",  null, "blue",  null, null  ],
+    ["green", null, "green", "yellow",null, "yellow",null, null  ],
+    ["blue",  null, "blue",  "red",   null, "red",   null, null  ],
+    ["yellow",null, "yellow","green", null, "green", null, null  ],
+    ["red",   null, "red",   "blue",  null, "blue",  null, null  ],
+    ["green", null, "green", "yellow",null, "yellow",null, null  ]
+  ],
+  "blockReleaseRule": { "type": "never" },
+  "preScenario": "scenarios/ch01_s02_pre.json",
+  "postScenario": "scenarios/ch01_s02_post.json"
+}

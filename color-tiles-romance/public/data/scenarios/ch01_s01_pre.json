@@ -1,0 +1,19 @@
+[
+  { "bg": "bg_ch01_crimson" },
+  { "bgm": "bgm_ch01" },
+  { "chara": { "id": "akari", "expr": "surprise", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "っ！？　人間がここに来るなんて……珍しいね！" } },
+  { "chara": { "id": "akari", "expr": "normal", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "私はあかり。紅羽 あかり。この緋色の階層を守る者よ。" } },
+  { "text": { "name": "???", "body": "守る？ あなたも囚われているんじゃないのか？" } },
+  { "chara": { "id": "akari", "expr": "angry", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "囚われてなんかないもん！　……まあ、ちょっと出られないだけで。" } },
+  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "でも！　旅人さんがパズルをクリアしてくれたら、一緒に登れるかも。やってみせてよ！" } },
+  { "choice": [
+    { "label": "もちろん！", "flag": "akari_friendly+1" },
+    { "label": "……条件次第かな", "flag": "akari_friendly-1" }
+  ]},
+  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "じゃあ行くよ！　時間内にタイルを全部消してね！" } }
+]

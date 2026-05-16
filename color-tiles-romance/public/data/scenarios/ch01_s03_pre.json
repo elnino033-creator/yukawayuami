@@ -1,0 +1,14 @@
+[
+  { "bg": "bg_ch01_crimson" },
+  { "bgm": "bgm_ch01" },
+  { "chara": { "id": "akari", "expr": "normal", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "ねえ、旅人さんって外ではどんな生活してたの？" } },
+  { "text": { "name": "???", "body": "普通の生活だよ。こんな塔に招待されるとは思ってなかったけど。" } },
+  { "chara": { "id": "akari", "expr": "sad", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "そっか……外は楽しい？　私ずっとここにいるから、全然知らなくて。" } },
+  { "text": { "name": "???", "body": "楽しいことも辛いことも色々あるよ。でも、きっとあかりにも見せてあげられる。" } },
+  { "chara": { "id": "akari", "expr": "surprise", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "ほんとに……？　じゃあ絶対クリアしないとね！" } },
+  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "今回は配置がいつもと違うから気をつけてよ。でも大丈夫、落ち着いて見れば分かるはず！" } }
+]

@@ -1,0 +1,19 @@
+{
+  "id": "ch00_prologue",
+  "title": "プロローグ：色彩の塔の招待",
+  "chapter": 0,
+  "boardWidth": 6,
+  "boardHeight": 4,
+  "timeLimitSec": 90,
+  "missPenaltySec": 0,
+  "hintCount": 3,
+  "tilesLayout": [
+    ["red",   null, "red",   "blue",  null, "blue" ],
+    ["green", null, "green", "red",   null, "red"  ],
+    ["blue",  null, "blue",  "green", null, "green"],
+    [null,    null, null,    null,    null, null   ]
+  ],
+  "blockReleaseRule": { "type": "never" },
+  "preScenario": "scenarios/prologue_pre.json",
+  "postScenario": "scenarios/prologue_post.json"
+}

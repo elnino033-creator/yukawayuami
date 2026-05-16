@@ -1,0 +1,21 @@
+{
+  "id": "ch01_stage05",
+  "title": "第1章 ステージ5：あかりの決意",
+  "chapter": 1,
+  "boardWidth": 8,
+  "boardHeight": 6,
+  "timeLimitSec": 120,
+  "missPenaltySec": 1,
+  "hintCount": 3,
+  "tilesLayout": [
+    ["yellow",null, "yellow","green", null, "green", null, null],
+    ["red",   null, "red",   "blue",  null, "blue",  null, null],
+    ["green", null, "green", "red",   null, "red",   null, null],
+    ["blue",  null, "blue",  "yellow",null, "yellow",null, null],
+    ["red",   null, "red",   "green", null, "green", null, null],
+    ["blue",  null, "blue",  "yellow",null, "yellow",null, null]
+  ],
+  "blockReleaseRule": { "type": "never" },
+  "preScenario": "scenarios/ch01_s05_pre.json",
+  "postScenario": "scenarios/ch01_s05_post.json"
+}

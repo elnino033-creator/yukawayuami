@@ -1,0 +1,13 @@
+[
+  { "bg": "bg_ch01_crimson" },
+  { "bgm": "bgm_ch01" },
+  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "クリアしちゃった！　さすがだね！" } },
+  { "text": { "name": "???", "body": "あかりが「信じてる」って言ってくれたおかげかな。" } },
+  { "chara": { "id": "akari", "expr": "shy", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "べ、別にそういう意味じゃ……！　ただ励ましただけよ！" } },
+  { "text": { "name": "あかり", "body": "……で、でも。ちょっとだけ嬉しかった。ありがとう。" } },
+  { "text": { "name": "???", "body": "こちらこそ。次もよろしく頼む。" } },
+  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "うん！　絶対クリアさせてあげるから！" } }
+]

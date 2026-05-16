@@ -1,0 +1,127 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Noto Sans JP', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: #14161e;
+  color: #e8eaf0;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100%;
+  padding: 16px;
+  gap: 12px;
+}
+
+header {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+h1 {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #b8bdcc;
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.controls select,
+.controls button {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #3a3f4f;
+  background: #252938;
+  color: #e8eaf0;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.controls button:hover {
+  background: #2e3344;
+}
+
+.hud {
+  width: 100%;
+  max-width: 720px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 12px;
+  background: #1c1f2a;
+  border: 1px solid #2a2f3e;
+  border-radius: 8px;
+}
+
+.hud-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hud-label {
+  font-size: 10px;
+  color: #7a8092;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hud-value {
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+#hud-timer.warn {
+  color: #ff5b6a;
+  animation: pulse 0.4s infinite alternate;
+}
+
+@keyframes pulse {
+  from { opacity: 1; }
+  to { opacity: 0.5; }
+}
+
+.status {
+  width: 100%;
+  max-width: 720px;
+  min-height: 20px;
+  font-size: 13px;
+  color: #b8bdcc;
+  text-align: center;
+}
+
+#puzzle-canvas {
+  background: #0e1018;
+  border-radius: 8px;
+  display: block;
+  max-width: 100%;
+  height: auto;
+  touch-action: none;
+}
+
+footer {
+  margin-top: 16px;
+  font-size: 11px;
+  color: #5a607a;
+  text-align: center;
+}

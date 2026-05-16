@@ -1,0 +1,19 @@
+{
+  "id": "ch01_stage01",
+  "title": "第1章 ステージ1：あかりとの出会い",
+  "chapter": 1,
+  "boardWidth": 8,
+  "boardHeight": 6,
+  "timeLimitSec": 120,
+  "missPenaltySec": 1,
+  "hintCount": 3,
+  "tilesLayout": [
+    ["red",   null,    null,    "red",    null,    "blue",  null,    "blue" ],
+    [null,    null,    null,    null,     null,    null,    null,    null   ],
+    ["green", null,    null,    "green",  null,    "yellow",null,    "yellow"],
+    [null,    null,    null,    null,     null,    null,    null,    null   ],
+    ["red",   null,    "red",   null,     "blue",  null,    "blue",  null   ],
+    ["green", null,    "green", null,     "yellow",null,    "yellow",null   ]
+  ],
+  "blockReleaseRule": { "type": "never" }
+}

@@ -1,0 +1,19 @@
+{
+  "id": "ch03_ice_demo",
+  "title": "ギミックデモ：氷・時間・障害ブロック",
+  "chapter": 3,
+  "boardWidth": 8,
+  "boardHeight": 6,
+  "timeLimitSec": 150,
+  "missPenaltySec": 1,
+  "hintCount": 3,
+  "tilesLayout": [
+    [{"color":"blue","type":"ice"}, null, null, {"color":"blue","type":"ice"}, null, "red", null, "red"],
+    [null, null, null, null, null, null, null, null],
+    [{"color":"yellow","type":"ice"}, null, null, {"color":"yellow","type":"ice"}, null, {"type":"block","color":null}, null, null],
+    [null, null, null, null, null, null, null, null],
+    [{"color":"green","type":"time"}, null, null, {"color":"green","type":"time"}, null, "purple", null, "purple"],
+    ["red", null, "red", null, "blue", null, "blue", null]
+  ],
+  "blockReleaseRule": { "type": "afterPairs", "count": 3 }
+}
