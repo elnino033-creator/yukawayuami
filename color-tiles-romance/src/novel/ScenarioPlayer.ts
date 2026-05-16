@@ -99,6 +99,9 @@ export class ScenarioPlayer {
   /** アニメーションフレームID */
   private rafId: number | null = null;
 
+  /** 現在再生中のBGM */
+  private bgmAudio: HTMLAudioElement | null = null;
+
   /** クリック/スペースキーのイベントリスナー（後でremoveするため保持） */
   private boundClick: (e: MouseEvent) => void;
   private boundKey: (e: KeyboardEvent) => void;
@@ -177,11 +180,23 @@ export class ScenarioPlayer {
   }
 
   /**
+   * BGMを停止する。
+   */
+  stopBgm(): void {
+    if (this.bgmAudio) {
+      this.bgmAudio.pause();
+      this.bgmAudio.src = '';
+      this.bgmAudio = null;
+    }
+  }
+
+  /**
    * リソースを解放してCanvasをコンテナから削除する。
    */
   destroy(): void {
     if (this.rafId !== null) cancelAnimationFrame(this.rafId);
     if (this.typewriterTimer !== null) clearTimeout(this.typewriterTimer);
+    this.stopBgm();
     this.canvas.removeEventListener('click', this.boundClick);
     window.removeEventListener('keydown', this.boundKey);
     window.removeEventListener('resize', () => this.resizeCanvas());
@@ -224,7 +239,16 @@ export class ScenarioPlayer {
       this.bgColor = this.filenameToColor(step.bg);
       this.advanceStep();
     } else if ('bgm' in step) {
-      // BGM（Phase 1: 無視）
+      // BGM再生
+      const src = `/assets/bgm/${step.bgm}`;
+      if (this.bgmAudio) {
+        this.bgmAudio.pause();
+        this.bgmAudio.src = '';
+      }
+      this.bgmAudio = new Audio(src);
+      this.bgmAudio.loop = true;
+      this.bgmAudio.volume = 0.5;
+      this.bgmAudio.play().catch(() => {}); // autoplayエラーは無視
       this.advanceStep();
     } else if ('chara' in step) {
       // キャラクター表示更新
@@ -372,6 +396,7 @@ export class ScenarioPlayer {
       cancelAnimationFrame(this.rafId);
       this.rafId = null;
     }
+    this.stopBgm();
     if (this.endCallback) this.endCallback();
     if (this.resolveStart) this.resolveStart();
   }

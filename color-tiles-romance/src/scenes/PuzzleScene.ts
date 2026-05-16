@@ -1,5 +1,6 @@
 import type { StageDefinition, Tile, MatchResult } from '@/types';
 import { PuzzleEngine } from '@/core/PuzzleEngine';
+import { soundEngine } from '@/core/SoundEngine';
 
 /**
  * 色名 → 表示色のマッピング（仮素材）
@@ -155,7 +156,10 @@ export class PuzzleScene {
     });
     this.canvas.addEventListener('click', (e) => {
       const cell = this.pointerToCell(e.clientX, e.clientY);
-      if (cell) this.engine.onCellClick(cell.cx, cell.cy);
+      if (cell) {
+        soundEngine.playClick();
+        this.engine.onCellClick(cell.cx, cell.cy);
+      }
     });
 
     // タッチ：tapで発火、ドラッグでプレビュー
@@ -218,15 +222,18 @@ export class PuzzleScene {
     this.engine.on((e) => {
       switch (e.type) {
         case 'tilesRemoved':
+          soundEngine.playMatch();
           this.removedEffects.push({ tiles: e.tiles, startedAt: Date.now() });
           if (e.bonusSec && e.bonusSec > 0) {
             this.spawnFloatText(`+${e.bonusSec}s`, '#5ec76a');
           }
           break;
         case 'iceCracked':
+          soundEngine.playIceCrack();
           this.spawnFloatText('Crack!', '#9ed3ff');
           break;
         case 'miss':
+          soundEngine.playMiss();
           this.missEffects.push({
             cx: e.clickPoint.x,
             cy: e.clickPoint.y,
@@ -244,9 +251,11 @@ export class PuzzleScene {
           this.flashStatus('障害ブロック解除！');
           break;
         case 'cleared':
+          soundEngine.playClear();
           this.flashStatus('CLEAR！');
           break;
         case 'gameOver':
+          soundEngine.playGameOver();
           this.timeUpFlashUntil = Date.now() + 2000;
           this.flashStatus('TIME UP');
           break;
