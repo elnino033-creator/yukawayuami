@@ -1,6 +1,6 @@
 [
-  {"type":"bg","src":"bg_school"},
-  {"type":"chara","src":"akari_normal","pos":"center"},
-  {"type":"text","chara":"あかり","text":"全部のギミックが一度に出てきた！連結・氷・時間・ブロック…これが第5章の洗礼だよ。"},
-  {"type":"text","chara":"あかり","text":"焦らず、一つずつ整理して考えよ。優先順位は：連結→時間→氷、の順番がおすすめ！"}
+  { "bg": "bg_school" },
+  { "chara": { "id": "akari", "expr": "normal", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "全部のギミックが一度に出てきた！連結・氷・時間・ブロック…これが第5章の洗礼だよ。" } },
+  { "text": { "name": "あかり", "body": "焦らず、一つずつ整理して考えよ。優先順位は：連結→時間→氷、の順番がおすすめ！" } }
 ]

@@ -1,6 +1,6 @@
 [
-  {"type":"bg","src":"bg_school"},
-  {"type":"chara","src":"akari_smile","pos":"center"},
-  {"type":"text","chara":"あかり","text":"今度は氷タイルがもっと増えてるね。でも焦らなくていいよ！"},
-  {"type":"text","chara":"あかり","text":"一個ずつ丁寧に消していこう。ゆっくりやれば必ず解けるから！"}
+  { "bg": "bg_school" },
+  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "今度は氷タイルがもっと増えてるね。でも焦らなくていいよ！" } },
+  { "text": { "name": "あかり", "body": "一個ずつ丁寧に消していこう。ゆっくりやれば必ず解けるから！" } }
 ]

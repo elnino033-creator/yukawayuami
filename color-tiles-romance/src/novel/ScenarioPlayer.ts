@@ -102,6 +102,12 @@ export class ScenarioPlayer {
   /** 現在再生中のBGM */
   private bgmAudio: HTMLAudioElement | null = null;
 
+  /** 読み込み済みキャラ画像キャッシュ（キー: "${id}_${expr}"） */
+  private charaImageCache: Map<string, HTMLImageElement> = new Map();
+
+  /** 現在の背景画像（読み込み済みの場合のみ） */
+  private bgImage: HTMLImageElement | null = null;
+
   /** クリック/スペースキーのイベントリスナー（後でremoveするため保持） */
   private boundClick: (e: MouseEvent) => void;
   private boundKey: (e: KeyboardEvent) => void;
@@ -235,8 +241,11 @@ export class ScenarioPlayer {
     this.stepIndex++;
 
     if ('bg' in step) {
-      // 背景色変更（Phase 1: ファイル名からハッシュで色を決定）
       this.bgColor = this.filenameToColor(step.bg);
+      this.bgImage = null;
+      const img = new Image();
+      img.onload = () => { this.bgImage = img; };
+      img.src = `/assets/bg/${step.bg}.jpg`;
       this.advanceStep();
     } else if ('bgm' in step) {
       // BGM再生
@@ -251,8 +260,8 @@ export class ScenarioPlayer {
       this.bgmAudio.play().catch(() => {}); // autoplayエラーは無視
       this.advanceStep();
     } else if ('chara' in step) {
-      // キャラクター表示更新
       this.updateChara(step.chara);
+      this.preloadCharaImage(step.chara.id, step.chara.expr);
       this.advanceStep();
     } else if ('text' in step) {
       // テキスト表示（ユーザー入力待ち）
@@ -408,11 +417,15 @@ export class ScenarioPlayer {
     const h = this.canvas.height;
 
     // 背景
-    const grad = this.ctx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, this.bgColor);
-    grad.addColorStop(1, this.darkenColor(this.bgColor));
-    this.ctx.fillStyle = grad;
-    this.ctx.fillRect(0, 0, w, h);
+    if (this.bgImage) {
+      this.ctx.drawImage(this.bgImage, 0, 0, w, h);
+    } else {
+      const grad = this.ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, this.bgColor);
+      grad.addColorStop(1, this.darkenColor(this.bgColor));
+      this.ctx.fillStyle = grad;
+      this.ctx.fillRect(0, 0, w, h);
+    }
 
     // キャラクタープレースホルダ
     this.drawCharacters(w, h);
@@ -433,36 +446,51 @@ export class ScenarioPlayer {
     }
   }
 
+  /** キャラ画像を非同期でプリロードしてキャッシュする */
+  private preloadCharaImage(id: string, expr: string): void {
+    const key = `${id}_${expr}`;
+    if (this.charaImageCache.has(key)) return;
+    const img = new Image();
+    img.onload = () => { this.charaImageCache.set(key, img); };
+    img.src = `/assets/chara/${key}.png`;
+  }
+
   private drawCharacters(w: number, h: number): void {
     for (const chara of this.characters) {
       let cx = w / 2;
       if (chara.pos === 'left') cx = w * 0.25;
       else if (chara.pos === 'right') cx = w * 0.75;
 
-      const charHeight = h * 0.55;
-      const charWidth = charHeight * 0.5;
-      const cy = h * 0.35;
+      const img = this.charaImageCache.get(`${chara.id}_${chara.expr}`);
+      if (img) {
+        // スプライト画像を描画（下辺をテキストウィンドウ上端に合わせる）
+        const displayH = h * 0.78;
+        const displayW = displayH * (img.naturalWidth / img.naturalHeight);
+        this.ctx.drawImage(img, cx - displayW / 2, h - displayH - h * 0.28, displayW, displayH);
+      } else {
+        // フォールバック: カラーシルエット描画
+        const charHeight = h * 0.55;
+        const charWidth = charHeight * 0.5;
+        const cy = h * 0.35;
 
-      // 胴体（矩形）
-      this.ctx.fillStyle = chara.color;
-      this.ctx.globalAlpha = 0.85;
-      this.ctx.fillRect(cx - charWidth / 2, cy - charHeight / 2, charWidth, charHeight);
+        this.ctx.fillStyle = chara.color;
+        this.ctx.globalAlpha = 0.85;
+        this.ctx.fillRect(cx - charWidth / 2, cy - charHeight / 2, charWidth, charHeight);
 
-      // 頭（円）
-      const headR = charWidth * 0.45;
-      this.ctx.beginPath();
-      this.ctx.arc(cx, cy - charHeight / 2 - headR * 0.5, headR, 0, Math.PI * 2);
-      this.ctx.fillStyle = this.lightenColor(chara.color);
-      this.ctx.fill();
+        const headR = charWidth * 0.45;
+        this.ctx.beginPath();
+        this.ctx.arc(cx, cy - charHeight / 2 - headR * 0.5, headR, 0, Math.PI * 2);
+        this.ctx.fillStyle = this.lightenColor(chara.color);
+        this.ctx.fill();
 
-      this.ctx.globalAlpha = 1;
+        this.ctx.globalAlpha = 1;
 
-      // キャラクターIDラベル
-      this.ctx.fillStyle = '#fff';
-      this.ctx.font = `bold ${Math.max(12, charWidth * 0.25)}px sans-serif`;
-      this.ctx.textAlign = 'center';
-      this.ctx.textBaseline = 'middle';
-      this.ctx.fillText(chara.id, cx, cy);
+        this.ctx.fillStyle = '#fff';
+        this.ctx.font = `bold ${Math.max(12, charWidth * 0.25)}px sans-serif`;
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText(chara.id, cx, cy);
+      }
     }
   }
 

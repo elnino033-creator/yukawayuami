@@ -1,6 +1,6 @@
 [
-  {"type":"bg","src":"bg_school"},
-  {"type":"chara","src":"akari_normal","pos":"center"},
-  {"type":"text","chara":"あかり","text":"連結タイルと氷タイルが混在してる…。連結は一発で消えるけど、氷は2回必要なんだよね。"},
-  {"type":"text","chara":"あかり","text":"まず連結タイルから先に消すと、盤面がすっきりして氷タイルを消しやすくなるよ！"}
+  { "bg": "bg_school" },
+  { "chara": { "id": "akari", "expr": "normal", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "連結タイルと氷タイルが混在してる…。連結は一発で消えるけど、氷は2回必要なんだよね。" } },
+  { "text": { "name": "あかり", "body": "まず連結タイルから先に消すと、盤面がすっきりして氷タイルを消しやすくなるよ！" } }
 ]

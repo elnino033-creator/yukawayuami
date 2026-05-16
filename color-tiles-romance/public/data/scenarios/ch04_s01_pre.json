@@ -1,6 +1,6 @@
 [
-  {"type":"bg","src":"bg_school"},
-  {"type":"chara","src":"akari_surprise","pos":"center"},
-  {"type":"text","chara":"あかり","text":"連結タイル！？鎖マークがついてるタイルはね、合わせると全部まとめて消えるんだよ！"},
-  {"type":"text","chara":"あかり","text":"一回のマッチで4枚まとめて消えるから、ぜったいお得！うまく使いこなして♪"}
+  { "bg": "bg_school" },
+  { "chara": { "id": "akari", "expr": "surprise", "pos": "center" } },
+  { "text": { "name": "あかり", "body": "連結タイル！？鎖マークがついてるタイルはね、合わせると全部まとめて消えるんだよ！" } },
+  { "text": { "name": "あかり", "body": "一回のマッチで4枚まとめて消えるから、ぜったいお得！うまく使いこなして♪" } }
 ]
