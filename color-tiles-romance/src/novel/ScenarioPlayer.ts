@@ -79,21 +79,21 @@ const CHARA_COLORS: Record<string, string> = {
   default: '#ffd234'
 };
 
-/** シナリオBGM論理名 → 既存ファイル名のフォールバックマップ */
-const BGM_FALLBACK: Record<string, string> = {
-  bgm_prologue: 'scenario',
-  bgm_mysterious_wind: 'scenario',
-  bgm_cold_wind: 'scenario',
-  bgm_forest_ambient: 'scenario',
-  bgm_clockwork: 'puzzle',
-  bgm_chapter_clear: 'title',
-  bgm_tension: 'puzzle',
-  bgm_tension_high: 'puzzle',
-  bgm_epic_climax: 'puzzle',
-  bgm_climax_tension: 'puzzle',
-  bgm_vocal_ending: 'title',
-  bgm_piano_gentle_morning: 'title',
-  bgm_piano_sad_loop: 'scenario',
+/** シナリオBGM論理名 → 実ファイル名マップ */
+const BGM_MAP: Record<string, string> = {
+  bgm_prologue: 'op_色彩の塔へ.mp3',
+  bgm_mysterious_wind: 'The_Unfolding_Hour.mp3',
+  bgm_cold_wind: 'The_Frost_Bound_Spire.mp3',
+  bgm_forest_ambient: "The_Keeper_s_Garden.mp3",
+  bgm_clockwork: "The_Pendulum_s_Grace.mp3",
+  bgm_chapter_clear: 'Golden_Spires_Rising.mp3',
+  bgm_tension: 'Steel_and_Shadows.mp3',
+  bgm_tension_high: 'Tooth_And_Lever.mp3',
+  bgm_epic_climax: 'Vow_Of_The_Gilded_Hall.mp3',
+  bgm_climax_tension: 'The_Dissolving_Spire.mp3',
+  bgm_vocal_ending: 'ed_色彩の塔.mp3',
+  bgm_piano_gentle_morning: 'エンディング_穏やか_bgm_春の約束.mp3',
+  bgm_piano_sad_loop: '君のいない色彩.mp3',
 };
 
 /**
@@ -287,20 +287,10 @@ export class ScenarioPlayer {
         this.bgmAudio = null;
       }
       if (step.bgm !== null) {
-        const primarySrc = `/assets/bgm/${step.bgm}.mp3`;
-        const audio = new Audio(primarySrc);
+        const filename = BGM_MAP[step.bgm] ?? `${step.bgm}.mp3`;
+        const audio = new Audio(`/assets/bgm/${encodeURIComponent(filename)}`);
         audio.loop = true;
         audio.volume = 0.5;
-        audio.onerror = () => {
-          const fallbackName = BGM_FALLBACK[step.bgm as string];
-          if (fallbackName && this.bgmAudio === audio) {
-            const fallback = new Audio(`/assets/bgm/${fallbackName}.mp3`);
-            fallback.loop = true;
-            fallback.volume = 0.5;
-            fallback.play().catch(() => {});
-            this.bgmAudio = fallback;
-          }
-        };
         audio.play().catch(() => {});
         this.bgmAudio = audio;
       }
