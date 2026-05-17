@@ -4,16 +4,16 @@
   "chapter": 2,
   "boardWidth": 8,
   "boardHeight": 6,
-  "timeLimitSec": 120,
-  "missPenaltySec": 1,
-  "hintCount": 3,
+  "timeLimitSec": 110,
+  "missPenaltySec": 2,
+  "hintCount": 2,
   "tilesLayout": [
-    [{"color":"blue","type":"ice"}, null, null, {"color":"blue","type":"ice"}, null, {"color":"red","type":"ice"}, null, {"color":"red","type":"ice"}],
-    [null, null, null, null, null, null, null, null],
-    [{"color":"green","type":"ice"}, null, null, {"color":"green","type":"ice"}, null, "yellow", null, "yellow"],
-    [null, null, null, null, null, null, null, null],
-    [{"color":"blue","type":"ice"}, null, {"color":"blue","type":"ice"}, null, {"color":"red","type":"ice"}, null, {"color":"red","type":"ice"}, null],
-    ["green", null, "green", null, "yellow", null, "yellow", null]
+    [{"color":"red","type":"ice"},    {"color":"blue","type":"ice"},   {"color":"purple","type":"ice"}, null, {"color":"purple","type":"ice"}, {"color":"blue","type":"ice"},   {"color":"red","type":"ice"},    null],
+    ["green",                          "yellow",                         "blue",                          null, "blue",                          "yellow",                         "green",                          null],
+    [{"color":"yellow","type":"ice"}, null,                              {"color":"red","type":"ice"},    "green", null, "green",                         {"color":"red","type":"ice"},    {"color":"yellow","type":"ice"}],
+    ["blue",                           null,                              {"color":"purple","type":"ice"}, {"color":"red","type":"ice"}, null, {"color":"red","type":"ice"},    {"color":"purple","type":"ice"}, "blue"],
+    [{"color":"green","type":"ice"},   null,                              "yellow",                        {"color":"blue","type":"ice"}, null, {"color":"blue","type":"ice"},   "yellow",                         {"color":"green","type":"ice"}],
+    [{"color":"purple","type":"ice"}, null,                              {"color":"red","type":"ice"},    "green", null, "green",                         {"color":"red","type":"ice"},    {"color":"purple","type":"ice"}]
   ],
   "preScenario": "ch02_s02_pre.json"
 }

@@ -4,17 +4,17 @@
   "chapter": 5,
   "boardWidth": 8,
   "boardHeight": 6,
-  "timeLimitSec": 130,
+  "timeLimitSec": 100,
   "missPenaltySec": 3,
   "hintCount": 1,
   "tilesLayout": [
-    [{"color":"red","type":"linked","linkGroupId":"lg1"}, null, null, {"color":"red","type":"linked","linkGroupId":"lg1"}, null, {"color":"blue","type":"linked","linkGroupId":"lg2"}, null, {"color":"blue","type":"linked","linkGroupId":"lg2"}],
-    [null, {"color":null,"type":"block"}, null, null, {"color":null,"type":"block"}, null, null, null],
-    [{"color":"red","type":"linked","linkGroupId":"lg1"}, null, null, {"color":"red","type":"linked","linkGroupId":"lg1"}, null, {"color":"blue","type":"linked","linkGroupId":"lg2"}, null, {"color":"blue","type":"linked","linkGroupId":"lg2"}],
-    [null, {"color":null,"type":"block"}, null, null, {"color":null,"type":"block"}, null, null, null],
-    [{"color":"green","type":"ice"}, null, {"color":"green","type":"ice"}, null, {"color":"yellow","type":"time"}, null, {"color":"yellow","type":"time"}, null],
-    [{"color":"green","type":"ice"}, null, {"color":"green","type":"ice"}, null, {"color":"yellow","type":"time"}, null, {"color":"yellow","type":"time"}, null]
+    [{"color":"green","type":"linked","linkGroupId":"lg3"},{"color":"red","type":"linked","linkGroupId":"lg1"},{"color":"purple","type":"ice"},{"color":null,"type":"block"},{"color":null,"type":"block"},{"color":"purple","type":"ice"},{"color":"red","type":"linked","linkGroupId":"lg1"},{"color":"green","type":"linked","linkGroupId":"lg3"}],
+    [{"color":"yellow","type":"time"},{"color":"blue","type":"linked","linkGroupId":"lg2"},{"color":"green","type":"ice"},null,null,{"color":"green","type":"ice"},{"color":"blue","type":"linked","linkGroupId":"lg2"},{"color":"yellow","type":"time"}],
+    [{"color":"red","type":"linked","linkGroupId":"lg1"},{"color":"green","type":"linked","linkGroupId":"lg3"},{"color":"purple","type":"ice"},null,null,{"color":"purple","type":"ice"},{"color":"green","type":"linked","linkGroupId":"lg3"},{"color":"red","type":"linked","linkGroupId":"lg1"}],
+    [{"color":"blue","type":"linked","linkGroupId":"lg2"},null,{"color":"yellow","type":"ice"},{"color":null,"type":"block"},{"color":null,"type":"block"},{"color":"yellow","type":"ice"},null,{"color":"blue","type":"linked","linkGroupId":"lg2"}],
+    [{"color":"purple","type":"ice"},{"color":"green","type":"ice"},{"color":"red","type":"ice"},null,null,{"color":"red","type":"ice"},{"color":"green","type":"ice"},{"color":"purple","type":"ice"}],
+    [{"color":"red","type":"ice"},{"color":"purple","type":"ice"},null,{"color":"green","type":"ice"},null,{"color":"green","type":"ice"},{"color":"purple","type":"ice"},{"color":"red","type":"ice"}]
   ],
-  "blockReleaseRule": {"type": "afterPairs", "count": 3},
+  "blockReleaseRule": {"type": "afterPairs", "count": 5},
   "preScenario": "ch05_s03_pre.json"
 }

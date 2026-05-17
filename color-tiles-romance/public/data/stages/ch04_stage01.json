@@ -4,16 +4,16 @@
   "chapter": 4,
   "boardWidth": 8,
   "boardHeight": 6,
-  "timeLimitSec": 130,
-  "missPenaltySec": 1,
-  "hintCount": 3,
+  "timeLimitSec": 110,
+  "missPenaltySec": 2,
+  "hintCount": 2,
   "tilesLayout": [
-    [{"color":"red","type":"linked","linkGroupId":"lg1"}, null, null, {"color":"red","type":"linked","linkGroupId":"lg1"}, null, {"color":"blue","type":"linked","linkGroupId":"lg2"}, null, {"color":"blue","type":"linked","linkGroupId":"lg2"}],
-    [null, null, null, null, null, null, null, null],
-    [{"color":"red","type":"linked","linkGroupId":"lg1"}, null, null, {"color":"red","type":"linked","linkGroupId":"lg1"}, null, {"color":"blue","type":"linked","linkGroupId":"lg2"}, null, {"color":"blue","type":"linked","linkGroupId":"lg2"}],
-    [null, null, null, null, null, null, null, null],
-    ["green", null, null, "green", null, "yellow", null, "yellow"],
-    ["green", null, "green", null, "yellow", null, "yellow", null]
+    ["green", {"color":"red","type":"linked","linkGroupId":"lg1"}, null, null, null, {"color":"red","type":"linked","linkGroupId":"lg1"}, "green", null],
+    ["yellow",{"color":"blue","type":"linked","linkGroupId":"lg2"},null, null, null, {"color":"blue","type":"linked","linkGroupId":"lg2"},"yellow",null],
+    [{"color":"red","type":"linked","linkGroupId":"lg1"},  null, null, {"color":"red","type":"linked","linkGroupId":"lg1"},  null, null, null, null],
+    [{"color":"blue","type":"linked","linkGroupId":"lg2"}, null, null, {"color":"blue","type":"linked","linkGroupId":"lg2"}, null, null, null, null],
+    ["purple", null, "green",  null, "green",  null, "purple", null],
+    [null, "yellow", null, "purple", null, "purple", "yellow", null]
   ],
   "preScenario": "ch04_s01_pre.json"
 }

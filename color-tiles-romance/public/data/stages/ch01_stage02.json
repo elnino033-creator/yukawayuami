@@ -4,16 +4,16 @@
   "chapter": 1,
   "boardWidth": 8,
   "boardHeight": 6,
-  "timeLimitSec": 100,
+  "timeLimitSec": 95,
   "missPenaltySec": 1,
   "hintCount": 3,
   "tilesLayout": [
-    ["red",   null, "red",   "blue",  null, "blue",  null, null  ],
-    ["green", null, "green", "yellow",null, "yellow",null, null  ],
-    ["blue",  null, "blue",  "red",   null, "red",   null, null  ],
-    ["yellow",null, "yellow","green", null, "green", null, null  ],
-    ["red",   null, "red",   "blue",  null, "blue",  null, null  ],
-    ["green", null, "green", "yellow",null, "yellow",null, null  ]
+    ["red",   "blue",  "purple",null,   "purple","blue",  "red",   null  ],
+    ["green", "yellow","blue",  null,   "blue",  "yellow","green", null  ],
+    ["yellow",null,    "red",   "green",null,    "green", "red",   "yellow"],
+    ["blue",  null,    "purple","red",  null,    "red",   "purple","blue" ],
+    ["green", null,    "yellow","blue", null,    "blue",  "yellow","green"],
+    ["purple",null,    "red",   "green",null,    "green", "red",   "purple"]
   ],
   "blockReleaseRule": { "type": "never" },
   "preScenario": "scenarios/ch01_s02_pre.json",

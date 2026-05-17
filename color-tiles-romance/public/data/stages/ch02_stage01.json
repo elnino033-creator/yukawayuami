@@ -4,16 +4,16 @@
   "chapter": 2,
   "boardWidth": 8,
   "boardHeight": 6,
-  "timeLimitSec": 130,
-  "missPenaltySec": 1,
-  "hintCount": 3,
+  "timeLimitSec": 115,
+  "missPenaltySec": 2,
+  "hintCount": 2,
   "tilesLayout": [
-    [{"color":"red","type":"ice"}, null, null, {"color":"red","type":"ice"}, null, "blue", null, "blue"],
-    [null, null, null, null, null, null, null, null],
-    ["green", null, null, "green", null, {"color":"yellow","type":"ice"}, null, {"color":"yellow","type":"ice"}],
-    [null, null, null, null, null, null, null, null],
-    [{"color":"red","type":"ice"}, null, {"color":"red","type":"ice"}, null, "blue", null, "blue", null],
-    ["green", null, "green", null, {"color":"yellow","type":"ice"}, null, {"color":"yellow","type":"ice"}, null]
+    [{"color":"red","type":"ice"},    null, {"color":"blue","type":"ice"},   null, {"color":"blue","type":"ice"},   null, {"color":"red","type":"ice"},    null],
+    ["green",                         null, "yellow",                        null, "yellow",                        null, "green",                          null],
+    [{"color":"purple","type":"ice"}, null, {"color":"red","type":"ice"},    null, {"color":"red","type":"ice"},    null, {"color":"purple","type":"ice"},   null],
+    ["blue",                          null, "green", {"color":"purple","type":"ice"}, null, {"color":"purple","type":"ice"}, "green", "blue"],
+    ["yellow",                        null, {"color":"red","type":"ice"}, "green", null, "green", {"color":"red","type":"ice"}, "yellow"],
+    [null,                           "blue", null,   "yellow",                null, "yellow",                       "blue",  null]
   ],
   "preScenario": "ch02_s01_pre.json"
 }

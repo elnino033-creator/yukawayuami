@@ -4,16 +4,16 @@
   "chapter": 1,
   "boardWidth": 8,
   "boardHeight": 6,
-  "timeLimitSec": 120,
+  "timeLimitSec": 100,
   "missPenaltySec": 1,
   "hintCount": 3,
   "tilesLayout": [
-    ["red",   null,    null,    "red",    null,    "blue",  null,    "blue" ],
-    [null,    null,    null,    null,     null,    null,    null,    null   ],
-    ["green", null,    null,    "green",  null,    "yellow",null,    "yellow"],
-    [null,    null,    null,    null,     null,    null,    null,    null   ],
-    ["red",   null,    "red",   null,     "blue",  null,    "blue",  null   ],
-    ["green", null,    "green", null,     "yellow",null,    "yellow",null   ]
+    ["red",   null,   "blue",   null,    "blue",   null,   "red",    null  ],
+    ["green", null,   "yellow", null,    "yellow", null,   "green",  null  ],
+    ["purple",null,   "red",    null,    "red",    null,   "purple", null  ],
+    ["blue",  null,   "green", "purple", null,  "purple",  "green",  "blue"],
+    ["yellow",null,   "red",   "green",  null,   "green",  "red",    "yellow"],
+    [null,   "blue",  null,    "yellow", null,   "yellow", "blue",   null  ]
   ],
   "blockReleaseRule": { "type": "never" }
 }

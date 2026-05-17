@@ -4,16 +4,16 @@
   "chapter": 4,
   "boardWidth": 8,
   "boardHeight": 6,
-  "timeLimitSec": 120,
+  "timeLimitSec": 100,
   "missPenaltySec": 2,
-  "hintCount": 2,
+  "hintCount": 1,
   "tilesLayout": [
-    [{"color":"red","type":"linked","linkGroupId":"lg1"}, null, null, {"color":"red","type":"linked","linkGroupId":"lg1"}, null, {"color":"blue","type":"linked","linkGroupId":"lg2"}, null, {"color":"blue","type":"linked","linkGroupId":"lg2"}],
-    [null, null, null, null, null, null, null, null],
-    [{"color":"red","type":"linked","linkGroupId":"lg1"}, null, null, {"color":"red","type":"linked","linkGroupId":"lg1"}, null, {"color":"blue","type":"linked","linkGroupId":"lg2"}, null, {"color":"blue","type":"linked","linkGroupId":"lg2"}],
-    [null, null, null, null, null, null, null, null],
-    [{"color":"green","type":"time"}, null, {"color":"green","type":"time"}, null, {"color":"yellow","type":"time"}, null, {"color":"yellow","type":"time"}, null],
-    [{"color":"green","type":"time"}, null, {"color":"green","type":"time"}, null, {"color":"yellow","type":"time"}, null, {"color":"yellow","type":"time"}, null]
+    ["green", {"color":"red","type":"linked","linkGroupId":"lg1"}, {"color":"purple","type":"ice"}, null, {"color":"purple","type":"ice"}, {"color":"red","type":"linked","linkGroupId":"lg1"}, "green", null],
+    ["yellow",{"color":"blue","type":"linked","linkGroupId":"lg2"},{"color":"green","type":"ice"},  null, {"color":"green","type":"ice"},  {"color":"blue","type":"linked","linkGroupId":"lg2"},"yellow",null],
+    [{"color":"red","type":"linked","linkGroupId":"lg1"}, null, {"color":"yellow","type":"ice"}, null, {"color":"yellow","type":"ice"}, null, {"color":"red","type":"linked","linkGroupId":"lg1"}, null],
+    [{"color":"blue","type":"linked","linkGroupId":"lg2"},null, {"color":"purple","type":"ice"}, null, {"color":"purple","type":"ice"}, null, {"color":"blue","type":"linked","linkGroupId":"lg2"}, null],
+    ["purple", null, "green",  "yellow", null, "yellow", "green",  "purple"],
+    [null, "purple", null, "yellow", null, "yellow", "purple", null]
   ],
   "preScenario": "ch04_s03_pre.json"
 }

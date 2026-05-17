@@ -4,16 +4,16 @@
   "chapter": 3,
   "boardWidth": 8,
   "boardHeight": 6,
-  "timeLimitSec": 140,
+  "timeLimitSec": 120,
   "missPenaltySec": 2,
   "hintCount": 2,
   "tilesLayout": [
-    [{"color":"red","type":"ice"}, null, null, {"color":"red","type":"ice"}, null, "blue", null, "blue"],
-    [null, null, {"color":null,"type":"block"}, null, null, {"color":null,"type":"block"}, null, null],
-    ["green", null, null, "green", null, {"color":"yellow","type":"ice"}, null, {"color":"yellow","type":"ice"}],
-    [null, null, {"color":null,"type":"block"}, null, null, {"color":null,"type":"block"}, null, null],
-    [{"color":"red","type":"ice"}, null, {"color":"red","type":"ice"}, null, "blue", null, "blue", null],
-    ["green", null, "green", null, "yellow", null, "yellow", null]
+    [{"color":"red","type":"ice"},    null, {"color":null,"type":"block"}, null, {"color":null,"type":"block"}, null, {"color":"red","type":"ice"},    null],
+    [{"color":"green","type":"ice"},  null, {"color":"yellow","type":"ice"},null, {"color":"yellow","type":"ice"},null, {"color":"green","type":"ice"},  null],
+    [{"color":"purple","type":"ice"}, null, {"color":null,"type":"block"}, null, {"color":null,"type":"block"}, null, {"color":"purple","type":"ice"},  null],
+    ["blue",                          null, {"color":"green","type":"ice"}, null, {"color":"green","type":"ice"}, null, "blue",                          null],
+    ["yellow",                        null, {"color":"red","type":"ice"},   null, {"color":"red","type":"ice"},   null, "yellow",                        null],
+    ["red",                          "blue", null,                          "purple", null,                      "purple","blue",                       "red"]
   ],
   "blockReleaseRule": {"type": "afterPairs", "count": 3},
   "preScenario": "ch03_s01_pre.json"

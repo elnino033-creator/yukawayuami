@@ -4,16 +4,16 @@
   "chapter": 4,
   "boardWidth": 8,
   "boardHeight": 6,
-  "timeLimitSec": 130,
-  "missPenaltySec": 1,
+  "timeLimitSec": 105,
+  "missPenaltySec": 2,
   "hintCount": 2,
   "tilesLayout": [
-    [{"color":"red","type":"linked","linkGroupId":"lg1"}, null, null, {"color":"red","type":"linked","linkGroupId":"lg1"}, null, {"color":"blue","type":"ice"}, null, {"color":"blue","type":"ice"}],
-    [null, null, null, null, null, null, null, null],
-    [{"color":"red","type":"linked","linkGroupId":"lg1"}, null, null, {"color":"red","type":"linked","linkGroupId":"lg1"}, null, {"color":"blue","type":"ice"}, null, {"color":"blue","type":"ice"}],
-    [null, null, null, null, null, null, null, null],
-    [{"color":"green","type":"linked","linkGroupId":"lg2"}, null, null, {"color":"green","type":"linked","linkGroupId":"lg2"}, null, {"color":"yellow","type":"ice"}, null, {"color":"yellow","type":"ice"}],
-    [{"color":"green","type":"linked","linkGroupId":"lg2"}, null, {"color":"green","type":"linked","linkGroupId":"lg2"}, null, "yellow", null, "yellow", null]
+    ["green", {"color":"red","type":"linked","linkGroupId":"lg1"}, {"color":"purple","type":"ice"}, null, {"color":"purple","type":"ice"}, {"color":"red","type":"linked","linkGroupId":"lg1"}, "green", null],
+    ["yellow",{"color":"blue","type":"linked","linkGroupId":"lg2"},{"color":"green","type":"ice"},  null, {"color":"green","type":"ice"},  {"color":"blue","type":"linked","linkGroupId":"lg2"},"yellow",null],
+    [{"color":"red","type":"linked","linkGroupId":"lg1"},  null, {"color":"yellow","type":"ice"}, null, {"color":"yellow","type":"ice"}, {"color":"red","type":"linked","linkGroupId":"lg1"},  null, null],
+    [{"color":"blue","type":"linked","linkGroupId":"lg2"}, null, {"color":"purple","type":"ice"}, null, {"color":"purple","type":"ice"}, {"color":"blue","type":"linked","linkGroupId":"lg2"}, null, null],
+    ["purple", null, "green",  null, "green",  null, "purple", null],
+    [null, "yellow", null, "purple", null, "purple", "yellow", null]
   ],
   "preScenario": "ch04_s02_pre.json"
 }

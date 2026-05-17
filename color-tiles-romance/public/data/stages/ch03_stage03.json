@@ -8,13 +8,13 @@
   "missPenaltySec": 2,
   "hintCount": 1,
   "tilesLayout": [
-    [{"color":"blue","type":"ice"}, null, null, {"color":"blue","type":"ice"}, null, {"color":"red","type":"ice"}, null, {"color":"red","type":"ice"}],
-    [null, {"color":null,"type":"block"}, null, null, null, null, {"color":null,"type":"block"}, null],
-    [{"color":"green","type":"ice"}, null, null, {"color":"green","type":"ice"}, null, {"color":"yellow","type":"ice"}, null, {"color":"yellow","type":"ice"}],
-    [null, {"color":null,"type":"block"}, null, null, null, null, {"color":null,"type":"block"}, null],
-    [{"color":"blue","type":"time"}, null, {"color":"blue","type":"time"}, null, {"color":"red","type":"time"}, null, {"color":"red","type":"time"}, null],
-    [{"color":"green","type":"time"}, null, {"color":"green","type":"time"}, null, {"color":"yellow","type":"time"}, null, {"color":"yellow","type":"time"}, null]
+    [{"color":"blue","type":"ice"},  {"color":null,"type":"block"}, {"color":"red","type":"ice"},   {"color":"green","type":"ice"}, null, {"color":"green","type":"ice"}, {"color":"red","type":"ice"},   {"color":"blue","type":"ice"}  ],
+    [{"color":"purple","type":"ice"},{"color":"yellow","type":"ice"},{"color":"blue","type":"ice"},  null,                          null, {"color":"blue","type":"ice"},   {"color":"yellow","type":"ice"},{"color":"purple","type":"ice"}],
+    [{"color":"red","type":"ice"},   null,                           {"color":"yellow","type":"ice"},{"color":"purple","type":"ice"},null, {"color":"purple","type":"ice"},{"color":"yellow","type":"ice"},{"color":"red","type":"ice"}   ],
+    [{"color":"green","type":"ice"}, {"color":null,"type":"block"}, {"color":"blue","type":"ice"},  {"color":"red","type":"ice"},   null, {"color":"red","type":"ice"},   {"color":"blue","type":"ice"},  {"color":"green","type":"ice"} ],
+    [{"color":"yellow","type":"ice"},null,                           {"color":"purple","type":"ice"},{"color":"green","type":"ice"}, null, {"color":"green","type":"ice"}, {"color":"purple","type":"ice"},{"color":"yellow","type":"ice"}],
+    [{"color":"red","type":"ice"},   null,                           {"color":"blue","type":"ice"},  {"color":"yellow","type":"ice"},null, {"color":"yellow","type":"ice"},{"color":"blue","type":"ice"},  {"color":"red","type":"ice"}   ]
   ],
-  "blockReleaseRule": {"type": "afterPairs", "count": 4},
+  "blockReleaseRule": {"type": "afterPairs", "count": 5},
   "preScenario": "ch03_s03_pre.json"
 }
