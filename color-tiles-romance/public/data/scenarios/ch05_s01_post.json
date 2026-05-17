@@ -1,0 +1,37 @@
+[
+  {
+    "bg": "bg_tower_floor5_purple_dim"
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "sad",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "ゆかり",
+      "body": "……なるほど。あなたはまだ、前に進む意志がある。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "当然だ。ここまで来て引き返す理由がない。"
+    }
+  },
+  {
+    "text": {
+      "name": "ゆかり",
+      "body": "……それが、本当の答えかどうか。次を見てから、また考えてください。"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  }
+]

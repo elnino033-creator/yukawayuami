@@ -1,20 +1,60 @@
 [
-  { "bg": "bg_ch01_crimson" },
-  { "bgm": "bgm_ch01" },
-  { "chara": { "id": "akari", "expr": "normal", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "……旅人さん、正直に聞いていい？" } },
-  { "text": { "name": "???", "body": "なんでも。" } },
-  { "chara": { "id": "akari", "expr": "sad", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "私を解放して……外に連れ出してくれる？　本当に？" } },
-  { "text": { "name": "???", "body": "ああ、約束する。" } },
-  { "chara": { "id": "akari", "expr": "surprise", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "……っ！" } },
-  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "ありがとう。じゃあ今度こそ本気でいくよ。このステージ、今まで一番難しいから！" } },
-  { "choice": [
-    { "label": "燃えてきた！", "flag": "akari_friendly+1" },
-    { "label": "慎重にいく", "flag": "akari_friendly+0" }
-  ]},
-  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "その顔、好きだよ。さあ、行こう！" } }
+  {
+    "bg": "bg_tower_floor1_gray"
+  },
+  {
+    "bgm": "bgm_mysterious_wind"
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "残り2ステージ！　気を抜かないでよ！　上の階層ほど、色の欠片は複雑に絡まってるから！"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "わかった。……ちなみに、上の階層には他の番人がいるんだろう？　みお、という子のことを言ってたな。"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "sad",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "……ええ。みおは、私なんかより全然あんたに近い場所にいた子なの。だから……きっと、私よりずっとあんたを責める。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "責める……？　なぜ彼女たちは、僕を責めるんだ。僕には本当に記憶がない。"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "angry",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "それも、あんた自身が気づくことに意味がある。今は集中！　パズルの話をするわよ！"
+    }
+  }
 ]

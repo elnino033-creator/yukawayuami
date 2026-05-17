@@ -1,6 +1,41 @@
 [
-  { "bg": "bg_school" },
-  { "chara": { "id": "akari", "expr": "normal", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "連結タイルと氷タイルが混在してる…。連結は一発で消えるけど、氷は2回必要なんだよね。" } },
-  { "text": { "name": "あかり", "body": "まず連結タイルから先に消すと、盤面がすっきりして氷タイルを消しやすくなるよ！" } }
+  {
+    "bg": "bg_tower_floor4_yellow_clock"
+  },
+  {
+    "bgm": "bgm_clockwork"
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "ひまり",
+      "body": "ねえ、次は時間が絡んでくるやつだよ！　砂時計のタイルが混じってて、うまく使うと時間が増えるの！"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "時間が増える……それはまるで、新しいアイデアが生まれた時の感覚に似ているな。時間を忘れて夢中になる、あの感じ。"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "smile",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "ひまり",
+      "body": "わかる！　わかるよ！　あなた、やっぱりまだ生きてるじゃない！"
+    }
+  }
 ]

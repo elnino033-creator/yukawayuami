@@ -1,13 +1,44 @@
 [
-  { "bg": "bg_ch01_crimson" },
-  { "bgm": "bgm_ch01" },
-  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "クリアした！　すごい、本当に！　って、当たり前か！　あなたなら絶対できると思ってたから！" } },
-  { "text": { "name": "???", "body": "あかりが信じてくれてたから力が湧いた気がする。" } },
-  { "chara": { "id": "akari", "expr": "shy", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "…………むぅ。なんかその言い方、ずるい。" } },
-  { "text": { "name": "あかり", "body": "次がラストよ。第一章の最後のステージ。クリアしたら……私、ここを出られる。" } },
-  { "text": { "name": "???", "body": "一緒に行こう。待ってる。" } },
-  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "うん！　絶対クリアしてよね！" } }
+  {
+    "bg": "bg_tower_floor1_red_dim"
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "smile",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "見事！　さすが……って、調子に乗らせると面倒だから黙っとくわ。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "正直に褒めてくれていいのに"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "blush",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "う、うるさい！　最後のステージに集中しなさい！"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  }
 ]

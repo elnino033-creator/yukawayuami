@@ -1,0 +1,37 @@
+[
+  {
+    "bg": "bg_tower_floor5_purple_dim"
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "ゆかり",
+      "body": "あと一つ。最後のパズルを超えれば、すべての扉が開きます。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "……君が待っているのを、感じていた。最初から、この場所に何かが待っていると。"
+    }
+  },
+  {
+    "text": {
+      "name": "ゆかり",
+      "body": "ええ。ずっと待っていました。あなたが、ここまで来てくれるのを。"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 1000
+    }
+  }
+]

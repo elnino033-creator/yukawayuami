@@ -1,0 +1,41 @@
+[
+  {
+    "bg": "bg_tower_floor5_purple_dark"
+  },
+  {
+    "bgm": "bgm_tension_high"
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "ゆかり",
+      "body": "……次が最後のパズルです。解き終えた後、真実をお話しします。引き返すなら、今が最後の機会です。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "引き返さない。3年間、逃げ続けた。もういい加減、向き合う時だ。"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "sad",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "ゆかり",
+      "body": "……そうですか。では、行きましょう。最後の儀式を。"
+    }
+  }
+]

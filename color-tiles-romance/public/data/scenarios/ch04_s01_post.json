@@ -1,0 +1,37 @@
+[
+  {
+    "bg": "bg_tower_floor4_yellow_dim"
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "smile",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "ひまり",
+      "body": "わぁっ！　すごいすごい！　やっぱりあなたと一緒だと、私の才能も120%発揮できちゃうね！"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "……不思議と、君の無茶苦茶なアイデアを聞いていると、頭の中がクリアになっていく気がしたよ。"
+    }
+  },
+  {
+    "text": {
+      "name": "ひまり",
+      "body": "でしょでしょ！　次はもっと面白いよ！"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  }
+]

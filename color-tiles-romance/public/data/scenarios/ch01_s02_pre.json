@@ -1,18 +1,72 @@
 [
-  { "bg": "bg_ch01_crimson" },
-  { "bgm": "bgm_ch01" },
-  { "chara": { "id": "akari", "expr": "normal", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "また来たんだ。もしかして、私に会いに来た？" } },
-  { "text": { "name": "???", "body": "パズルをクリアしに来ただけだよ。" } },
-  { "chara": { "id": "akari", "expr": "angry", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "ちょっと！　ひどくない！？　まあいいけど。" } },
-  { "chara": { "id": "akari", "expr": "normal", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "今回のパズルは前より少し難しいよ。タイルの数が増えてる。" } },
-  { "text": { "name": "あかり", "body": "でも大丈夫、あなたならできるって信じてる。……ちょっとだけね。" } },
-  { "choice": [
-    { "label": "任せておけ！", "flag": "akari_friendly+1" },
-    { "label": "やってみるよ", "flag": "akari_friendly+0" }
-  ]},
-  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "その頼もしさ、嫌いじゃないかも。さあ始めよう！" } }
+  {
+    "bg": "bg_tower_floor1_gray"
+  },
+  {
+    "bgm": "bgm_mysterious_wind"
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "まだまだ！　次のステージよ！"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "休む暇もくれないのか……"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "当たり前でしょ！　立ち止まった瞬間、また色が消えていくんだから。あんた、前に進む気があるの、ないの？"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "……ある。ただ……正直、体がついてこない感じがする。久しぶりに、何かに集中したから"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "sad",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "……そう。それはね、あんたの心が動き始めた証拠よ。長い間、凍ってたんだもの。最初は誰でも錆びついてるわ。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "（番人のくせに、妙に僕のことを知っているような言い方をする……）"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "normal",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "ほら、グダグダ言わない！　行くよ！"
+    }
+  }
 ]

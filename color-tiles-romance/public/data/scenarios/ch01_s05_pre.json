@@ -1,15 +1,96 @@
 [
-  { "bg": "bg_ch01_crimson" },
-  { "bgm": "bgm_ch01" },
-  { "chara": { "id": "akari", "expr": "normal", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "……来たね。ついにここまで来た。" } },
-  { "text": { "name": "???", "body": "ここがラストか？" } },
-  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "そう。このパズルをクリアすれば、私はここを出られる。だから……お願い。" } },
-  { "text": { "name": "???", "body": "任せておけ。" } },
-  { "chara": { "id": "akari", "expr": "surprise", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "……っ。うん！　一緒に、外の世界を見ようね！" } },
-  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "タイルの配置は今まで一番複雑。でも焦らないで。一歩ずつ、確実に消していって。" } },
-  { "text": { "name": "あかり", "body": "私も、旅人さんのこと、信じてるから。" } }
+  {
+    "bg": "bg_tower_floor1_gray"
+  },
+  {
+    "bgm": "bgm_mysterious_wind"
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "……最後のステージよ。ここを越えたら、私との戦いは終わり。上の階層に行ける。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "……なんだか、少し寂しいな"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "surprise",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "えっ……？"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "ずっとうるさくて、ずっと引っ張ってくれてたから。君がいなくなると思ったら、少しだけ、心細い。"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "sad",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "……バカ。私は消えないわよ。あんたの中に、ちゃんといるから。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "どういう意味だ？"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "normal",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "……行きなさい。最後のパズルを解いて。そしたら教えてあげる。"
+    }
+  },
+  {
+    "choice": [
+      {
+        "label": "一緒に来てくれるか、あかり",
+        "flag": "love_akari",
+        "value": 10,
+        "next": "ch01_s05_pre_A"
+      },
+      {
+        "label": "ありがとう。ここまで連れてきてくれて。",
+        "flag": "love_akari",
+        "value": 5,
+        "next": "ch01_s05_pre_B"
+      }
+    ],
+    "prompt": "最後のパズルに臨む前に、一言。"
+  }
 ]

@@ -1,0 +1,37 @@
+[
+  {
+    "bg": "bg_tower_floor3_green_dim"
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "smile",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "すず",
+      "body": "……氷が溶けましたね。固まっていたものが、少しほぐれた瞬間に似ていませんか？"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "……ああ。みおのことを思い出した。"
+    }
+  },
+  {
+    "text": {
+      "name": "すず",
+      "body": "みおさんは、ここに来るまでに少し溶けてくれましたか？　よかった。"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  }
+]

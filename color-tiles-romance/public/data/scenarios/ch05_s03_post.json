@@ -1,0 +1,31 @@
+[
+  {
+    "bg": "bg_tower_floor5_purple_dim"
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "sad",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "ゆかり……君は最初から、僕に気づかせようとしていたのか？"
+    }
+  },
+  {
+    "text": {
+      "name": "ゆかり",
+      "body": "いいえ。私はただ、真実を守っているだけです。あなたが本当に向き合う覚悟を持てた時にだけ、開かれるものがある。"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  }
+]

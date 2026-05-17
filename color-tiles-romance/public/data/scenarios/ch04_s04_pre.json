@@ -1,0 +1,60 @@
+[
+  {
+    "bg": "bg_tower_floor4_yellow_clock"
+  },
+  {
+    "bgm": "bgm_clockwork"
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "ひまり",
+      "body": "ねえ、黄昏って知ってる？　一番好きな時間帯なんだ。昼でも夜でもない、境界線の時間。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "彼女も……好きだと言っていたな。黄昏が。"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "sad",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "ひまり",
+      "body": "……今、少し思い出せたでしょ？　黄昏の光の中で、誰かと一緒にいた記憶。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "（……ああ。手を繋いで、窓辺に立っていた。彼女と。ぼんやりと、光の輪郭が見える……）"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "normal",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "ひまり",
+      "body": "もう少し！　あと少しで全部思い出せる！　行くよ！"
+    }
+  }
+]

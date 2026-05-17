@@ -1,0 +1,63 @@
+[
+  {
+    "bg": "bg_tower_floor2_blue_dim"
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "みお",
+      "body": "…………"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "さっきの続きを、聞かせてもらえるか？　壁の向こう側、という話を。"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "sad",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "みお",
+      "body": "……いつかわかる。最後まで行けばね。今は……まだ、その時じゃない。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "そうか。なら、最後まで行くよ。"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "surprise",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "みお",
+      "body": "……絶対に、後悔させないから。そこだけは約束する。"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  }
+]

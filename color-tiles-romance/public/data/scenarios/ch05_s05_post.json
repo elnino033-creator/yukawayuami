@@ -1,0 +1,31 @@
+[
+  {
+    "bg": "bg_tower_floor5_purple_dim"
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "sad",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "……少しずつ、思い出せてきた。肖像の輪郭が見えてきた。でも……まだ、顔が見えない。"
+    }
+  },
+  {
+    "text": {
+      "name": "ゆかり",
+      "body": "あなたが自分でそれを見えなくしているからです。でも……あと一歩。次で、すべて終わります。"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  }
+]

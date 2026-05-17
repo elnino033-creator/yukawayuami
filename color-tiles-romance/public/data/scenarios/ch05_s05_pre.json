@@ -1,0 +1,53 @@
+[
+  {
+    "bg": "bg_tower_floor5_purple_dark"
+  },
+  {
+    "bgm": "bgm_tension_high"
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "ゆかり",
+      "body": "最後の問いです。あなたは3年前、何をしましたか？"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "……キャンバスに、黒い絵の具を……"
+    }
+  },
+  {
+    "text": {
+      "name": "ゆかり",
+      "body": "その前に。キャンバスには何が描かれていましたか？"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "……誰かの、肖像が。とても大切な……"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "sad",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "ゆかり",
+      "body": "……もうすぐです。最後のパズルの先に、すべての答えがある。"
+    }
+  }
+]
