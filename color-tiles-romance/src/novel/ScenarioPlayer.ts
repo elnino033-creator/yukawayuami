@@ -79,6 +79,23 @@ const CHARA_COLORS: Record<string, string> = {
   default: '#ffd234'
 };
 
+/** シナリオBGM論理名 → 既存ファイル名のフォールバックマップ */
+const BGM_FALLBACK: Record<string, string> = {
+  bgm_prologue: 'scenario',
+  bgm_mysterious_wind: 'scenario',
+  bgm_cold_wind: 'scenario',
+  bgm_forest_ambient: 'scenario',
+  bgm_clockwork: 'puzzle',
+  bgm_chapter_clear: 'title',
+  bgm_tension: 'puzzle',
+  bgm_tension_high: 'puzzle',
+  bgm_epic_climax: 'puzzle',
+  bgm_climax_tension: 'puzzle',
+  bgm_vocal_ending: 'title',
+  bgm_piano_gentle_morning: 'title',
+  bgm_piano_sad_loop: 'scenario',
+};
+
 /**
  * Canvas/DOM を使ったシナリオ再生クラス。
  * container に Canvas を挿入し、シナリオステップを順番に表示する。
@@ -270,11 +287,22 @@ export class ScenarioPlayer {
         this.bgmAudio = null;
       }
       if (step.bgm !== null) {
-        const src = `/assets/bgm/${step.bgm}`;
-        this.bgmAudio = new Audio(src);
-        this.bgmAudio.loop = true;
-        this.bgmAudio.volume = 0.5;
-        this.bgmAudio.play().catch(() => {});
+        const primarySrc = `/assets/bgm/${step.bgm}.mp3`;
+        const audio = new Audio(primarySrc);
+        audio.loop = true;
+        audio.volume = 0.5;
+        audio.onerror = () => {
+          const fallbackName = BGM_FALLBACK[step.bgm as string];
+          if (fallbackName && this.bgmAudio === audio) {
+            const fallback = new Audio(`/assets/bgm/${fallbackName}.mp3`);
+            fallback.loop = true;
+            fallback.volume = 0.5;
+            fallback.play().catch(() => {});
+            this.bgmAudio = fallback;
+          }
+        };
+        audio.play().catch(() => {});
+        this.bgmAudio = audio;
       }
       this.advanceStep();
     } else if ('se' in step) {
@@ -514,9 +542,10 @@ export class ScenarioPlayer {
       const img = this.charaImageCache.get(`${chara.id}_${chara.expr}`);
       if (img) {
         // スプライト画像を描画（下辺をテキストウィンドウ上端に合わせる）
-        const displayH = h * 0.78;
+        const winY = h - h * 0.28 - 16;
+        const displayH = Math.min(h * 0.65, winY * 0.92);
         const displayW = displayH * (img.naturalWidth / img.naturalHeight);
-        this.ctx.drawImage(img, cx - displayW / 2, h - displayH - h * 0.28, displayW, displayH);
+        this.ctx.drawImage(img, cx - displayW / 2, winY - displayH, displayW, displayH);
       } else {
         // フォールバック: カラーシルエット描画
         const charHeight = h * 0.55;
