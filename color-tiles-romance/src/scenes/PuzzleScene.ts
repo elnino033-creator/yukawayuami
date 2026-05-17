@@ -70,6 +70,7 @@ export class PuzzleScene {
   private shadowReveals: Map<string, number> = new Map();
 
   private rafId: number | null = null;
+  private bgmAudio: HTMLAudioElement | null = null;
 
   // HUD要素
   private hudTimer: HTMLElement;
@@ -116,6 +117,12 @@ export class PuzzleScene {
     this.timeUpFlashUntil = 0;
     this.hudStatus.textContent = `${stage.title}`;
     this.startRenderLoop();
+    if (!this.bgmAudio) {
+      this.bgmAudio = new Audio('/assets/bgm/puzzle.mp3');
+      this.bgmAudio.loop = true;
+      this.bgmAudio.volume = 0.4;
+      this.bgmAudio.play().catch(() => {});
+    }
   }
 
   /** ヒントボタン用 */
@@ -142,6 +149,11 @@ export class PuzzleScene {
   destroy(): void {
     if (this.rafId !== null) cancelAnimationFrame(this.rafId);
     this.engine.timer.stop();
+    if (this.bgmAudio) {
+      this.bgmAudio.pause();
+      this.bgmAudio.src = '';
+      this.bgmAudio = null;
+    }
   }
 
   // ---------- 入力 ----------

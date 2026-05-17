@@ -31,6 +31,7 @@ export class TitleScene {
   private buttons: TitleButton[] = [];
   private rafId: number | null = null;
   private startTime: number = Date.now();
+  private bgmAudio: HTMLAudioElement | null = null;
 
   /** マウス位置 */
   private mouseX = 0;
@@ -74,6 +75,10 @@ export class TitleScene {
     this.handleResize();
     this.buildButtons();
     this.startRenderLoop();
+    this.bgmAudio = new Audio('/assets/bgm/title.mp3');
+    this.bgmAudio.loop = true;
+    this.bgmAudio.volume = 0.4;
+    this.bgmAudio.play().catch(() => {});
   }
 
   /**
@@ -84,6 +89,11 @@ export class TitleScene {
     this.canvas.removeEventListener('mousemove', this.boundMouseMove);
     this.canvas.removeEventListener('click', this.boundClick);
     window.removeEventListener('resize', this.boundResize);
+    if (this.bgmAudio) {
+      this.bgmAudio.pause();
+      this.bgmAudio.src = '';
+      this.bgmAudio = null;
+    }
   }
 
   // ---------- プライベートメソッド ----------
