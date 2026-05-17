@@ -75,7 +75,7 @@ export class TitleScene {
     this.handleResize();
     this.buildButtons();
     this.startRenderLoop();
-    this.bgmAudio = new Audio('/assets/bgm/title.mp3');
+    this.bgmAudio = new Audio(`/assets/bgm/${encodeURIComponent('夢の跡を照らす.mp3')}`);
     this.bgmAudio.loop = true;
     this.bgmAudio.volume = 0.4;
     this.bgmAudio.play().catch(() => {});
