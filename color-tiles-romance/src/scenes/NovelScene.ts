@@ -71,7 +71,7 @@ export class NovelScene {
    */
   private async loadScenario(): Promise<ScenarioStep[]> {
     try {
-      const url = `/data/scenarios/${this.scenarioId}.json`;
+      const url = `${import.meta.env.BASE_URL}data/scenarios/${this.scenarioId}.json`;
       const res = await fetch(url);
       if (!res.ok) {
         console.warn(`[NovelScene] scenario not found: ${this.scenarioId}, using fallback`);

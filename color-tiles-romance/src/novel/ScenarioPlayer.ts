@@ -278,7 +278,7 @@ export class ScenarioPlayer {
       this.bgImage = null;
       const img = new Image();
       img.onload = () => { this.bgImage = img; };
-      img.src = `/assets/bg/${step.bg}.jpg`;
+      img.src = `${import.meta.env.BASE_URL}assets/bg/${step.bg}.jpg`;
       this.advanceStep();
     } else if ('bgm' in step) {
       if (this.bgmAudio) {
@@ -288,7 +288,7 @@ export class ScenarioPlayer {
       }
       if (step.bgm !== null) {
         const filename = BGM_MAP[step.bgm] ?? `${step.bgm}.mp3`;
-        const audio = new Audio(`/assets/bgm/${encodeURIComponent(filename)}`);
+        const audio = new Audio(`${import.meta.env.BASE_URL}assets/bgm/${encodeURIComponent(filename)}`);
         audio.loop = true;
         audio.volume = 0.5;
         audio.play().catch(() => {});
@@ -296,7 +296,7 @@ export class ScenarioPlayer {
       }
       this.advanceStep();
     } else if ('se' in step) {
-      const audio = new Audio(`/assets/se/${step.se.src}`);
+      const audio = new Audio(`${import.meta.env.BASE_URL}assets/se/${step.se.src}`);
       audio.loop = step.se.loop ?? false;
       audio.play().catch(() => {});
       this.advanceStep();
@@ -454,7 +454,7 @@ export class ScenarioPlayer {
 
   /** 選択肢の next で指定されたシナリオに分岐する */
   private jumpToScenario(scenarioId: string): void {
-    fetch(`/data/scenarios/${scenarioId}.json`)
+    fetch(`${import.meta.env.BASE_URL}data/scenarios/${scenarioId}.json`)
       .then(r => r.json())
       .then((steps: ScenarioStep[]) => {
         this.steps = steps;
@@ -520,7 +520,7 @@ export class ScenarioPlayer {
     if (this.charaImageCache.has(key)) return;
     const img = new Image();
     img.onload = () => { this.charaImageCache.set(key, img); };
-    img.src = `/assets/chara/${key}.png`;
+    img.src = `${import.meta.env.BASE_URL}assets/chara/${key}.png`;
   }
 
   private drawCharacters(w: number, h: number): void {
