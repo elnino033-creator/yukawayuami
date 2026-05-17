@@ -1,7 +1,7 @@
 {
   "name": "color-tiles-romance",
-  "version": "0.1.0",
-  "description": "Color Tiles × 美少女シナリオゲーム (Phase 0 prototype)",
+  "version": "0.2.0",
+  "description": "Color Tiles × 美少女シナリオゲーム — BGM・立ち絵統合版",
   "type": "module",
   "private": true,
   "scripts": {

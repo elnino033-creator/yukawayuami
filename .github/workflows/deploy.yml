@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'color-tiles-romance/**'
+      - 'kiohp_sample/**'
   workflow_dispatch:
 
 permissions:
@@ -48,6 +49,9 @@ jobs:
         env:
           VITE_BASE: /yukawayuami/
         run: pnpm build
+
+      - name: Copy kiohp_sample to dist
+        run: cp -r ../kiohp_sample dist/kiohp_sample
 
       - uses: actions/upload-pages-artifact@v3
         with:
