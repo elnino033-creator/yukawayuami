@@ -1,0 +1,50 @@
+[
+  {
+    "bg": "bg_tower_floor2_blue_dim"
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "みお",
+      "body": "……へえ。思ったより、できるじゃない。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "ありがとう、と言っていいのかな"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "angry",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "みお",
+      "body": "褒めてないわよ。事実を言っただけ。勘違いしないで。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "（……あかりが言っていた通り、確かに素直じゃない。でも、嫌いではないな、この感じ）"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  }
+]

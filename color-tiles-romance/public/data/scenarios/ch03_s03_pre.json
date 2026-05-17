@@ -1,0 +1,45 @@
+[
+  {
+    "bg": "bg_tower_floor3_green_forest"
+  },
+  {
+    "bgm": "bgm_forest_ambient"
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "すず",
+      "body": "……あなたは、自分のことを許せていますか？"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "……正直、まだわからない。"
+    }
+  },
+  {
+    "choice": [
+      {
+        "label": "許せていないけど……君の優しさが、少し楽にしてくれた",
+        "flag": "love_suzu",
+        "value": 10,
+        "next": "ch03_s03_pre_A"
+      },
+      {
+        "label": "僕にはまだ、許される資格なんてない",
+        "flag": "love_suzu",
+        "value": 0,
+        "next": "ch03_s03_pre_B"
+      }
+    ],
+    "prompt": "すずの問いに答える。"
+  }
+]

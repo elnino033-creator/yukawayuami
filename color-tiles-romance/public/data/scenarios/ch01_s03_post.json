@@ -1,13 +1,63 @@
 [
-  { "bg": "bg_ch01_crimson" },
-  { "bgm": "bgm_ch01" },
-  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "やった！　クリアだよ！　すごい、本当にすごい！" } },
-  { "text": { "name": "???", "body": "あかりが「落ち着いて」って言ってくれたから、ちゃんと見えた気がする。" } },
-  { "chara": { "id": "akari", "expr": "shy", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "そ、そう……？　役に立てたなら良かった。" } },
-  { "text": { "name": "あかり", "body": "ねえ、私さ。ずっとここで一人でパズルを並べてたんだ。誰かに見てもらえる日なんて来ないと思ってた。" } },
-  { "text": { "name": "???", "body": "……ひとりで、ずっと？" } },
-  { "chara": { "id": "akari", "expr": "normal", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "うん。でも今は違う。だから……もう少し頑張れそう。次のステージも待ってるよ。" } }
+  {
+    "bg": "bg_tower_floor1_red_dim"
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "smile",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "よし！　折り返しよ！　あと少し！"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "……あかり、さっきの話だけど。"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "surprise",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "君が『知りたい』って言ってくれて、少し楽になった気がする。誰かにそう言ってもらったのは……久しぶりだったから。"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "blush",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "っ……！　べ、別に、大したことじゃないわよ！　ただの番人の仕事なんだから！　変なこと言わないでよ！"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "（……顔が赤くなっている。この少女は、なかなか正直じゃないな）"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  }
 ]

@@ -1,0 +1,31 @@
+[
+  {
+    "bg": "bg_tower_floor5_purple_dim"
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "sad",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "ゆかり。君は……誰なんだ？　あかりたちと違って、君だけは何者なのかを言わない。"
+    }
+  },
+  {
+    "text": {
+      "name": "ゆかり",
+      "body": "……それを知った時が、この旅の終わりです。あと少し。耐えられますか？"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  }
+]

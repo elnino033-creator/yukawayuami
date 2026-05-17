@@ -1,0 +1,19 @@
+{
+  "id": "ch02_stage03",
+  "title": "第2章 ステージ3：時の砂時計",
+  "chapter": 2,
+  "boardWidth": 8,
+  "boardHeight": 6,
+  "timeLimitSec": 90,
+  "missPenaltySec": 1,
+  "hintCount": 2,
+  "tilesLayout": [
+    [{"color":"red","type":"ice"}, null, null, {"color":"red","type":"ice"}, null, {"color":"blue","type":"time"}, null, {"color":"blue","type":"time"}],
+    [null, null, null, null, null, null, null, null],
+    [{"color":"green","type":"ice"}, null, null, {"color":"green","type":"ice"}, null, {"color":"yellow","type":"time"}, null, {"color":"yellow","type":"time"}],
+    [null, null, null, null, null, null, null, null],
+    [{"color":"red","type":"ice"}, null, {"color":"red","type":"ice"}, null, {"color":"blue","type":"time"}, null, {"color":"blue","type":"time"}, null],
+    [{"color":"green","type":"ice"}, null, {"color":"green","type":"ice"}, null, {"color":"yellow","type":"time"}, null, {"color":"yellow","type":"time"}, null]
+  ],
+  "preScenario": "ch02_s03_pre.json"
+}

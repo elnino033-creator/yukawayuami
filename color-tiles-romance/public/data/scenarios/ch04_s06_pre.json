@@ -1,0 +1,60 @@
+[
+  {
+    "bg": "bg_tower_floor4_yellow_clock"
+  },
+  {
+    "bgm": "bgm_clockwork"
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "ひまり",
+      "body": "最後！　これを解けば、第5層への扉が開く！"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "ひまり……上に行く前に、一つだけ。ありがとう。"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "surprise",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "ひまり",
+      "body": "えっ？　なんで？"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "君が空回りしている間、ずっと閃きを持ち続けていてくれたから。おかげで、また何かを作りたいという気持ちを思い出せた。"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "blush",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "ひまり",
+      "body": "う、うん……！　役に立てて、良かった。"
+    }
+  }
+]

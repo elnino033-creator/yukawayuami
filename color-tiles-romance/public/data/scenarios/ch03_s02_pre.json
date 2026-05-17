@@ -1,0 +1,34 @@
+[
+  {
+    "bg": "bg_tower_floor3_green_forest"
+  },
+  {
+    "bgm": "bgm_forest_ambient"
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "すず",
+      "body": "……氷のかけらが混じっていますね。次のパズルには、一度では溶かせない固い色の欠片が入っています。焦らずに、二度触れてください。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "一度では溶かせない……なるほど、心の傷と同じだな。"
+    }
+  },
+  {
+    "text": {
+      "name": "すず",
+      "body": "ふふ。そうですね。"
+    }
+  }
+]

@@ -32,6 +32,7 @@ export class StageValidator {
   /**
    * バックトラックで全消去ルートを探索。
    * memo は「同じ盤面状態を再探索しない」ための簡易メモ化。
+   * 氷タイル・連結タイルのギミックを正しくシミュレートする。
    */
   private static dfs(
     board: (Tile | null)[][],
@@ -45,26 +46,78 @@ export class StageValidator {
     memo.add(stateKey);
 
     const checker = new LineChecker(board);
-    const pairs = checker.findAllValidPairs();
+    const rawPairs = checker.findAllValidPairs();
+    // canPair でさらにフィルタ（pairId チェックなど）
+    const pairs = rawPairs.filter((p) => this.canPair(p.a, p.b));
     if (pairs.length === 0) return false;
 
     for (const pair of pairs) {
-      // 消去をシミュレート
-      const a = board[pair.a.y][pair.a.x];
-      const b = board[pair.b.y][pair.b.x];
-      board[pair.a.y][pair.a.x] = null;
-      board[pair.b.y][pair.b.x] = null;
+      // ギミックを考慮した消去シミュレート
+      const next = this.applyPair(board, pair);
       path?.push(`(${pair.a.x},${pair.a.y})-(${pair.b.x},${pair.b.y})`);
 
-      if (this.dfs(board, memo, path)) return true;
+      if (this.dfs(next, memo, path)) return true;
 
-      // 巻き戻し
-      board[pair.a.y][pair.a.x] = a;
-      board[pair.b.y][pair.b.x] = b;
       path?.pop();
     }
 
     return false;
+  }
+
+  /**
+   * ペア消去をシミュレートして新しい盤面を返す。
+   * 氷タイル・連結タイルのギミックを考慮する。
+   */
+  private static applyPair(
+    board: (Tile | null)[][],
+    pair: { a: Tile; b: Tile }
+  ): (Tile | null)[][] {
+    const next = board.map((row) => [...row]);
+    const a = next[pair.a.y][pair.a.x];
+    const b = next[pair.b.y][pair.b.x];
+    if (!a || !b) return next;
+
+    // 氷タイル処理
+    if (a.type === 'ice' || b.type === 'ice') {
+      const aReady = a.type !== 'ice' || a.state === 'cracked';
+      const bReady = b.type !== 'ice' || b.state === 'cracked';
+      if (aReady && bReady) {
+        next[a.y][a.x] = null;
+        next[b.y][b.x] = null;
+      } else {
+        if (a.type === 'ice' && a.state === 'normal') next[a.y][a.x] = { ...a, state: 'cracked' };
+        if (b.type === 'ice' && b.state === 'normal') next[b.y][b.x] = { ...b, state: 'cracked' };
+      }
+      return next;
+    }
+
+    // 連結タイル処理：同じ linkGroupId のタイルをすべて消去
+    if (a.type === 'linked' && b.type === 'linked' && a.linkGroupId === b.linkGroupId) {
+      for (let y = 0; y < next.length; y++) {
+        for (let x = 0; x < next[y].length; x++) {
+          const t = next[y][x];
+          if (t && t.linkGroupId === a.linkGroupId) next[y][x] = null;
+        }
+      }
+      return next;
+    }
+
+    // 通常消去
+    next[a.y][a.x] = null;
+    next[b.y][b.x] = null;
+    return next;
+  }
+
+  /**
+   * ペアとして消去できるか判定する（LineChecker.canPair と同等）。
+   * pairId チェックなど StageValidator 独自のフィルタを含む。
+   */
+  private static canPair(a: Tile, b: Tile): boolean {
+    if (a.color === null || b.color === null) return false;
+    if (a.color !== b.color) return false;
+    if (a.type === 'block' || b.type === 'block') return false;
+    if (a.type === 'paired' && b.type === 'paired' && a.pairId !== b.pairId) return false;
+    return true;
   }
 
   /** クリア判定：色付きタイルが残っていないか */
@@ -102,11 +155,20 @@ export class StageValidator {
     };
   }
 
-  /** 盤面状態の文字列キー（メモ化用） */
+  /**
+   * 盤面状態の文字列キー（メモ化用）。
+   * 氷タイルの cracked 状態を区別するため、状態も含める。
+   */
   private static boardKey(board: (Tile | null)[][]): string {
     return board
       .map((row) =>
-        row.map((t) => (t === null ? '.' : (t.color ?? '#'))).join('')
+        row
+          .map((t) => {
+            if (t === null) return '.';
+            const base = t.color ?? '#';
+            return t.state === 'cracked' ? base + '*' : base;
+          })
+          .join('')
       )
       .join('|');
   }

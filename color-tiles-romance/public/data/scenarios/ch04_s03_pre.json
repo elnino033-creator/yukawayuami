@@ -1,0 +1,39 @@
+[
+  {
+    "bg": "bg_tower_floor4_yellow_clock"
+  },
+  {
+    "bgm": "bgm_clockwork"
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "ひまり",
+      "body": "ねえ、あなたって、なんで絵を描くのやめちゃったの？　私にはずっと不思議だったんだ。"
+    }
+  },
+  {
+    "choice": [
+      {
+        "label": "君のアイデア、もっと聞かせてくれないか",
+        "flag": "love_himari",
+        "value": 10,
+        "next": "ch04_s03_pre_A"
+      },
+      {
+        "label": "空想は空想だ。現実には意味がない",
+        "flag": "love_himari",
+        "value": 0,
+        "next": "ch04_s03_pre_B"
+      }
+    ],
+    "prompt": "ひまりに、どう答えるか。"
+  }
+]

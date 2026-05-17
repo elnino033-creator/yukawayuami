@@ -1,0 +1,56 @@
+[
+  {
+    "bg": "bg_tower_floor2_blue_dim"
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "みお",
+      "body": "…………"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "どうした？　今日は何も言わないのか？"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "sad",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "みお",
+      "body": "……あなた、あかりから何か聞いた？"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "少しだけ。でも詳しくは何も。"
+    }
+  },
+  {
+    "text": {
+      "name": "みお",
+      "body": "……そう。ならいい。次も手を抜かないわよ。"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  }
+]

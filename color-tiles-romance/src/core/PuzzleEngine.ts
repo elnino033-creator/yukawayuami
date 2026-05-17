@@ -122,6 +122,11 @@ export class PuzzleEngine {
       return this.handleIceMatch(a, b);
     }
 
+    // 連結タイル: 両方が linked かつ同じ linkGroupId の場合、グループ全体を消去
+    if (a.type === 'linked' && b.type === 'linked' && a.linkGroupId && a.linkGroupId === b.linkGroupId) {
+      return this.handleLinkedChainRemoval(a, b);
+    }
+
     // 通常消去
     return this.applyRemoval(a, b);
   }
@@ -159,6 +164,68 @@ export class PuzzleEngine {
     this.emit({ type: 'iceCracked', tiles: cracked });
     // ペアの消去自体は成功扱い：手数を進めたとみなす
     return { type: 'success', removed: [] };
+  }
+
+  /**
+   * 連結タイルがマッチした際の処理。
+   * 同じ linkGroupId を持つタイルをすべて盤面から一括消去する。
+   * スコア・コンボ・時間ボーナスは applyRemoval と同様のロジックで計算する。
+   */
+  private handleLinkedChainRemoval(a: Tile, _b: Tile): ClickResult {
+    const now = Date.now();
+
+    // コンボ判定
+    if (now - this.lastClearAt <= PuzzleEngine.COMBO_WINDOW_MS) {
+      this.combo++;
+    } else {
+      this.combo = 1;
+    }
+    this.lastClearAt = now;
+    if (this.combo > this.maxCombo) this.maxCombo = this.combo;
+
+    // グループ全体を収集して削除
+    const groupId = a.linkGroupId!;
+    const removed: Tile[] = [];
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const t = this.board[y][x];
+        if (t && t.linkGroupId === groupId) {
+          removed.push(t);
+          this.board[y][x] = null;
+        }
+      }
+    }
+
+    // 時間タイル相当の bonus（linked グループ内の time タイルも考慮）
+    let bonusSec = 0;
+    if (this.combo >= 2) {
+      bonusSec += this.combo * 2;
+    }
+    if (bonusSec > 0) this.timer.add(bonusSec);
+
+    // スコア加算（ペア1組分 + グループ追加タイル分）
+    this.score += 100;
+    if (this.combo >= 2) this.score += this.combo * 50;
+
+    this.pairsCleared++;
+
+    this.emit({ type: 'tilesRemoved', tiles: removed, bonusSec });
+
+    // 障害ブロック解除条件チェック
+    this.checkBlockRelease();
+
+    // クリア判定
+    if (this.isCleared()) {
+      this.timer.stop();
+      this.score += this.timer.remain * 10;
+      if (this.hintUsed === 0) this.score += 1000;
+      if (this.missCount === 0) this.score += 500;
+      this.emit({ type: 'cleared' });
+    } else if (this.isStuck()) {
+      this.shuffle();
+    }
+
+    return { type: 'success', removed, bonusSec };
   }
 
   private applyRemoval(a: Tile, b: Tile): ClickResult {

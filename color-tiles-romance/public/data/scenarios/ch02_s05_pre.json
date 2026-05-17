@@ -1,0 +1,90 @@
+[
+  {
+    "bg": "bg_tower_floor2_blue_ice"
+  },
+  {
+    "bgm": "bgm_cold_wind"
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "みお",
+      "body": "……最後のパズルよ。これを超えれば、私との戦いは終わる。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "……みお。一つ言っていいか。"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "normal",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "君が怒ったり突き放したりするのは……本当は、怖いからだろう。また傷つくのが。それを守るために、ずっと壁を張り続けてきた。"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "sad",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "みお",
+      "body": "……黙って。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "でも、君の瞳は嘘をつけていない。ずっと泣いているような目をしている。"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "angry",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "みお",
+      "body": "うるさい！　関係ないでしょ！　さっさとパズルをやりなさい！"
+    }
+  },
+  {
+    "choice": [
+      {
+        "label": "もうどこにも行かない。君の痛みを知りたい",
+        "flag": "love_mio",
+        "value": 10,
+        "next": "ch02_s05_pre_A"
+      },
+      {
+        "label": "……わかった。パズルをやろう",
+        "flag": "love_mio",
+        "value": 0,
+        "next": "ch02_s05_pre_B"
+      }
+    ],
+    "prompt": "みおに、どう向き合うか。"
+  }
+]

@@ -1,14 +1,63 @@
 [
-  { "bg": "bg_ch01_crimson" },
-  { "bgm": "bgm_ch01" },
-  { "chara": { "id": "akari", "expr": "normal", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "ねえ、旅人さんって外ではどんな生活してたの？" } },
-  { "text": { "name": "???", "body": "普通の生活だよ。こんな塔に招待されるとは思ってなかったけど。" } },
-  { "chara": { "id": "akari", "expr": "sad", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "そっか……外は楽しい？　私ずっとここにいるから、全然知らなくて。" } },
-  { "text": { "name": "???", "body": "楽しいことも辛いことも色々あるよ。でも、きっとあかりにも見せてあげられる。" } },
-  { "chara": { "id": "akari", "expr": "surprise", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "ほんとに……？　じゃあ絶対クリアしないとね！" } },
-  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "今回は配置がいつもと違うから気をつけてよ。でも大丈夫、落ち着いて見れば分かるはず！" } }
+  {
+    "bg": "bg_tower_floor1_gray"
+  },
+  {
+    "bgm": "bgm_mysterious_wind"
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "ねえ、少し聞いていい？　あんた、なんで絵を描くのやめたの？"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "……唐突だな"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "唐突でもなんでもない。私にはずっと、謎だったんだから。あんなに情熱があったのに。昨日まで灯ってた炎が、突然ぷつんと消えたみたいに。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "……"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "答えたくないなら、答えなくていい。ただ……私は知りたいの。あんたのことを。"
+    }
+  },
+  {
+    "choice": [
+      {
+        "label": "……大切なものを、失ったんだ",
+        "flag": "love_akari",
+        "value": 10,
+        "next": "ch01_s03_pre_A"
+      },
+      {
+        "label": "（首を振り、黙って前を向く）",
+        "flag": "love_akari",
+        "value": 0,
+        "next": "ch01_s03_pre_B"
+      }
+    ],
+    "prompt": "あかりの問いに、どう答えるか。"
+  }
 ]

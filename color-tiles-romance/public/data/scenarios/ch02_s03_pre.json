@@ -1,0 +1,51 @@
+[
+  {
+    "bg": "bg_tower_floor2_blue_ice"
+  },
+  {
+    "bgm": "bgm_cold_wind"
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "みお",
+      "body": "……一つだけ聞く。あなたは今でも、絵を描けると思っている？"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "……急な質問だな"
+    }
+  },
+  {
+    "text": {
+      "name": "みお",
+      "body": "答えたくないなら別にいい。ただ……そういう目をしているから、聞いてみたかっただけ。諦めていない目よ。それが憎らしくて、少しだけ……眩しい。"
+    }
+  },
+  {
+    "choice": [
+      {
+        "label": "正直に言うと……まだ諦めていないと思う",
+        "flag": "love_mio",
+        "value": 10,
+        "next": "ch02_s03_pre_A"
+      },
+      {
+        "label": "わからない。描けるかどうかは、まだ……",
+        "flag": "love_mio",
+        "value": 5,
+        "next": "ch02_s03_pre_B"
+      }
+    ],
+    "prompt": "みおの問いに答える。"
+  }
+]

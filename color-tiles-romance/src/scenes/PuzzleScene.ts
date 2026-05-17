@@ -1,5 +1,6 @@
 import type { StageDefinition, Tile, MatchResult } from '@/types';
 import { PuzzleEngine } from '@/core/PuzzleEngine';
+import { soundEngine } from '@/core/SoundEngine';
 
 /**
  * 色名 → 表示色のマッピング（仮素材）
@@ -65,6 +66,8 @@ export class PuzzleScene {
   private hintHighlight: { tiles: Tile[]; clickPoint: { x: number; y: number }; until: number } | null = null;
   private shuffleFlashUntil = 0;
   private timeUpFlashUntil = 0;
+  /** シャドウタイルの一時的な色表示期限マップ。key: "x,y"、value: 公開期限(ms timestamp) */
+  private shadowReveals: Map<string, number> = new Map();
 
   private rafId: number | null = null;
 
@@ -153,7 +156,10 @@ export class PuzzleScene {
     });
     this.canvas.addEventListener('click', (e) => {
       const cell = this.pointerToCell(e.clientX, e.clientY);
-      if (cell) this.engine.onCellClick(cell.cx, cell.cy);
+      if (cell) {
+        soundEngine.playClick();
+        this.engine.onCellClick(cell.cx, cell.cy);
+      }
     });
 
     // タッチ：tapで発火、ドラッグでプレビュー
@@ -185,6 +191,15 @@ export class PuzzleScene {
     }
     const match = this.engine.previewClick(cell.cx, cell.cy);
     this.hover = { cx: cell.cx, cy: cell.cy, match };
+
+    // シャドウタイルが含まれるマッチのとき、3000ms だけ色を表示する
+    if (match) {
+      for (const t of [match.a, match.b]) {
+        if (t.type === 'shadow') {
+          this.shadowReveals.set(`${t.x},${t.y}`, Date.now() + 3000);
+        }
+      }
+    }
   }
 
   private pointerToCell(clientX: number, clientY: number): { cx: number; cy: number } | null {
@@ -207,15 +222,18 @@ export class PuzzleScene {
     this.engine.on((e) => {
       switch (e.type) {
         case 'tilesRemoved':
+          soundEngine.playMatch();
           this.removedEffects.push({ tiles: e.tiles, startedAt: Date.now() });
           if (e.bonusSec && e.bonusSec > 0) {
             this.spawnFloatText(`+${e.bonusSec}s`, '#5ec76a');
           }
           break;
         case 'iceCracked':
+          soundEngine.playIceCrack();
           this.spawnFloatText('Crack!', '#9ed3ff');
           break;
         case 'miss':
+          soundEngine.playMiss();
           this.missEffects.push({
             cx: e.clickPoint.x,
             cy: e.clickPoint.y,
@@ -233,9 +251,11 @@ export class PuzzleScene {
           this.flashStatus('障害ブロック解除！');
           break;
         case 'cleared':
+          soundEngine.playClear();
           this.flashStatus('CLEAR！');
           break;
         case 'gameOver':
+          soundEngine.playGameOver();
           this.timeUpFlashUntil = Date.now() + 2000;
           this.flashStatus('TIME UP');
           break;
@@ -402,6 +422,29 @@ export class PuzzleScene {
       return;
     }
 
+    // シャドウタイル：未公開時はダークグレーに "?" を表示
+    if (t.type === 'shadow') {
+      const revealExpiry = this.shadowReveals.get(`${t.x},${t.y}`) ?? 0;
+      const revealed = revealExpiry > Date.now();
+      if (!revealed) {
+        // 未公開：色を隠してダークグレー表示
+        this.ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        this.ctx.fillRect(x + 2, y + 2, TILE_SIZE, TILE_SIZE);
+        this.ctx.fillStyle = '#4a4f60';
+        this.ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+        this.ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+        this.ctx.lineWidth = 1;
+        this.ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
+        this.ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        this.ctx.font = 'bold 26px sans-serif';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText('?', x + TILE_SIZE / 2, y + TILE_SIZE / 2);
+        return;
+      }
+      // 公開中：通常タイルとして色を表示（以降の描画処理に続く）
+    }
+
     const color = COLOR_MAP[t.color ?? 'red'] ?? '#888';
 
     // 影
@@ -445,6 +488,15 @@ export class PuzzleScene {
       this.ctx.textAlign = 'center';
       this.ctx.textBaseline = 'middle';
       this.ctx.fillText('⌛', x + TILE_SIZE / 2, y + TILE_SIZE / 2);
+    } else if (t.type === 'linked') {
+      // 連結タイル：右下隅にチェーンアイコンを描画
+      this.ctx.font = '14px sans-serif';
+      this.ctx.textAlign = 'right';
+      this.ctx.textBaseline = 'bottom';
+      this.ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      this.ctx.fillText('⛓', x + TILE_SIZE - 4, y + TILE_SIZE - 4);
+      this.ctx.textAlign = 'center';
+      this.ctx.textBaseline = 'middle';
     }
   }
 
@@ -505,6 +557,10 @@ export class PuzzleScene {
     this.missEffects = this.missEffects.filter((m) => now - m.startedAt < 500);
     this.removedEffects = this.removedEffects.filter((r) => now - r.startedAt < 500);
     this.floatTexts = this.floatTexts.filter((f) => now - f.startedAt < 1000);
+    // 期限切れのシャドウタイル公開を削除
+    for (const [key, expiry] of this.shadowReveals) {
+      if (expiry <= now) this.shadowReveals.delete(key);
+    }
   }
 
   private spawnFloatText(text: string, color: string): void {

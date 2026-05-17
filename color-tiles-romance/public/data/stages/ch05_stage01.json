@@ -1,0 +1,20 @@
+{
+  "id": "ch05_stage01",
+  "title": "第5章 ステージ1：全てのギミック",
+  "chapter": 5,
+  "boardWidth": 8,
+  "boardHeight": 6,
+  "timeLimitSec": 150,
+  "missPenaltySec": 2,
+  "hintCount": 2,
+  "tilesLayout": [
+    [{"color":"red","type":"linked","linkGroupId":"lg1"}, null, null, {"color":"red","type":"linked","linkGroupId":"lg1"}, null, {"color":"blue","type":"ice"}, null, {"color":"blue","type":"ice"}],
+    [null, null, {"color":null,"type":"block"}, null, null, null, {"color":null,"type":"block"}, null],
+    [{"color":"red","type":"linked","linkGroupId":"lg1"}, null, null, {"color":"red","type":"linked","linkGroupId":"lg1"}, null, {"color":"blue","type":"ice"}, null, {"color":"blue","type":"ice"}],
+    [null, null, {"color":null,"type":"block"}, null, null, null, {"color":null,"type":"block"}, null],
+    [{"color":"green","type":"time"}, null, {"color":"green","type":"time"}, null, {"color":"yellow","type":"ice"}, null, {"color":"yellow","type":"ice"}, null],
+    [{"color":"green","type":"time"}, null, {"color":"green","type":"time"}, null, {"color":"yellow","type":"time"}, null, {"color":"yellow","type":"time"}, null]
+  ],
+  "blockReleaseRule": {"type": "afterPairs", "count": 3},
+  "preScenario": "ch05_s01_pre.json"
+}

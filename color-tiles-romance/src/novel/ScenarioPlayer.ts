@@ -11,9 +11,19 @@ export interface BgStep {
   bg: string;
 }
 
-/** BGM変更ステップ */
+/** BGM変更ステップ（null で停止） */
 export interface BgmStep {
-  bgm: string;
+  bgm: string | null;
+}
+
+/** SE 再生ステップ */
+export interface SeStep {
+  se: { src: string; loop?: boolean };
+}
+
+/** エフェクトステップ */
+export interface EffectStep {
+  effect: { type: string; duration: number };
 }
 
 /** キャラクター表示ステップ */
@@ -22,6 +32,8 @@ export interface CharaStep {
     id: string;
     expr: string;
     pos: 'left' | 'center' | 'right';
+    show?: boolean;
+    hide?: boolean;
   };
 }
 
@@ -40,11 +52,14 @@ export interface ChoiceStep {
   choice: Array<{
     label: string;
     flag?: string;
+    value?: number;
+    next?: string;
   }>;
+  prompt?: string;
 }
 
 /** シナリオのひとつのステップ */
-export type ScenarioStep = BgStep | BgmStep | CharaStep | TextStep | ChoiceStep;
+export type ScenarioStep = BgStep | BgmStep | SeStep | EffectStep | CharaStep | TextStep | ChoiceStep;
 
 /** キャラクター表示状態 */
 interface CharaState {
@@ -57,9 +72,10 @@ interface CharaState {
 /** キャラクターIDに対応するプレースホルダ色 */
 const CHARA_COLORS: Record<string, string> = {
   akari: '#ff8fb1',
-  hikari: '#4a90e2',
-  sora: '#5ec76a',
-  yuki: '#9c6bd8',
+  mio: '#4a90e2',
+  suzu: '#5ec76a',
+  himari: '#ffaa33',
+  yukari: '#9c6bd8',
   default: '#ffd234'
 };
 
@@ -85,7 +101,7 @@ export class ScenarioPlayer {
   private bgColor = '#1a1a2e';
   private characters: CharaState[] = [];
   private currentName = '';
-  private choiceButtons: Array<{ label: string; x: number; y: number; w: number; h: number; flag?: string }> = [];
+  private choiceButtons: Array<{ label: string; x: number; y: number; w: number; h: number; flag?: string; value?: number; next?: string }> = [];
 
   /** 選択肢待機中フラグ */
   private awaitingChoice = false;
@@ -98,6 +114,15 @@ export class ScenarioPlayer {
 
   /** アニメーションフレームID */
   private rafId: number | null = null;
+
+  /** 現在再生中のBGM */
+  private bgmAudio: HTMLAudioElement | null = null;
+
+  /** 読み込み済みキャラ画像キャッシュ（キー: "${id}_${expr}"） */
+  private charaImageCache: Map<string, HTMLImageElement> = new Map();
+
+  /** 現在の背景画像（読み込み済みの場合のみ） */
+  private bgImage: HTMLImageElement | null = null;
 
   /** クリック/スペースキーのイベントリスナー（後でremoveするため保持） */
   private boundClick: (e: MouseEvent) => void;
@@ -177,11 +202,23 @@ export class ScenarioPlayer {
   }
 
   /**
+   * BGMを停止する。
+   */
+  stopBgm(): void {
+    if (this.bgmAudio) {
+      this.bgmAudio.pause();
+      this.bgmAudio.src = '';
+      this.bgmAudio = null;
+    }
+  }
+
+  /**
    * リソースを解放してCanvasをコンテナから削除する。
    */
   destroy(): void {
     if (this.rafId !== null) cancelAnimationFrame(this.rafId);
     if (this.typewriterTimer !== null) clearTimeout(this.typewriterTimer);
+    this.stopBgm();
     this.canvas.removeEventListener('click', this.boundClick);
     window.removeEventListener('keydown', this.boundKey);
     window.removeEventListener('resize', () => this.resizeCanvas());
@@ -220,18 +257,44 @@ export class ScenarioPlayer {
     this.stepIndex++;
 
     if ('bg' in step) {
-      // 背景色変更（Phase 1: ファイル名からハッシュで色を決定）
       this.bgColor = this.filenameToColor(step.bg);
+      this.bgImage = null;
+      const img = new Image();
+      img.onload = () => { this.bgImage = img; };
+      img.src = `/assets/bg/${step.bg}.jpg`;
       this.advanceStep();
     } else if ('bgm' in step) {
-      // BGM（Phase 1: 無視）
+      if (this.bgmAudio) {
+        this.bgmAudio.pause();
+        this.bgmAudio.src = '';
+        this.bgmAudio = null;
+      }
+      if (step.bgm !== null) {
+        const src = `/assets/bgm/${step.bgm}`;
+        this.bgmAudio = new Audio(src);
+        this.bgmAudio.loop = true;
+        this.bgmAudio.volume = 0.5;
+        this.bgmAudio.play().catch(() => {});
+      }
       this.advanceStep();
+    } else if ('se' in step) {
+      const audio = new Audio(`/assets/se/${step.se.src}`);
+      audio.loop = step.se.loop ?? false;
+      audio.play().catch(() => {});
+      this.advanceStep();
+    } else if ('effect' in step) {
+      // エフェクトは duration 後に自動進行
+      setTimeout(() => this.advanceStep(), step.effect.duration);
     } else if ('chara' in step) {
-      // キャラクター表示更新
-      this.updateChara(step.chara);
+      const c = step.chara;
+      if (c.hide) {
+        this.characters = this.characters.filter(ch => ch.id !== c.id);
+      } else {
+        this.updateChara(c);
+        this.preloadCharaImage(c.id, c.expr);
+      }
       this.advanceStep();
     } else if ('text' in step) {
-      // テキスト表示（ユーザー入力待ち）
       const lineId = (step as TextStep).id ?? `line_${this.stepIndex}`;
       const isRead = this.context.readLines.has(lineId);
       this.currentName = step.text.name;
@@ -241,7 +304,6 @@ export class ScenarioPlayer {
       this.awaitingChoice = false;
 
       if (isRead) {
-        // 既読行はスキップ（即表示）
         this.displayedText = this.targetText;
         this.isTyping = false;
       } else {
@@ -249,7 +311,6 @@ export class ScenarioPlayer {
         this.startTypewriter();
       }
     } else if ('choice' in step) {
-      // 選択肢表示
       this.awaitingChoice = true;
       this.buildChoiceButtons(step.choice);
     }
@@ -290,15 +351,15 @@ export class ScenarioPlayer {
     const color = CHARA_COLORS[charaData.id] ?? CHARA_COLORS['default']!;
     if (existing) {
       existing.expr = charaData.expr;
-      existing.pos = charaData.pos;
+      existing.pos = charaData.pos ?? existing.pos;
     } else {
-      this.characters.push({ ...charaData, color });
+      this.characters.push({ id: charaData.id, expr: charaData.expr, pos: charaData.pos ?? 'center', color });
     }
   }
 
   /** 選択肢ボタンを構築する */
   private buildChoiceButtons(
-    choices: Array<{ label: string; flag?: string }>
+    choices: Array<{ label: string; flag?: string; value?: number; next?: string }>
   ): void {
     const w = this.canvas.width;
     const h = this.canvas.height;
@@ -312,6 +373,8 @@ export class ScenarioPlayer {
     this.choiceButtons = choices.map((c, i) => ({
       label: c.label,
       flag: c.flag,
+      value: c.value,
+      next: c.next,
       x: startX,
       y: startY + i * (bh + gap),
       w: bw,
@@ -329,11 +392,16 @@ export class ScenarioPlayer {
       for (const btn of this.choiceButtons) {
         if (mx >= btn.x && mx <= btn.x + btn.w && my >= btn.y && my <= btn.y + btn.h) {
           if (btn.flag) {
-            this.context.flags[btn.flag] = (this.context.flags[btn.flag] ?? 0) + 1;
+            const delta = btn.value ?? 1;
+            this.context.flags[btn.flag] = (this.context.flags[btn.flag] ?? 0) + delta;
           }
           this.awaitingChoice = false;
           this.choiceButtons = [];
-          this.advanceStep();
+          if (btn.next) {
+            this.jumpToScenario(btn.next);
+          } else {
+            this.advanceStep();
+          }
           return;
         }
       }
@@ -366,12 +434,28 @@ export class ScenarioPlayer {
     }
   }
 
+  /** 選択肢の next で指定されたシナリオに分岐する */
+  private jumpToScenario(scenarioId: string): void {
+    fetch(`/data/scenarios/${scenarioId}.json`)
+      .then(r => r.json())
+      .then((steps: ScenarioStep[]) => {
+        this.steps = steps;
+        this.stepIndex = 0;
+        this.advanceStep();
+      })
+      .catch(() => {
+        // 読み込み失敗時は次のステップへ
+        this.advanceStep();
+      });
+  }
+
   /** シナリオ終了処理 */
   private endScenario(): void {
     if (this.rafId !== null) {
       cancelAnimationFrame(this.rafId);
       this.rafId = null;
     }
+    this.stopBgm();
     if (this.endCallback) this.endCallback();
     if (this.resolveStart) this.resolveStart();
   }
@@ -383,11 +467,15 @@ export class ScenarioPlayer {
     const h = this.canvas.height;
 
     // 背景
-    const grad = this.ctx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, this.bgColor);
-    grad.addColorStop(1, this.darkenColor(this.bgColor));
-    this.ctx.fillStyle = grad;
-    this.ctx.fillRect(0, 0, w, h);
+    if (this.bgImage) {
+      this.ctx.drawImage(this.bgImage, 0, 0, w, h);
+    } else {
+      const grad = this.ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, this.bgColor);
+      grad.addColorStop(1, this.darkenColor(this.bgColor));
+      this.ctx.fillStyle = grad;
+      this.ctx.fillRect(0, 0, w, h);
+    }
 
     // キャラクタープレースホルダ
     this.drawCharacters(w, h);
@@ -408,36 +496,51 @@ export class ScenarioPlayer {
     }
   }
 
+  /** キャラ画像を非同期でプリロードしてキャッシュする */
+  private preloadCharaImage(id: string, expr: string): void {
+    const key = `${id}_${expr}`;
+    if (this.charaImageCache.has(key)) return;
+    const img = new Image();
+    img.onload = () => { this.charaImageCache.set(key, img); };
+    img.src = `/assets/chara/${key}.png`;
+  }
+
   private drawCharacters(w: number, h: number): void {
     for (const chara of this.characters) {
       let cx = w / 2;
       if (chara.pos === 'left') cx = w * 0.25;
       else if (chara.pos === 'right') cx = w * 0.75;
 
-      const charHeight = h * 0.55;
-      const charWidth = charHeight * 0.5;
-      const cy = h * 0.35;
+      const img = this.charaImageCache.get(`${chara.id}_${chara.expr}`);
+      if (img) {
+        // スプライト画像を描画（下辺をテキストウィンドウ上端に合わせる）
+        const displayH = h * 0.78;
+        const displayW = displayH * (img.naturalWidth / img.naturalHeight);
+        this.ctx.drawImage(img, cx - displayW / 2, h - displayH - h * 0.28, displayW, displayH);
+      } else {
+        // フォールバック: カラーシルエット描画
+        const charHeight = h * 0.55;
+        const charWidth = charHeight * 0.5;
+        const cy = h * 0.35;
 
-      // 胴体（矩形）
-      this.ctx.fillStyle = chara.color;
-      this.ctx.globalAlpha = 0.85;
-      this.ctx.fillRect(cx - charWidth / 2, cy - charHeight / 2, charWidth, charHeight);
+        this.ctx.fillStyle = chara.color;
+        this.ctx.globalAlpha = 0.85;
+        this.ctx.fillRect(cx - charWidth / 2, cy - charHeight / 2, charWidth, charHeight);
 
-      // 頭（円）
-      const headR = charWidth * 0.45;
-      this.ctx.beginPath();
-      this.ctx.arc(cx, cy - charHeight / 2 - headR * 0.5, headR, 0, Math.PI * 2);
-      this.ctx.fillStyle = this.lightenColor(chara.color);
-      this.ctx.fill();
+        const headR = charWidth * 0.45;
+        this.ctx.beginPath();
+        this.ctx.arc(cx, cy - charHeight / 2 - headR * 0.5, headR, 0, Math.PI * 2);
+        this.ctx.fillStyle = this.lightenColor(chara.color);
+        this.ctx.fill();
 
-      this.ctx.globalAlpha = 1;
+        this.ctx.globalAlpha = 1;
 
-      // キャラクターIDラベル
-      this.ctx.fillStyle = '#fff';
-      this.ctx.font = `bold ${Math.max(12, charWidth * 0.25)}px sans-serif`;
-      this.ctx.textAlign = 'center';
-      this.ctx.textBaseline = 'middle';
-      this.ctx.fillText(chara.id, cx, cy);
+        this.ctx.fillStyle = '#fff';
+        this.ctx.font = `bold ${Math.max(12, charWidth * 0.25)}px sans-serif`;
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText(chara.id, cx, cy);
+      }
     }
   }
 

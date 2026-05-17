@@ -1,13 +1,63 @@
 [
-  { "bg": "bg_ch01_crimson" },
-  { "bgm": "bgm_ch01" },
-  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "クリアしちゃった！　さすがだね！" } },
-  { "text": { "name": "???", "body": "あかりが「信じてる」って言ってくれたおかげかな。" } },
-  { "chara": { "id": "akari", "expr": "shy", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "べ、別にそういう意味じゃ……！　ただ励ましただけよ！" } },
-  { "text": { "name": "あかり", "body": "……で、でも。ちょっとだけ嬉しかった。ありがとう。" } },
-  { "text": { "name": "???", "body": "こちらこそ。次もよろしく頼む。" } },
-  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "うん！　絶対クリアさせてあげるから！" } }
+  {
+    "bg": "bg_tower_floor1_red_dim"
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "smile",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "いいじゃない！　さっきより全然速くなったわ！"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "こうやって色を繋いでいくと……何かが解けていくような気がする。心の、何かが。"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "surprise",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "……！　そう感じるなら、正解。この儀式はね、ただ色を合わせるだけじゃない。あんた自身が、自分の内側と向き合う作業なの。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "どういう意味だ？"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "normal",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "……それは、自分で気づくことに意味がある。さ、次！"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  }
 ]

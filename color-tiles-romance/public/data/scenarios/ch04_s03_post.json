@@ -1,0 +1,37 @@
+[
+  {
+    "bg": "bg_tower_floor4_yellow_dim"
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "smile",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "ひまり",
+      "body": "見えてきた！　歯車が噛み合ってきた感じがする！"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "ああ……いつかまた、君のアイデアを形にしてみたいと、本当にそう思い始めている。"
+    }
+  },
+  {
+    "text": {
+      "name": "ひまり",
+      "body": "やった！！"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  }
+]

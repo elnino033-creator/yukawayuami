@@ -1,0 +1,37 @@
+[
+  {
+    "bg": "bg_tower_floor4_yellow_dim"
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "smile",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "ひまり",
+      "body": "時間タイル、うまく使えた！　あれが光った時、なんかワクワクしなかった？"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "ああ。久しぶりに……何かが閃いた時のような感覚があった。"
+    }
+  },
+  {
+    "text": {
+      "name": "ひまり",
+      "body": "それよ！　それが私の出番！　あなたの中で、また閃きが動き始めてる！"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  }
+]

@@ -1,0 +1,69 @@
+[
+  {
+    "bg": "bg_tower_floor2_blue_dim"
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "みお",
+      "body": "……また越えたわね。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "みおは……本当は、怒っているわけじゃないんだろう？"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "angry",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "みお",
+      "body": "っ……！　何が言いたいの？"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "怒っているふりをして……でも、ずっとこちらを気にしている。あかりとは別の意味で、君もずっと僕を見ている気がする。"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "blush",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "みお",
+      "body": "……勘違いしないで。私はただ、番人の仕事をしているだけよ。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "（……嘘が下手だな、君は）"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  }
+]
