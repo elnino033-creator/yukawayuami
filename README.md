@@ -1,130 +1,64 @@
-# claude-vertex-tool
+# カラータイル・ロマンス / Color Tiles Romance
 
-Vertex AI Workbench (外部通信不可) で Claude を利用するためのオフライン配布キット。
-依存ライブラリの wheel を同梱し、エアギャップ環境でも `pip install --no-index` で
-セットアップできる CLI + Python ライブラリを提供します。
+色合わせパズル × 恋愛ノベルのブラウザゲーム。  
+同じ色のタイルを直線で消しながら、5人の少女たちとの物語を進めていく。
 
-- **対象環境**: Vertex AI Workbench / Linux x86_64 / Python 3.10
-- **同梱**: `anthropic[vertex]` 0.100.0 とその依存（`google-auth` 含む）の wheel 一式
-- **認証**: Workbench のサービスアカウント (Application Default Credentials)
-- **モデル**: Vertex AI Model Garden で有効化済みの Claude（既定 `claude-sonnet-4-5@20250929`、リージョン `us-east5`）
+**プレイ**: https://elnino033-creator.github.io/yukawayuami/
 
 ---
 
-## 1. ディレクトリ構成
+## ゲーム概要
 
-```
-.
-├── claude_vertex_tool/        # 本体パッケージ (CLI + ラッパー)
-│   ├── __init__.py
-│   ├── client.py              # ClaudeVertexClient
-│   └── cli.py                 # `claude-vertex` コマンド
-├── wheels/                    # 同梱 wheel (依存 + 本体)
-├── scripts/
-│   ├── install.sh             # オフライン側で実行する導入スクリプト
-│   ├── download_wheels.sh     # オンライン側で wheel を再取得
-│   └── verify.sh              # venv 内で動作確認
-├── examples/
-│   ├── quickstart.py
-│   ├── streaming.py
-│   └── notebook_quickstart.ipynb
-├── pyproject.toml
-└── requirements.txt
-```
+| 項目 | 内容 |
+|---|---|
+| ジャンル | パズル × 恋愛ノベル |
+| プラットフォーム | ブラウザ（PC / スマートフォン対応） |
+| 技術スタック | TypeScript / Vite / Canvas API / Web Audio API |
 
-## 2. 持ち込みフロー
+### ストーリー
 
-### A. オンライン端末（社内ネット可など）
-1. このリポジトリを clone
-2. wheel が古い・別バージョンを使いたい場合のみ再取得：
-   ```bash
-   ./scripts/download_wheels.sh
-   ```
-   既定: Python 3.10 / `manylinux2014_x86_64`。
-   変更したい場合は環境変数で：
-   ```bash
-   PYTHON_VERSION=3.11 PLATFORM=manylinux2014_x86_64 ./scripts/download_wheels.sh
-   ```
-3. リポジトリ全体（`wheels/` 込み）を zip 化して持込：
-   ```bash
-   zip -r claude-vertex-bundle.zip . -x ".git/*"
-   ```
+謎の招待状に導かれ「色彩の塔」に迷い込んだ主人公。  
+塔に囚われた5人の少女（あかり・みお・すず・ひまり・ゆかり）を、色合わせのパズルを解きながら解放していく。
 
-### B. Vertex AI Workbench（オフライン）
-1. zip を Workbench に転送して展開
-2. オフラインインストール：
-   ```bash
-   cd claude-vertex-bundle
-   ./scripts/install.sh
-   ```
-   `pip install --no-index --find-links ./wheels claude-vertex-tool` を実行します。
-3. Workbench 既定の Python に入れたくない場合は事前に venv を作って `PYTHON_BIN` を渡します：
-   ```bash
-   python3 -m venv ~/venvs/claude && source ~/venvs/claude/bin/activate
-   PYTHON_BIN=$(which python) ./scripts/install.sh
-   ```
+### キャラクター
 
-## 3. 利用方法
+| キャラ | 色 | 章 |
+|---|---|---|
+| あかり | ピンク | 第1章 緋色の階層 |
+| みお | 青 | 第2章 氷雪の洗礼 |
+| すず | 緑 | 第3章 翠葉の迷宮 |
+| ひまり | オレンジ | 第4章 連鎖の宮殿 |
+| ゆかり | 紫 | 第5章 混沌の頂点 |
 
-### 環境変数
-| 変数 | 必須 | 説明 |
-| --- | --- | --- |
-| `ANTHROPIC_VERTEX_PROJECT_ID` | ○ | GCP プロジェクト ID |
-| `CLOUD_ML_REGION` | - | Vertex リージョン (既定 `us-east5`) |
-| `CLAUDE_VERTEX_MODEL` | - | 既定モデル ID |
+### ゲームシステム
 
-> Workbench のサービスアカウントに `roles/aiplatform.user` と、Model Garden 上で
-> 該当 Claude モデルの利用申請/有効化が必要です。
+- **タイル消去**: 同色タイルを空きマス経由の直線で繋いで消す
+- **ギミック**: 氷タイル・時間タイル・ブロック・連結タイル
+- **スコア**: コンボ・タイムボーナス・ヒント未使用ボーナス
+- **セーブ**: localStorage によるプレイデータ自動保存
 
-### CLI
+---
+
+## 開発
+
 ```bash
-export ANTHROPIC_VERTEX_PROJECT_ID="your-gcp-project"
-export CLOUD_ML_REGION="us-east5"
-
-claude-vertex "日本語で1文だけ自己紹介して"
-echo "要約して: ..." | claude-vertex -
-claude-vertex --system "簡潔に" --stream "Vertex AI とは？"
-claude-vertex --model claude-sonnet-4-5@20250929 --max-tokens 2048 "..."
+cd color-tiles-romance
+pnpm install
+pnpm dev        # 開発サーバー起動
+pnpm test       # テスト実行（71テスト）
+pnpm typecheck  # 型チェック
+pnpm build      # ビルド
 ```
 
-### Python / Notebook
-```python
-from claude_vertex_tool import ClaudeVertexClient
+---
 
-client = ClaudeVertexClient()  # 環境変数から project / region を取得
-print(client.send("hello"))
+## リポジトリ構成
 
-# システムプロンプト + メッセージ配列
-messages = [{"role": "user", "content": "Vertex AI の利点を3つ"}]
-print(client.send(messages, system="Reply in Japanese."))
-
-# ストリーミング
-for chunk in client.stream("段階的に説明して"):
-    print(chunk, end="", flush=True)
+```
+yukawayuami/
+├── color-tiles-romance/   # ゲーム本体（TypeScript / Vite）
+├── kiohp_sample/          # HPサンプル
+└── vertex-tool/           # Vertex AI Workbench 向け Claude CLIツール
 ```
 
-## 4. 動作確認
-
-オフライン側で:
-```bash
-./scripts/verify.sh    # venv に入れ直して import + --help を確認
-claude-vertex "ping"   # 実 API 呼び出し（プロジェクト/モデル要設定）
-```
-
-## 5. アップデート手順
-
-1. オンライン端末で `requirements.txt` のバージョンを更新
-2. `wheels/` を一旦削除し `./scripts/download_wheels.sh` を再実行
-3. 新しい zip を作って持込 → `./scripts/install.sh` で上書きインストール
-
-## 6. トラブルシューティング
-
-| 症状 | 対処 |
-| --- | --- |
-| `google.auth.exceptions.DefaultCredentialsError` | Workbench のサービスアカウント設定、または `gcloud auth application-default login` を確認 |
-| `404 Publisher Model ... was not found` | リージョンとモデル ID の組み合わせ、Model Garden の有効化状況を確認 |
-| `pip` が wheel を解決できない | Python バージョン/プラットフォームが一致するか確認。必要なら `download_wheels.sh` を該当環境向けに再実行 |
-| プロキシ越しに導入したい | `pip install --no-index` を使うため通常はプロキシ不要。社内 PyPI を使う場合は `--no-index --find-links` を `--index-url` に置き換え |
-
-## 7. ライセンス
-MIT (本ラッパー部分)。同梱 wheel はそれぞれの元プロジェクトのライセンスに従います。
+詳細は各ディレクトリの README を参照。
