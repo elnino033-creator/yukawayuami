@@ -307,11 +307,26 @@ export class ScenarioPlayer {
       const c = step.chara;
       if (c.hide) {
         this.characters = this.characters.filter(ch => ch.id !== c.id);
+        this.advanceStep();
       } else {
-        this.updateChara(c);
-        this.preloadCharaImage(c.id, c.expr);
+        const key = `${c.id}_${c.expr}`;
+        if (this.charaImageCache.has(key)) {
+          this.updateChara(c);
+          this.advanceStep();
+        } else {
+          const img = new Image();
+          img.onload = () => {
+            this.charaImageCache.set(key, img);
+            this.updateChara(c);
+            this.advanceStep();
+          };
+          img.onerror = () => {
+            this.updateChara(c);
+            this.advanceStep();
+          };
+          img.src = `${import.meta.env.BASE_URL}assets/chara/${key}.png`;
+        }
       }
-      this.advanceStep();
     } else if ('text' in step) {
       const lineId = (step as TextStep).id ?? `line_${this.stepIndex}`;
       const isRead = this.context.readLines.has(lineId);
@@ -512,15 +527,6 @@ export class ScenarioPlayer {
     if (!this.isTyping && !this.awaitingChoice && this.targetText) {
       this.drawClickPrompt(w, h);
     }
-  }
-
-  /** キャラ画像を非同期でプリロードしてキャッシュする */
-  private preloadCharaImage(id: string, expr: string): void {
-    const key = `${id}_${expr}`;
-    if (this.charaImageCache.has(key)) return;
-    const img = new Image();
-    img.onload = () => { this.charaImageCache.set(key, img); };
-    img.src = `${import.meta.env.BASE_URL}assets/chara/${key}.png`;
   }
 
   private drawCharacters(w: number, h: number): void {
