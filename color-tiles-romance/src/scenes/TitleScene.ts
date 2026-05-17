@@ -28,6 +28,7 @@ export class TitleScene {
   private ctx: CanvasRenderingContext2D;
   private onSelect: (choice: TitleChoice) => void;
   private hasSave: boolean;
+  private allStagesComplete: boolean;
   private buttons: TitleButton[] = [];
   private rafId: number | null = null;
   private startTime: number = Date.now();
@@ -50,7 +51,8 @@ export class TitleScene {
   constructor(
     canvas: HTMLCanvasElement,
     onSelect: (choice: TitleChoice) => void,
-    hasSave: boolean
+    hasSave: boolean,
+    allStagesComplete: boolean = false
   ) {
     this.canvas = canvas;
     const ctx = canvas.getContext('2d');
@@ -58,6 +60,7 @@ export class TitleScene {
     this.ctx = ctx;
     this.onSelect = onSelect;
     this.hasSave = hasSave;
+    this.allStagesComplete = allStagesComplete;
 
     this.boundMouseMove = (e: MouseEvent) => this.handleMouseMove(e);
     this.boundClick = (e: MouseEvent) => this.handleClick(e);
@@ -78,7 +81,12 @@ export class TitleScene {
     this.bgmAudio = new Audio(`${import.meta.env.BASE_URL}assets/bgm/${encodeURIComponent('op_色彩の塔へ.mp3')}`);
     this.bgmAudio.loop = true;
     this.bgmAudio.volume = 0.4;
-    this.bgmAudio.play().catch(() => {});
+    this.bgmAudio.play().catch(() => {
+      const resume = () => {
+        this.bgmAudio?.play().catch(() => {});
+      };
+      this.canvas.addEventListener('click', resume, { once: true });
+    });
   }
 
   /**
@@ -145,7 +153,7 @@ export class TitleScene {
         w: bw,
         h: bh,
         hovered: false,
-        disabled: false
+        disabled: !this.allStagesComplete
       }
     ];
   }

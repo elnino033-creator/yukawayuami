@@ -321,7 +321,6 @@ export class ScenarioPlayer {
             this.advanceStep();
           };
           img.onerror = () => {
-            this.updateChara(c);
             this.advanceStep();
           };
           img.src = `${import.meta.env.BASE_URL}assets/chara/${key}.png`;
@@ -537,34 +536,10 @@ export class ScenarioPlayer {
 
       const img = this.charaImageCache.get(`${chara.id}_${chara.expr}`);
       if (img) {
-        // スプライト画像を描画（下辺をテキストウィンドウ上端に合わせる）
         const winY = h - h * 0.28 - 16;
         const displayH = Math.min(h * 0.65, winY * 0.92);
         const displayW = displayH * (img.naturalWidth / img.naturalHeight);
         this.ctx.drawImage(img, cx - displayW / 2, winY - displayH, displayW, displayH);
-      } else {
-        // フォールバック: カラーシルエット描画
-        const charHeight = h * 0.55;
-        const charWidth = charHeight * 0.5;
-        const cy = h * 0.35;
-
-        this.ctx.fillStyle = chara.color;
-        this.ctx.globalAlpha = 0.85;
-        this.ctx.fillRect(cx - charWidth / 2, cy - charHeight / 2, charWidth, charHeight);
-
-        const headR = charWidth * 0.45;
-        this.ctx.beginPath();
-        this.ctx.arc(cx, cy - charHeight / 2 - headR * 0.5, headR, 0, Math.PI * 2);
-        this.ctx.fillStyle = this.lightenColor(chara.color);
-        this.ctx.fill();
-
-        this.ctx.globalAlpha = 1;
-
-        this.ctx.fillStyle = '#fff';
-        this.ctx.font = `bold ${Math.max(12, charWidth * 0.25)}px sans-serif`;
-        this.ctx.textAlign = 'center';
-        this.ctx.textBaseline = 'middle';
-        this.ctx.fillText(chara.id, cx, cy);
       }
     }
   }
@@ -667,17 +642,5 @@ export class ScenarioPlayer {
   /** 色を少し暗くする */
   private darkenColor(hsl: string): string {
     return hsl.replace(/(\d+)%\)$/, (_, n) => `${Math.max(0, Number(n) - 10)}%)`);
-  }
-
-  /** 色を少し明るくする */
-  private lightenColor(hex: string): string {
-    // hexを少し明るくする簡易実装
-    if (hex.startsWith('#') && hex.length === 7) {
-      const r = Math.min(255, parseInt(hex.slice(1, 3), 16) + 40);
-      const g = Math.min(255, parseInt(hex.slice(3, 5), 16) + 40);
-      const b = Math.min(255, parseInt(hex.slice(5, 7), 16) + 40);
-      return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-    }
-    return hex;
   }
 }

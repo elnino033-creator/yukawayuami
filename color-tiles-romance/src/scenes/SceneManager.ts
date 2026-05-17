@@ -7,6 +7,16 @@
 import { SaveStore } from '@/store/saveStore';
 import { ProgressStore } from '@/store/progressStore';
 
+const LINEAR_STAGES = [
+  'ch00_tutorial',
+  'ch00_prologue',
+  'ch01_stage01', 'ch01_stage02', 'ch01_stage03', 'ch01_stage04', 'ch01_stage05',
+  'ch02_stage01', 'ch02_stage02', 'ch02_stage03',
+  'ch03_stage01', 'ch03_stage02', 'ch03_stage03',
+  'ch04_stage01', 'ch04_stage02', 'ch04_stage03',
+  'ch05_stage01', 'ch05_stage02', 'ch05_stage03',
+] as const;
+
 /** アプリ内のシーン種別 */
 export type SceneType = 'title' | 'novel' | 'stageSelect' | 'puzzle' | 'result';
 
@@ -110,6 +120,27 @@ export class SceneManager {
     }
   }
 
+  // ---------- 線形進行ヘルパー ----------
+
+  private getNextStage(currentId: string): string | null {
+    const idx = (LINEAR_STAGES as readonly string[]).indexOf(currentId);
+    if (idx === -1 || idx >= LINEAR_STAGES.length - 1) return null;
+    return LINEAR_STAGES[idx + 1];
+  }
+
+  private getFirstUncompletedStage(): string | null {
+    const records = this.saveStore.getData().stageRecords;
+    for (const id of LINEAR_STAGES) {
+      if (!records[id]?.cleared) return id;
+    }
+    return null;
+  }
+
+  private isAllStagesComplete(): boolean {
+    const records = this.saveStore.getData().stageRecords;
+    return (LINEAR_STAGES as readonly string[]).every(id => records[id]?.cleared);
+  }
+
   // ---------- 各シーンのマウント ----------
 
   private async mountTitleScene(): Promise<void> {
@@ -121,22 +152,28 @@ export class SceneManager {
 
     const hasSave = this.saveStore.getData().currentChapter > 0 ||
       Object.keys(this.saveStore.getData().stageRecords).length > 0;
+    const allComplete = this.isAllStagesComplete();
 
     const scene = new TitleScene(canvas, (choice) => {
       switch (choice) {
         case 'new':
           this.saveStore.reset();
           this.progressStore.resetScenarioContext();
-          this.transition({ to: 'novel', scenarioId: 'ch00_intro' });
+          this.transition({ to: 'novel', scenarioId: 'prologue_pre' });
           break;
-        case 'continue':
-          this.transition({ to: 'stageSelect' });
+        case 'continue': {
+          const next = this.getFirstUncompletedStage();
+          this.transition(next
+            ? { to: 'puzzle', stageId: next }
+            : { to: 'stageSelect' }
+          );
           break;
+        }
         case 'stage':
           this.transition({ to: 'stageSelect' });
           break;
       }
-    }, hasSave);
+    }, hasSave, allComplete);
 
     this.currentScene = scene;
     scene.start();
@@ -154,8 +191,8 @@ export class SceneManager {
       scenarioId,
       this.progressStore.scenarioContext,
       () => {
-        // シナリオ終了後はステージセレクトへ
-        this.transition({ to: 'stageSelect' });
+        // 導入シナリオ終了後は最初のステージへ
+        this.transition({ to: 'puzzle', stageId: LINEAR_STAGES[0] });
       }
     );
 
@@ -301,8 +338,12 @@ export class SceneManager {
         this.transition({ to: 'puzzle', stageId: data.stageId });
       },
       () => {
-        // 次のステージ（Phase 1: ステージセレクトへ）
-        this.transition({ to: 'stageSelect' });
+        // 次のステージへ（全完了ならステージセレクト）
+        const next = this.getNextStage(data.stageId);
+        this.transition(next
+          ? { to: 'puzzle', stageId: next }
+          : { to: 'stageSelect' }
+        );
       },
       () => {
         this.transition({ to: 'title' });

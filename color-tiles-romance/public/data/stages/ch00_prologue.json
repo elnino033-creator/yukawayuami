@@ -14,6 +14,5 @@
     [null,    null, null,    null,    null, null   ]
   ],
   "blockReleaseRule": { "type": "never" },
-  "preScenario": "scenarios/prologue_pre.json",
   "postScenario": "scenarios/prologue_post.json"
 }
