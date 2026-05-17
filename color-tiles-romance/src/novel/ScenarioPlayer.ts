@@ -60,6 +60,7 @@ const CHARA_COLORS: Record<string, string> = {
   hikari: '#4a90e2',
   sora: '#5ec76a',
   yuki: '#9c6bd8',
+  luna: '#c04060',
   default: '#ffd234'
 };
 
