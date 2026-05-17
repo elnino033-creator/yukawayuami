@@ -81,7 +81,7 @@ const CHARA_COLORS: Record<string, string> = {
 
 /** シナリオBGM論理名 → 実ファイル名マップ */
 const BGM_MAP: Record<string, string> = {
-  bgm_prologue: 'Threshold_of_the_Map.mp3',
+  bgm_prologue: 'op_色彩の塔へ.mp3',
   bgm_mysterious_wind: 'The_Unfolding_Hour.mp3',
   bgm_cold_wind: 'The_Frost_Bound_Spire.mp3',
   bgm_forest_ambient: "The_Keeper_s_Garden.mp3",
@@ -91,8 +91,8 @@ const BGM_MAP: Record<string, string> = {
   bgm_tension_high: 'Tooth_And_Lever.mp3',
   bgm_epic_climax: 'Vow_Of_The_Gilded_Hall.mp3',
   bgm_climax_tension: 'The_Dissolving_Spire.mp3',
-  bgm_vocal_ending: '虹色の祈り.mp3',
-  bgm_piano_gentle_morning: '夢の跡を照らす.mp3',
+  bgm_vocal_ending: 'ed_色彩の塔.mp3',
+  bgm_piano_gentle_morning: 'エンディング_穏やか_bgm_春の約束.mp3',
   bgm_piano_sad_loop: '君のいない色彩.mp3',
 };
 
