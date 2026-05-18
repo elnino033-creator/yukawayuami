@@ -19,13 +19,13 @@ const iceStage: StageDefinition = {
   id: 'test_ice',
   title: 'ice',
   chapter: 3,
-  boardWidth: 4,
+  boardWidth: 6,
   boardHeight: 1,
   timeLimitSec: 60,
   missPenaltySec: 0,
   hintCount: 3,
   tilesLayout: [
-    [{ color: 'blue', type: 'ice' }, null, null, { color: 'blue', type: 'ice' }]
+    [{ color: 'blue', type: 'ice' }, 'blue', null, 'blue', { color: 'blue', type: 'ice' }, null]
   ],
   blockReleaseRule: { type: 'never' }
 };
@@ -76,18 +76,18 @@ describe('PuzzleEngine', () => {
 
   it('氷タイルは1回目でヒビ、2回目で消える', () => {
     engine.loadStage(iceStage);
-    // 1回目：両方ヒビになるが消えない
-    let result = engine.onCellClick(1, 0);
+    // 1回目：隣接する通常タイルを消してヒビを入れる
+    let result = engine.onCellClick(2, 0);
     expect(result.type).toBe('success');
-    expect(result.type === 'success' && result.removed).toEqual([]);
+    expect(result.type === 'success' && result.removed.length).toBe(2);
     expect(engine.board[0][0]?.state).toBe('cracked');
-    expect(engine.board[0][3]?.state).toBe('cracked');
+    expect(engine.board[0][4]?.state).toBe('cracked');
 
-    // 2回目：消える
-    result = engine.onCellClick(1, 0);
+    // 2回目：ヒビ入り氷タイルを消す
+    result = engine.onCellClick(2, 0);
     expect(result.type).toBe('success');
     expect(engine.board[0][0]).toBeNull();
-    expect(engine.board[0][3]).toBeNull();
+    expect(engine.board[0][4]).toBeNull();
     expect(engine.isCleared()).toBe(true);
   });
 
