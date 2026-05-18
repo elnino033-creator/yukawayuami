@@ -129,14 +129,11 @@ export class PuzzleEngine {
   }
 
   /**
-   * 消去されたタイルに隣接する氷タイルを処理する。
-   * - normal 状態 → cracked に変える
-   * - cracked 状態 → 消去（再帰的に周囲の氷も処理）
+   * 消去されたタイルに隣接する normal 状態の氷タイルを cracked に変える。
+   * cracked になった氷タイルは次のターンから通常タイルと同様にマッチ可能になる。
    */
   private checkAdjacentIce(removedTiles: Tile[]): void {
     const toCrack: Tile[] = [];
-    const toMelt: Tile[] = [];
-
     const dirs = [[-1, 0], [1, 0], [0, -1], [0, 1]];
     for (const removed of removedTiles) {
       for (const [dx, dy] of dirs) {
@@ -144,30 +141,13 @@ export class PuzzleEngine {
         const ny = removed.y + dy;
         if (nx < 0 || ny < 0 || nx >= this.width || ny >= this.height) continue;
         const neighbor = this.board[ny][nx];
-        if (!neighbor || neighbor.type !== 'ice') continue;
-        if (neighbor.state === 'normal') {
-          if (!toCrack.includes(neighbor)) toCrack.push(neighbor);
-        } else if (neighbor.state === 'cracked') {
-          if (!toMelt.includes(neighbor)) toMelt.push(neighbor);
-        }
+        if (!neighbor || neighbor.type !== 'ice' || neighbor.state !== 'normal') continue;
+        if (!toCrack.includes(neighbor)) toCrack.push(neighbor);
       }
     }
-
-    // cracked になるタイルを toMelt から除外（同一タイルが両方に入らないよう）
-    const meltOnly = toMelt.filter(t => !toCrack.includes(t));
-
     if (toCrack.length > 0) {
       for (const t of toCrack) t.state = 'cracked';
       this.emit({ type: 'iceCracked', tiles: toCrack });
-    }
-
-    if (meltOnly.length > 0) {
-      for (const t of meltOnly) {
-        this.board[t.y][t.x] = null;
-      }
-      this.emit({ type: 'tilesRemoved', tiles: meltOnly });
-      // 溶けた氷の周囲もチェック（連鎖）
-      this.checkAdjacentIce(meltOnly);
     }
   }
 

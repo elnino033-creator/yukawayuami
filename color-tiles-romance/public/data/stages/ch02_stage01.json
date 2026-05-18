@@ -8,39 +8,39 @@
   "missPenaltySec": 0,
   "hintCount": 3,
   "tilesLayout": [
-    [null, "red",                        null, null, null, "red",                        null],
-    [null, {"color":"red","type":"ice"},  null, null, null, {"color":"red","type":"ice"},  null],
-    [null, "blue",                        null, null, null, "blue",                        null],
-    [null, {"color":"blue","type":"ice"}, null, null, null, {"color":"blue","type":"ice"}, null],
-    [null, "red",                         null, null, null, "red",                         null]
+    [null, "red",                       null, null, null, "red",                       null],
+    [null, {"color":"red","type":"ice"}, null, null, null, {"color":"red","type":"ice"}, null],
+    [null, "blue",                       null, null, null, "blue",                       null],
+    [null, {"color":"blue","type":"ice"},null, null, null, {"color":"blue","type":"ice"},null],
+    [null, "red",                        null, null, null, "red",                        null]
   ],
   "preScenario": "ch02_s01_pre.json",
   "tutorialSteps": [
     {
       "type": "explain",
-      "text": "氷タイル（❄）が登場！\n氷タイルは直接消せません。\n隣に並んでいる同色タイルを消すと、氷にヒビが入ります。\nヒビが入った状態でもう一度隣を消すと、氷が溶けて消えます。",
+      "text": "氷タイル（❄）が登場！\n氷タイルは最初は直接消せません。\n隣の同色タイルを消すと、ヒビが入ります。\nヒビが入ったら、通常タイルと同じように消せます！",
       "highlightCells": [{"x":1,"y":1},{"x":5,"y":1}]
     },
     {
       "type": "force_match",
-      "text": "赤タイルのペアを消してみよう！\n列3（中央）の空マスをクリック！",
+      "text": "まず赤タイルのペアを消してみよう！\n列3（中央）の空マスをクリック！",
       "highlightCells": [{"x":1,"y":0},{"x":5,"y":0}],
       "allowedCells": [{"x":2,"y":0},{"x":3,"y":0},{"x":4,"y":0}]
     },
     {
       "type": "explain",
-      "text": "氷にヒビが入りました（❄*）！\n隣の赤タイルが消えたので、氷がダメージを受けました。\n今度は青タイルのペアを消してみましょう。",
+      "text": "氷にヒビが入りました（❄*）！\nヒビ入り氷タイルは通常のタイルと同じように消せます。\n氷タイルの間の空マスをクリックしてみよう！",
       "highlightCells": [{"x":1,"y":1},{"x":5,"y":1}]
     },
     {
       "type": "force_match",
-      "text": "青タイルのペアを消そう！\n列3の空マスをクリック！",
-      "highlightCells": [{"x":1,"y":2},{"x":5,"y":2}],
-      "allowedCells": [{"x":2,"y":2},{"x":3,"y":2},{"x":4,"y":2}]
+      "text": "ヒビ入り氷タイルを消そう！\n列3（中央）の空マスをクリック！",
+      "highlightCells": [{"x":1,"y":1},{"x":5,"y":1}],
+      "allowedCells": [{"x":2,"y":1},{"x":3,"y":1},{"x":4,"y":1}]
     },
     {
       "type": "praise",
-      "text": "赤い氷が溶けて消えました！\nヒビ入り氷タイルの隣のタイルを消すと、氷が溶けます。\n残りのタイルも消してクリアしましょう！",
+      "text": "消えた！これが氷タイルです！\n残りのタイルも全部消してクリアを目指しましょう！",
       "autoAdvanceMs": 2500
     }
   ]
