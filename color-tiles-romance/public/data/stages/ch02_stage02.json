@@ -7,14 +7,6 @@
   "timeLimitSec": 110,
   "missPenaltySec": 2,
   "hintCount": 2,
-  "tilesLayout": [
-    [{"color":"red","type":"ice"},    {"color":"blue","type":"ice"},   "green",  null, "green",  {"color":"blue","type":"ice"},   {"color":"red","type":"ice"}   ],
-    [{"color":"blue","type":"ice"},   {"color":"purple","type":"ice"}, "red",    null, "red",    {"color":"purple","type":"ice"}, {"color":"blue","type":"ice"}  ],
-    [{"color":"green","type":"ice"},  "purple", "yellow", null, "yellow", "purple", {"color":"green","type":"ice"} ],
-    ["yellow", {"color":"green","type":"ice"},  "blue",   null, "blue",   {"color":"green","type":"ice"},  "yellow"],
-    [{"color":"purple","type":"ice"}, "yellow", "red",    null, "red",    "yellow", {"color":"purple","type":"ice"}],
-    [{"color":"red","type":"ice"},    {"color":"blue","type":"ice"},   "green",  null, "green",  {"color":"blue","type":"ice"},   {"color":"red","type":"ice"}   ],
-    [{"color":"blue","type":"ice"},   {"color":"purple","type":"ice"}, "yellow", null, "yellow", {"color":"purple","type":"ice"}, {"color":"blue","type":"ice"}  ]
-  ],
+  "generationParams": { "seed": 2002, "targetPairs": 14, "iceChance": 0.25 },
   "preScenario": "ch02_s02_pre.json"
 }

@@ -55,6 +55,16 @@ export type BlockReleaseRule =
   | { type: 'onLastTile' }                  // 最後の色付きタイル消去と同時
   | { type: 'never' };                      // 消滅しない（演出のみ）
 
+/** 自動生成パラメータ（StageGeneratorに渡す） */
+export interface StageGenerationParams {
+  seed: number;
+  targetPairs: number;
+  colors?: string[];
+  iceChance?: number;
+  timeTileChance?: number;
+  blockCount?: number;
+}
+
 /** チュートリアルステップ */
 export interface TutorialStep {
   /** ステップ種別: 説明表示 / 強制操作 / 称賛 */
@@ -81,8 +91,10 @@ export interface StageDefinition {
   missPenaltySec: number;
   /** ヒント使用可能回数 */
   hintCount: number;
-  /** 2次元タイルレイアウト [y][x] */
-  tilesLayout: LayoutCell[][];
+  /** 2次元タイルレイアウト [y][x]。generationParams がある場合は省略可 */
+  tilesLayout?: LayoutCell[][];
+  /** 自動生成パラメータ。tilesLayout の代わりに指定する */
+  generationParams?: StageGenerationParams;
   /** 障害ブロック解除ルール */
   blockReleaseRule?: BlockReleaseRule;
   /** パズル前シナリオのJSONパス（public/data/scenarios/以下） */

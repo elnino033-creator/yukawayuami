@@ -1,20 +1,12 @@
 {
   "id": "ch02_stage03",
-  "title": "第2章 ステージ3：時の砂時計",
+  "title": "第2章 ステージ3：氷の迷宮",
   "chapter": 2,
   "boardWidth": 7,
   "boardHeight": 7,
   "timeLimitSec": 105,
   "missPenaltySec": 2,
   "hintCount": 1,
-  "tilesLayout": [
-    [{"color":"red","type":"ice"},    {"color":"blue","type":"ice"},   {"color":"green","type":"ice"},  null, {"color":"green","type":"ice"},  {"color":"blue","type":"ice"},   {"color":"red","type":"ice"}   ],
-    [{"color":"blue","type":"ice"},   {"color":"purple","type":"ice"}, {"color":"red","type":"ice"},    null, {"color":"red","type":"ice"},    {"color":"purple","type":"ice"}, {"color":"blue","type":"ice"}  ],
-    [{"color":"green","type":"ice"},  {"color":"red","type":"ice"},    {"color":"yellow","type":"ice"}, null, {"color":"yellow","type":"ice"}, {"color":"red","type":"ice"},    {"color":"green","type":"ice"} ],
-    [{"color":"yellow","type":"ice"}, {"color":"green","type":"ice"},  {"color":"blue","type":"ice"},   null, {"color":"blue","type":"ice"},   {"color":"green","type":"ice"},  {"color":"yellow","type":"ice"}],
-    [{"color":"purple","type":"ice"}, {"color":"yellow","type":"ice"}, {"color":"red","type":"ice"},    null, {"color":"red","type":"ice"},    {"color":"yellow","type":"ice"}, {"color":"purple","type":"ice"}],
-    [{"color":"red","type":"ice"},    {"color":"blue","type":"ice"},   {"color":"green","type":"ice"},  null, {"color":"green","type":"ice"},  {"color":"blue","type":"ice"},   {"color":"red","type":"ice"}   ],
-    [{"color":"blue","type":"ice"},   {"color":"purple","type":"ice"}, {"color":"yellow","type":"ice"}, null, {"color":"yellow","type":"ice"}, {"color":"purple","type":"ice"}, {"color":"blue","type":"ice"}  ]
-  ],
+  "generationParams": { "seed": 2003, "targetPairs": 16, "iceChance": 0.40 },
   "preScenario": "ch02_s03_pre.json"
 }

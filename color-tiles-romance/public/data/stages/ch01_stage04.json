@@ -1,19 +1,12 @@
 {
   "id": "ch01_stage04",
-  "title": "第1章 ステージ4：紅蓮の誓い",
+  "title": "第1章 ステージ4：迷いの森",
   "chapter": 1,
   "boardWidth": 6,
   "boardHeight": 6,
   "timeLimitSec": 100,
-  "missPenaltySec": 2,
+  "missPenaltySec": 1,
   "hintCount": 2,
-  "tilesLayout": [
-    ["red",    "blue",  "green",  "green",  "blue",  "red"   ],
-    ["yellow", null,    "purple", "purple", null,    "yellow"],
-    [null,     null,    null,     null,     null,    null    ],
-    ["yellow", null,    "purple", "purple", null,    "yellow"],
-    ["red",    "blue",  "green",  "green",  "blue",  "red"   ],
-    ["purple", "yellow",null,     null,     "yellow","purple"]
-  ],
+  "generationParams": { "seed": 1004, "targetPairs": 12 },
   "preScenario": "ch01_s04_pre.json"
 }

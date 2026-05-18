@@ -7,13 +7,6 @@
   "timeLimitSec": 120,
   "missPenaltySec": 1,
   "hintCount": 3,
-  "tilesLayout": [
-    ["red",    "blue",   null, null, "blue",   "red"   ],
-    ["green",  "yellow", null, null, "yellow", "green" ],
-    ["purple", "red",    null, null, "red",    "purple"],
-    ["blue",   "green",  null, null, "green",  "blue"  ],
-    ["yellow", "purple", null, null, "purple", "yellow"],
-    ["red",    "blue",   null, null, "blue",   "red"   ]
-  ],
+  "generationParams": { "seed": 1001, "targetPairs": 10 },
   "preScenario": "ch01_s01_pre.json"
 }

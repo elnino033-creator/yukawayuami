@@ -64,7 +64,7 @@ export class PuzzleEngine {
    * ステージをロードして開始する。
    */
   loadStage(stage: StageDefinition): void {
-    this.board = this.layoutToBoard(stage.tilesLayout);
+    this.board = this.layoutToBoard(stage.tilesLayout ?? []);
     this.width = stage.boardWidth;
     this.height = stage.boardHeight;
     this.checker = new LineChecker(this.board);

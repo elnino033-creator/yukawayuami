@@ -266,6 +266,19 @@ export class SceneManager {
     const { PuzzleScene } = await import('@/scenes/PuzzleScene');
     const { StageValidator } = await import('@/core/StageValidator');
 
+    // tilesLayout が無く generationParams がある場合は自動生成する
+    if (!stageDef.tilesLayout && stageDef.generationParams) {
+      const { StageGenerator } = await import('@/core/StageGenerator');
+      stageDef = {
+        ...stageDef,
+        tilesLayout: StageGenerator.generate(
+          stageDef.boardWidth,
+          stageDef.boardHeight,
+          stageDef.generationParams
+        )
+      };
+    }
+
     // コンテナをクリアして再構築
     this.appContainer.innerHTML = '';
 
@@ -282,7 +295,7 @@ export class SceneManager {
 
     // 解検証（24枚以下のみ）
     let count = 0;
-    for (const row of stageDef.tilesLayout) {
+    for (const row of stageDef.tilesLayout ?? []) {
       for (const cell of row) {
         if (cell !== null) count++;
       }

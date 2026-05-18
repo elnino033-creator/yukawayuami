@@ -7,16 +7,7 @@
   "timeLimitSec": 105,
   "missPenaltySec": 2,
   "hintCount": 2,
-  "tilesLayout": [
-    [{"color":"red","type":"ice"},    {"color":"blue","type":"ice"},   "green",  null, null, "green",  {"color":"blue","type":"ice"},   {"color":"red","type":"ice"}   ],
-    [{"color":"yellow","type":"ice"}, "purple", null, {"color":null,"type":"block"}, {"color":null,"type":"block"}, null, "purple", {"color":"yellow","type":"ice"}],
-    [{"color":"blue","type":"ice"},   "green",  {"color":"yellow","type":"ice"}, null, null, {"color":"yellow","type":"ice"}, "green", {"color":"blue","type":"ice"}  ],
-    [{"color":"purple","type":"ice"}, "red",    null, {"color":null,"type":"block"}, {"color":null,"type":"block"}, null, "red",    {"color":"purple","type":"ice"} ],
-    ["green",  {"color":"yellow","type":"ice"}, "blue",   null, null, "blue",   {"color":"yellow","type":"ice"}, "green"  ],
-    [{"color":"red","type":"ice"},    "purple", null,     null, null, null,     "purple", {"color":"red","type":"ice"}    ],
-    ["yellow", {"color":"blue","type":"ice"},   "green",  null, null, "green",  {"color":"blue","type":"ice"},   "yellow" ],
-    [{"color":"purple","type":"ice"}, "red",    "yellow", null, null, "yellow", "red",    {"color":"purple","type":"ice"} ]
-  ],
-  "blockReleaseRule": {"type": "afterPairs", "count": 5},
+  "generationParams": { "seed": 3002, "targetPairs": 16, "iceChance": 0.20, "blockCount": 4 },
+  "blockReleaseRule": { "type": "afterPairs", "count": 4 },
   "preScenario": "ch03_s02_pre.json"
 }

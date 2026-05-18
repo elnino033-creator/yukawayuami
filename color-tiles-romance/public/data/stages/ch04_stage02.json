@@ -7,15 +7,6 @@
   "timeLimitSec": 105,
   "missPenaltySec": 3,
   "hintCount": 2,
-  "tilesLayout": [
-    [{"color":"red","type":"linked","linkGroupId":"lg1"}, {"color":"blue","type":"linked","linkGroupId":"lg2"}, {"color":"green","type":"ice"},  null, null, {"color":"green","type":"ice"},  {"color":"blue","type":"linked","linkGroupId":"lg2"}, {"color":"red","type":"linked","linkGroupId":"lg1"}],
-    [{"color":"red","type":"linked","linkGroupId":"lg1"}, {"color":"blue","type":"linked","linkGroupId":"lg2"}, {"color":"purple","type":"ice"}, null, null, {"color":"purple","type":"ice"}, {"color":"blue","type":"linked","linkGroupId":"lg2"}, {"color":"red","type":"linked","linkGroupId":"lg1"}],
-    [{"color":"yellow","type":"ice"}, {"color":"purple","type":"ice"}, "blue",   null, null, "blue",   {"color":"purple","type":"ice"}, {"color":"yellow","type":"ice"}],
-    ["green",  {"color":"yellow","type":"ice"}, "red",    null, null, "red",    {"color":"yellow","type":"ice"}, "green" ],
-    [{"color":"purple","type":"ice"}, "green",  "yellow", null, null, "yellow", "green",  {"color":"purple","type":"ice"}],
-    ["blue",   "red",    {"color":"green","type":"ice"},  null, null, {"color":"green","type":"ice"},  "red",    "blue"  ],
-    ["red",    {"color":"purple","type":"ice"}, "yellow", null, null, "yellow", {"color":"purple","type":"ice"}, "red"   ],
-    [{"color":"yellow","type":"ice"}, "blue",   "purple", null, null, "purple", "blue",   {"color":"yellow","type":"ice"}]
-  ],
+  "generationParams": { "seed": 4002, "targetPairs": 16, "iceChance": 0.25 },
   "preScenario": "ch04_s02_pre.json"
 }
