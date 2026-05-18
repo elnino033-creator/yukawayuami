@@ -121,8 +121,8 @@ export type ClickResult =
 export interface MatchResult {
   a: Tile;
   b: Tile;
-  /** 結ぶ直線の方向 */
-  direction: 'horizontal' | 'vertical';
+  /** 結ぶ線の種類: 直線(H/V) または L字コーナー */
+  direction: 'horizontal' | 'vertical' | 'corner';
 }
 
 /** ヒント結果 */

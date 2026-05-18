@@ -276,6 +276,8 @@ export class PuzzleScene {
           this.removedEffects.push({ tiles: e.tiles, startedAt: Date.now() });
           if (e.tiles.length >= 4) {
             this.spawnFloatText('CROSS!', '#ff9844');
+          } else if (e.tiles.length === 3) {
+            this.spawnFloatText('T字！', '#ff9844');
           }
           if (e.bonusSec && e.bonusSec > 0) {
             this.spawnFloatText(`+${e.bonusSec}s`, '#5ec76a');
@@ -416,6 +418,10 @@ export class PuzzleScene {
     if (matches.length === 0) return;
 
     // 各マッチについて接続線と両端強調を描画
+    const clickPx = this.cellToPixel(cx, cy);
+    const clickCx = clickPx.x + TILE_SIZE / 2;
+    const clickCy = clickPx.y + TILE_SIZE / 2;
+
     for (const match of matches) {
       const pa = this.cellToPixel(match.a.x, match.a.y);
       const pb = this.cellToPixel(match.b.x, match.b.y);
@@ -428,8 +434,18 @@ export class PuzzleScene {
       this.ctx.lineWidth = isCross ? 5 : 4;
       this.ctx.globalAlpha = 0.7;
       this.ctx.beginPath();
-      this.ctx.moveTo(ax, ay);
-      this.ctx.lineTo(bx, by_);
+
+      if (match.direction === 'corner') {
+        // L字: A → クリックセル → B の2線分
+        this.ctx.moveTo(ax, ay);
+        this.ctx.lineTo(clickCx, clickCy);
+        this.ctx.lineTo(bx, by_);
+      } else {
+        // 直線
+        this.ctx.moveTo(ax, ay);
+        this.ctx.lineTo(bx, by_);
+      }
+
       this.ctx.stroke();
       this.ctx.globalAlpha = 1;
 

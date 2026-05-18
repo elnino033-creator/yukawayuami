@@ -37,44 +37,56 @@ export class LineChecker {
 
   /**
    * 空マス (cx, cy) をクリックされた時、消えるペアをすべて返す。
-   * 水平・垂直の両方が成立する場合は2件（交点同時消し）。
+   * - 水平直線マッチ (左+右)
+   * - 垂直直線マッチ (上+下)
+   * - L字コーナーマッチ (上+左 / 上+右 / 下+左 / 下+右)
+   * 交点では最大2件（4タイル同時消し）が返る。
    */
   checkClickAll(cx: number, cy: number): MatchResult[] {
     if (!this.isInBounds(cx, cy)) return [];
     if (this.board[cy][cx] !== null) return [];
 
+    const L = this.scanLeft(cx, cy);
+    const R = this.scanRight(cx, cy);
+    const U = this.scanUp(cx, cy);
+    const D = this.scanDown(cx, cy);
+
     const results: MatchResult[] = [];
+    const addedKeys = new Set<string>();
 
-    // 水平方向
-    const left = this.scanLeft(cx, cy);
-    const right = this.scanRight(cx, cy);
-    if (this.canPair(left, right)) {
-      results.push({ a: left!, b: right!, direction: 'horizontal' });
-    }
+    const tryAdd = (a: Tile | null, b: Tile | null, dir: MatchResult['direction']) => {
+      if (!this.canPair(a, b)) return;
+      const key = this.pairKey(a!, b!);
+      if (addedKeys.has(key)) return;
+      addedKeys.add(key);
+      results.push({ a: a!, b: b!, direction: dir });
+    };
 
-    // 垂直方向
-    const up = this.scanUp(cx, cy);
-    const down = this.scanDown(cx, cy);
-    if (this.canPair(up, down)) {
-      results.push({ a: up!, b: down!, direction: 'vertical' });
-    }
+    // 直線マッチ
+    tryAdd(L, R, 'horizontal');
+    tryAdd(U, D, 'vertical');
+
+    // L字マッチ（クリックセルをコーナーとして2方向のタイルをペアリング）
+    tryAdd(U, L, 'corner');
+    tryAdd(U, R, 'corner');
+    tryAdd(D, L, 'corner');
+    tryAdd(D, R, 'corner');
 
     return results;
   }
 
   /**
    * 残された全タイルから消去可能なペアを1組探して返す。
-   * ヒント表示・詰み判定の両方で使用する。
+   * ヒント表示・詰み判定の両方で使用する。L字マッチも対象。
    */
   findAnyValidPair(): HintResult | null {
-    // 空マスを総当たりで checkClick する。
-    // 盤面が小さい（最大12×8）ので O(W*H*(W+H)) でも十分速い。
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
         if (this.board[y][x] !== null) continue;
-        const match = this.checkClick(x, y);
-        if (match) {
-          return { a: match.a, b: match.b, clickPoint: { x, y } };
+        const matches = this.checkClickAll(x, y);
+        if (matches.length > 0) {
+          const m = matches[0];
+          return { a: m.a, b: m.b, clickPoint: { x, y } };
         }
       }
     }
@@ -83,7 +95,7 @@ export class LineChecker {
 
   /**
    * 盤面のすべての消去可能ペア（重複なし）を返す。
-   * StageValidator から利用される。
+   * StageValidator から利用される。L字マッチも対象。
    */
   findAllValidPairs(): MatchResult[] {
     const seen = new Set<string>();
@@ -92,14 +104,12 @@ export class LineChecker {
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
         if (this.board[y][x] !== null) continue;
-        const match = this.checkClick(x, y);
-        if (!match) continue;
-
-        // 同じペアを2回数えないために、両端のタイル座標で識別
-        const key = this.pairKey(match.a, match.b);
-        if (seen.has(key)) continue;
-        seen.add(key);
-        results.push(match);
+        for (const match of this.checkClickAll(x, y)) {
+          const key = this.pairKey(match.a, match.b);
+          if (seen.has(key)) continue;
+          seen.add(key);
+          results.push(match);
+        }
       }
     }
 
