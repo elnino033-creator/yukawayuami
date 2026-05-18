@@ -77,35 +77,81 @@ export class StageValidator {
     const b = next[pair.b.y][pair.b.x];
     if (!a || !b) return next;
 
-    // 氷タイル処理
+    // 氷タイル処理（cracked 状態のみマッチ可能。normal 状態は LineChecker が除外済み）
     if (a.type === 'ice' || b.type === 'ice') {
       const aReady = a.type !== 'ice' || a.state === 'cracked';
       const bReady = b.type !== 'ice' || b.state === 'cracked';
       if (aReady && bReady) {
         next[a.y][a.x] = null;
         next[b.y][b.x] = null;
-      } else {
-        if (a.type === 'ice' && a.state === 'normal') next[a.y][a.x] = { ...a, state: 'cracked' };
-        if (b.type === 'ice' && b.state === 'normal') next[b.y][b.x] = { ...b, state: 'cracked' };
+        this.applyAdjacentIce(next, [a, b]);
       }
       return next;
     }
 
     // 連結タイル処理：同じ linkGroupId のタイルをすべて消去
     if (a.type === 'linked' && b.type === 'linked' && a.linkGroupId === b.linkGroupId) {
+      const removed: Tile[] = [];
       for (let y = 0; y < next.length; y++) {
         for (let x = 0; x < next[y].length; x++) {
           const t = next[y][x];
-          if (t && t.linkGroupId === a.linkGroupId) next[y][x] = null;
+          if (t && t.linkGroupId === a.linkGroupId) {
+            removed.push(t);
+            next[y][x] = null;
+          }
         }
       }
+      this.applyAdjacentIce(next, removed);
       return next;
     }
 
     // 通常消去
     next[a.y][a.x] = null;
     next[b.y][b.x] = null;
+    this.applyAdjacentIce(next, [a, b]);
     return next;
+  }
+
+  /**
+   * 消去されたタイルに隣接する normal 状態の氷タイルを cracked に変える。
+   * cracked 状態の氷タイルは消去して連鎖的に処理する。
+   */
+  private static applyAdjacentIce(
+    board: (Tile | null)[][],
+    removedTiles: Tile[]
+  ): void {
+    const height = board.length;
+    const width = board[0]?.length ?? 0;
+    const dirs: [number, number][] = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    const toCrack: Tile[] = [];
+    const toMelt: Tile[] = [];
+
+    for (const removed of removedTiles) {
+      for (const [dx, dy] of dirs) {
+        const nx = removed.x + dx;
+        const ny = removed.y + dy;
+        if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
+        const neighbor = board[ny][nx];
+        if (!neighbor || neighbor.type !== 'ice') continue;
+        if (neighbor.state === 'normal' && !toCrack.some((t) => t.x === nx && t.y === ny)) {
+          toCrack.push(neighbor);
+        } else if (neighbor.state === 'cracked' && !toMelt.some((t) => t.x === nx && t.y === ny)) {
+          toMelt.push(neighbor);
+        }
+      }
+    }
+
+    for (const t of toCrack) {
+      board[t.y][t.x] = { ...board[t.y][t.x]!, state: 'cracked' };
+    }
+
+    for (const t of toMelt) {
+      board[t.y][t.x] = null;
+    }
+
+    if (toMelt.length > 0) {
+      this.applyAdjacentIce(board, toMelt);
+    }
   }
 
   /**

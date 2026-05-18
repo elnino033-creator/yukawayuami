@@ -7,14 +7,16 @@ import type { StageDefinition } from '../src/types';
 import { StageValidator } from '../src/core/StageValidator';
 
 // ---------- Chapter 2: 氷雪の洗礼 ----------
+// 氷タイルは隣接する通常タイルが消えるとヒビが入り、cracked 状態になると直接マッチ可能になる。
+// 孤立した氷タイル（隣に通常タイルなし）は通常タイルに置き換えてある。
 
 const ch02Stage01: StageDefinition = {
   id: 'ch02_stage01', title: '', chapter: 2,
   boardWidth: 8, boardHeight: 6, timeLimitSec: 130, missPenaltySec: 1, hintCount: 3,
   tilesLayout: [
-    [{ color: 'red', type: 'ice' }, null, null, { color: 'red', type: 'ice' }, null, 'blue', null, 'blue'],
+    ['red', null, null, 'red', null, 'blue', null, 'blue'],
     [null, null, null, null, null, null, null, null],
-    ['green', null, null, 'green', null, { color: 'yellow', type: 'ice' }, null, { color: 'yellow', type: 'ice' }],
+    ['green', null, null, 'green', null, 'yellow', null, 'yellow'],
     [null, null, null, null, null, null, null, null],
     [{ color: 'red', type: 'ice' }, null, { color: 'red', type: 'ice' }, null, 'blue', null, 'blue', null],
     ['green', null, 'green', null, { color: 'yellow', type: 'ice' }, null, { color: 'yellow', type: 'ice' }, null]
@@ -25,9 +27,9 @@ const ch02Stage02: StageDefinition = {
   id: 'ch02_stage02', title: '', chapter: 2,
   boardWidth: 8, boardHeight: 6, timeLimitSec: 120, missPenaltySec: 1, hintCount: 3,
   tilesLayout: [
-    [{ color: 'blue', type: 'ice' }, null, null, { color: 'blue', type: 'ice' }, null, { color: 'red', type: 'ice' }, null, { color: 'red', type: 'ice' }],
+    ['blue', null, null, 'blue', null, 'red', null, 'red'],
     [null, null, null, null, null, null, null, null],
-    [{ color: 'green', type: 'ice' }, null, null, { color: 'green', type: 'ice' }, null, 'yellow', null, 'yellow'],
+    ['green', null, null, 'green', null, 'yellow', null, 'yellow'],
     [null, null, null, null, null, null, null, null],
     [{ color: 'blue', type: 'ice' }, null, { color: 'blue', type: 'ice' }, null, { color: 'red', type: 'ice' }, null, { color: 'red', type: 'ice' }, null],
     ['green', null, 'green', null, 'yellow', null, 'yellow', null]
@@ -38,12 +40,12 @@ const ch02Stage03: StageDefinition = {
   id: 'ch02_stage03', title: '', chapter: 2,
   boardWidth: 8, boardHeight: 6, timeLimitSec: 90, missPenaltySec: 1, hintCount: 2,
   tilesLayout: [
-    [{ color: 'red', type: 'ice' }, null, null, { color: 'red', type: 'ice' }, null, { color: 'blue', type: 'time' }, null, { color: 'blue', type: 'time' }],
+    ['red', null, null, 'red', null, { color: 'blue', type: 'time' }, null, { color: 'blue', type: 'time' }],
     [null, null, null, null, null, null, null, null],
-    [{ color: 'green', type: 'ice' }, null, null, { color: 'green', type: 'ice' }, null, { color: 'yellow', type: 'time' }, null, { color: 'yellow', type: 'time' }],
+    ['green', null, null, 'green', null, { color: 'yellow', type: 'time' }, null, { color: 'yellow', type: 'time' }],
     [null, null, null, null, null, null, null, null],
-    [{ color: 'red', type: 'ice' }, null, { color: 'red', type: 'ice' }, null, { color: 'blue', type: 'time' }, null, { color: 'blue', type: 'time' }, null],
-    [{ color: 'green', type: 'ice' }, null, { color: 'green', type: 'ice' }, null, { color: 'yellow', type: 'time' }, null, { color: 'yellow', type: 'time' }, null]
+    ['red', null, 'red', null, { color: 'blue', type: 'time' }, null, { color: 'blue', type: 'time' }, null],
+    ['green', null, 'green', null, { color: 'yellow', type: 'time' }, null, { color: 'yellow', type: 'time' }, null]
   ]
 };
 
@@ -53,9 +55,9 @@ const ch03Stage01: StageDefinition = {
   id: 'ch03_stage01', title: '', chapter: 3,
   boardWidth: 8, boardHeight: 6, timeLimitSec: 140, missPenaltySec: 2, hintCount: 2,
   tilesLayout: [
-    [{ color: 'red', type: 'ice' }, null, null, { color: 'red', type: 'ice' }, null, 'blue', null, 'blue'],
+    ['red', null, null, 'red', null, 'blue', null, 'blue'],
     [null, null, { color: null, type: 'block' }, null, null, { color: null, type: 'block' }, null, null],
-    ['green', null, null, 'green', null, { color: 'yellow', type: 'ice' }, null, { color: 'yellow', type: 'ice' }],
+    ['green', null, null, 'green', null, 'yellow', null, 'yellow'],
     [null, null, { color: null, type: 'block' }, null, null, { color: null, type: 'block' }, null, null],
     [{ color: 'red', type: 'ice' }, null, { color: 'red', type: 'ice' }, null, 'blue', null, 'blue', null],
     ['green', null, 'green', null, 'yellow', null, 'yellow', null]
@@ -67,9 +69,9 @@ const ch03Stage02: StageDefinition = {
   id: 'ch03_stage02', title: '', chapter: 3,
   boardWidth: 8, boardHeight: 6, timeLimitSec: 130, missPenaltySec: 2, hintCount: 2,
   tilesLayout: [
-    [{ color: 'blue', type: 'ice' }, null, null, { color: 'blue', type: 'ice' }, { color: null, type: 'block' }, { color: 'red', type: 'ice' }, null, { color: 'red', type: 'ice' }],
+    ['blue', null, null, 'blue', { color: null, type: 'block' }, 'red', null, 'red'],
     [null, null, null, null, null, null, null, null],
-    [{ color: 'green', type: 'ice' }, null, null, { color: 'green', type: 'ice' }, { color: null, type: 'block' }, { color: 'yellow', type: 'ice' }, null, { color: 'yellow', type: 'ice' }],
+    ['green', null, null, 'green', { color: null, type: 'block' }, 'yellow', null, 'yellow'],
     [null, null, null, null, null, null, null, null],
     [{ color: 'blue', type: 'ice' }, null, { color: 'blue', type: 'ice' }, null, { color: 'red', type: 'time' }, null, { color: 'red', type: 'time' }, null],
     ['green', null, 'green', null, { color: 'yellow', type: 'time' }, null, { color: 'yellow', type: 'time' }, null]
@@ -81,9 +83,9 @@ const ch03Stage03: StageDefinition = {
   id: 'ch03_stage03', title: '', chapter: 3,
   boardWidth: 8, boardHeight: 6, timeLimitSec: 110, missPenaltySec: 2, hintCount: 1,
   tilesLayout: [
-    [{ color: 'blue', type: 'ice' }, null, null, { color: 'blue', type: 'ice' }, null, { color: 'red', type: 'ice' }, null, { color: 'red', type: 'ice' }],
+    ['blue', null, null, 'blue', null, 'red', null, 'red'],
     [null, { color: null, type: 'block' }, null, null, null, null, { color: null, type: 'block' }, null],
-    [{ color: 'green', type: 'ice' }, null, null, { color: 'green', type: 'ice' }, null, { color: 'yellow', type: 'ice' }, null, { color: 'yellow', type: 'ice' }],
+    ['green', null, null, 'green', null, 'yellow', null, 'yellow'],
     [null, { color: null, type: 'block' }, null, null, null, null, { color: null, type: 'block' }, null],
     [{ color: 'blue', type: 'time' }, null, { color: 'blue', type: 'time' }, null, { color: 'red', type: 'time' }, null, { color: 'red', type: 'time' }, null],
     [{ color: 'green', type: 'time' }, null, { color: 'green', type: 'time' }, null, { color: 'yellow', type: 'time' }, null, { color: 'yellow', type: 'time' }, null]
@@ -110,11 +112,11 @@ const ch04Stage02: StageDefinition = {
   id: 'ch04_stage02', title: '', chapter: 4,
   boardWidth: 8, boardHeight: 6, timeLimitSec: 130, missPenaltySec: 1, hintCount: 2,
   tilesLayout: [
-    [{ color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, null, { color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, { color: 'blue', type: 'ice' }, null, { color: 'blue', type: 'ice' }],
+    [{ color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, null, { color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, 'blue', null, 'blue'],
     [null, null, null, null, null, null, null, null],
-    [{ color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, null, { color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, { color: 'blue', type: 'ice' }, null, { color: 'blue', type: 'ice' }],
+    [{ color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, null, { color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, 'blue', null, 'blue'],
     [null, null, null, null, null, null, null, null],
-    [{ color: 'green', type: 'linked', linkGroupId: 'lg2' }, null, null, { color: 'green', type: 'linked', linkGroupId: 'lg2' }, null, { color: 'yellow', type: 'ice' }, null, { color: 'yellow', type: 'ice' }],
+    [{ color: 'green', type: 'linked', linkGroupId: 'lg2' }, null, null, { color: 'green', type: 'linked', linkGroupId: 'lg2' }, { color: 'yellow', type: 'ice' }, null, { color: 'yellow', type: 'ice' }, null],
     [{ color: 'green', type: 'linked', linkGroupId: 'lg2' }, null, { color: 'green', type: 'linked', linkGroupId: 'lg2' }, null, 'yellow', null, 'yellow', null]
   ]
 };
@@ -138,9 +140,9 @@ const ch05Stage01: StageDefinition = {
   id: 'ch05_stage01', title: '', chapter: 5,
   boardWidth: 8, boardHeight: 6, timeLimitSec: 150, missPenaltySec: 2, hintCount: 2,
   tilesLayout: [
-    [{ color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, null, { color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, { color: 'blue', type: 'ice' }, null, { color: 'blue', type: 'ice' }],
+    [{ color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, null, { color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, 'blue', null, 'blue'],
     [null, null, { color: null, type: 'block' }, null, null, null, { color: null, type: 'block' }, null],
-    [{ color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, null, { color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, { color: 'blue', type: 'ice' }, null, { color: 'blue', type: 'ice' }],
+    [{ color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, null, { color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, 'blue', null, 'blue'],
     [null, null, { color: null, type: 'block' }, null, null, null, { color: null, type: 'block' }, null],
     [{ color: 'green', type: 'time' }, null, { color: 'green', type: 'time' }, null, { color: 'yellow', type: 'ice' }, null, { color: 'yellow', type: 'ice' }, null],
     [{ color: 'green', type: 'time' }, null, { color: 'green', type: 'time' }, null, { color: 'yellow', type: 'time' }, null, { color: 'yellow', type: 'time' }, null]
@@ -152,12 +154,12 @@ const ch05Stage02: StageDefinition = {
   id: 'ch05_stage02', title: '', chapter: 5,
   boardWidth: 8, boardHeight: 6, timeLimitSec: 140, missPenaltySec: 2, hintCount: 1,
   tilesLayout: [
-    [{ color: 'red', type: 'ice' }, null, null, { color: 'red', type: 'ice' }, { color: null, type: 'block' }, { color: 'blue', type: 'linked', linkGroupId: 'lg1' }, null, { color: 'blue', type: 'linked', linkGroupId: 'lg1' }],
+    ['red', null, null, 'red', { color: null, type: 'block' }, { color: 'blue', type: 'linked', linkGroupId: 'lg1' }, null, { color: 'blue', type: 'linked', linkGroupId: 'lg1' }],
     [null, null, null, null, null, null, null, null],
     [{ color: 'green', type: 'linked', linkGroupId: 'lg2' }, null, null, { color: 'green', type: 'linked', linkGroupId: 'lg2' }, { color: null, type: 'block' }, { color: 'blue', type: 'linked', linkGroupId: 'lg1' }, null, { color: 'blue', type: 'linked', linkGroupId: 'lg1' }],
     [null, null, null, null, null, null, null, null],
     [{ color: 'green', type: 'linked', linkGroupId: 'lg2' }, null, null, { color: 'green', type: 'linked', linkGroupId: 'lg2' }, null, { color: 'yellow', type: 'time' }, null, { color: 'yellow', type: 'time' }],
-    [{ color: 'red', type: 'ice' }, null, { color: 'red', type: 'ice' }, null, { color: 'yellow', type: 'time' }, null, { color: 'yellow', type: 'time' }, null]
+    [{ color: 'red', type: 'ice' }, null, 'red', null, { color: 'yellow', type: 'time' }, null, { color: 'yellow', type: 'time' }, null]
   ],
   blockReleaseRule: { type: 'afterPairs', count: 3 }
 };
@@ -170,8 +172,8 @@ const ch05Stage03: StageDefinition = {
     [null, { color: null, type: 'block' }, null, null, { color: null, type: 'block' }, null, null, null],
     [{ color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, null, { color: 'red', type: 'linked', linkGroupId: 'lg1' }, null, { color: 'blue', type: 'linked', linkGroupId: 'lg2' }, null, { color: 'blue', type: 'linked', linkGroupId: 'lg2' }],
     [null, { color: null, type: 'block' }, null, null, { color: null, type: 'block' }, null, null, null],
-    [{ color: 'green', type: 'ice' }, null, { color: 'green', type: 'ice' }, null, { color: 'yellow', type: 'time' }, null, { color: 'yellow', type: 'time' }, null],
-    [{ color: 'green', type: 'ice' }, null, { color: 'green', type: 'ice' }, null, { color: 'yellow', type: 'time' }, null, { color: 'yellow', type: 'time' }, null]
+    ['green', null, 'green', null, { color: 'yellow', type: 'time' }, null, { color: 'yellow', type: 'time' }, null],
+    ['green', null, 'green', null, { color: 'yellow', type: 'time' }, null, { color: 'yellow', type: 'time' }, null]
   ],
   blockReleaseRule: { type: 'afterPairs', count: 3 }
 };
