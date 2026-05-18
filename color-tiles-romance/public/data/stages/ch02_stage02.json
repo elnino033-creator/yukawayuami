@@ -7,6 +7,11 @@
   "timeLimitSec": 110,
   "missPenaltySec": 30,
   "hintCount": 2,
-  "generationParams": { "seed": 2002, "targetPairs": 14, "iceChance": 0 },
-  "preScenario": "ch02_s02_pre.json"
+  "generationParams": {
+    "seed": 2002,
+    "targetPairs": 14,
+    "iceChance": 0
+  },
+  "preScenario": "ch02_s02_pre.json",
+  "puzzleBgm": "妖精の小径_v2.mp3"
 }

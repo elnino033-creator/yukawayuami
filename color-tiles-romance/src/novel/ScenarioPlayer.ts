@@ -94,6 +94,7 @@ const BGM_MAP: Record<string, string> = {
   bgm_vocal_ending: 'ed_色彩の塔.mp3',
   bgm_piano_gentle_morning: 'エンディング_穏やか_bgm_春の約束.mp3',
   bgm_piano_sad_loop: '君のいない色彩.mp3',
+  bgm_tutorial: 'amaotonomeiro.mp3',
 };
 
 /**

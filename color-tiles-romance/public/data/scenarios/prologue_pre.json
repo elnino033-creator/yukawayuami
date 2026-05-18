@@ -1,6 +1,6 @@
 [
   { "bg": "bg_tower_entrance" },
-  { "bgm": "bgm_prologue" },
+  { "bgm": "bgm_tutorial" },
   { "text": { "name": "???", "body": "……ここが、「色彩の塔」か。" } },
   { "text": { "name": "???", "body": "突然届いた招待状。差出人も分からないまま、気づいたらここに立っていた。" } },
   { "text": { "name": "???", "body": "（塔の扉に触れると、虹色の光が溢れ出した）" } },

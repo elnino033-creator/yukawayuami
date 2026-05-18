@@ -130,7 +130,8 @@ export class PuzzleScene {
     this.hudStatus.textContent = `${stage.title}`;
     this.startRenderLoop();
     if (!this.bgmAudio) {
-      this.bgmAudio = new Audio('/assets/bgm/Steel_and_Shadows.mp3');
+      const bgmFile = stage.puzzleBgm ?? 'Steel_and_Shadows.mp3';
+      this.bgmAudio = new Audio(`${import.meta.env.BASE_URL}assets/bgm/${encodeURIComponent(bgmFile)}`);
       this.bgmAudio.loop = true;
       this.bgmAudio.volume = 0.4;
       this.bgmAudio.play().catch(() => {});
