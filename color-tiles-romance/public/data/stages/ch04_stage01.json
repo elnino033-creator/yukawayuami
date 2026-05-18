@@ -3,17 +3,39 @@
   "title": "第4章 ステージ1：連鎖の目覚め",
   "chapter": 4,
   "boardWidth": 8,
-  "boardHeight": 6,
+  "boardHeight": 8,
   "timeLimitSec": 110,
-  "missPenaltySec": 2,
+  "missPenaltySec": 3,
   "hintCount": 2,
   "tilesLayout": [
-    ["green", {"color":"red","type":"linked","linkGroupId":"lg1"}, null, null, null, {"color":"red","type":"linked","linkGroupId":"lg1"}, "green", null],
-    ["yellow",{"color":"blue","type":"linked","linkGroupId":"lg2"},null, null, null, {"color":"blue","type":"linked","linkGroupId":"lg2"},"yellow",null],
-    [{"color":"red","type":"linked","linkGroupId":"lg1"},  null, null, {"color":"red","type":"linked","linkGroupId":"lg1"},  null, null, null, null],
-    [{"color":"blue","type":"linked","linkGroupId":"lg2"}, null, null, {"color":"blue","type":"linked","linkGroupId":"lg2"}, null, null, null, null],
-    ["purple", null, "green",  null, "green",  null, "purple", null],
-    [null, "yellow", null, "purple", null, "purple", "yellow", null]
+    [{"color":"red","type":"linked","linkGroupId":"lg1"}, {"color":"blue","type":"linked","linkGroupId":"lg2"}, "green",  null, null, "green",  {"color":"blue","type":"linked","linkGroupId":"lg2"}, {"color":"red","type":"linked","linkGroupId":"lg1"}],
+    [{"color":"red","type":"linked","linkGroupId":"lg1"}, {"color":"blue","type":"linked","linkGroupId":"lg2"}, "purple", null, null, "purple", {"color":"blue","type":"linked","linkGroupId":"lg2"}, {"color":"red","type":"linked","linkGroupId":"lg1"}],
+    ["yellow", "purple", "blue",   null, null, "blue",   "purple", "yellow"],
+    ["green",  "yellow", "red",    null, null, "red",    "yellow", "green" ],
+    ["purple", "green",  "yellow", null, null, "yellow", "green",  "purple"],
+    ["blue",   "red",    "green",  null, null, "green",  "red",    "blue"  ],
+    ["red",    "purple", "yellow", null, null, "yellow", "purple", "red"   ],
+    ["yellow", "blue",   "purple", null, null, "purple", "blue",   "yellow"]
   ],
-  "preScenario": "ch04_s01_pre.json"
+  "preScenario": "ch04_s01_pre.json",
+  "tutorialSteps": [
+    {
+      "type": "explain",
+      "text": "連結タイル（⛓）が登場！\n同じグループの⛓タイルはすべてマッチさせないと消えません。",
+      "highlightCells": [
+        {"x":0,"y":0},{"x":7,"y":0},{"x":0,"y":1},{"x":7,"y":1},
+        {"x":1,"y":0},{"x":6,"y":0},{"x":1,"y":1},{"x":6,"y":1}
+      ]
+    },
+    {
+      "type": "explain",
+      "text": "⛓タイルを順番にマッチさせましょう！\nすべてマッチした瞬間にまとめて消えます！\n「赤⛓」と「青⛓」の2グループあります。",
+      "highlightCells": []
+    },
+    {
+      "type": "praise",
+      "text": "連結タイルの仕組みがわかりました！\n残りのタイルも消してクリアを目指しましょう！",
+      "autoAdvanceMs": 2000
+    }
+  ]
 }

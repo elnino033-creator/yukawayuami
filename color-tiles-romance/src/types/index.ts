@@ -55,6 +55,20 @@ export type BlockReleaseRule =
   | { type: 'onLastTile' }                  // 最後の色付きタイル消去と同時
   | { type: 'never' };                      // 消滅しない（演出のみ）
 
+/** チュートリアルステップ */
+export interface TutorialStep {
+  /** ステップ種別: 説明表示 / 強制操作 / 称賛 */
+  type: 'explain' | 'force_match' | 'praise';
+  /** 表示テキスト（\n で改行） */
+  text: string;
+  /** ハイライトするタイルのセル座標 */
+  highlightCells?: Array<{ x: number; y: number }>;
+  /** force_match のみ：クリックを許可する空マス座標（それ以外はブロック） */
+  allowedCells?: Array<{ x: number; y: number }>;
+  /** praise のみ：指定 ms 後に自動進行 */
+  autoAdvanceMs?: number;
+}
+
 /** ステージ定義 */
 export interface StageDefinition {
   id: string;
@@ -79,6 +93,8 @@ export interface StageDefinition {
   failScenario?: string;
   /** クリア報酬 */
   rewards?: { S?: string[]; A?: string[]; B?: string[]; C?: string[] };
+  /** チュートリアルステップ（指定時はガイド付きモードで進行） */
+  tutorialSteps?: TutorialStep[];
 }
 
 /** クリック結果 */

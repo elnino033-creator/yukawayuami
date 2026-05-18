@@ -2,20 +2,18 @@
   "id": "ch01_stage05",
   "title": "第1章 ステージ5：あかりの決意",
   "chapter": 1,
-  "boardWidth": 8,
+  "boardWidth": 6,
   "boardHeight": 6,
-  "timeLimitSec": 85,
+  "timeLimitSec": 95,
   "missPenaltySec": 2,
   "hintCount": 2,
   "tilesLayout": [
-    ["red",   null,   "blue",  "green", null,   "green", "blue",  "red"   ],
-    ["yellow",null,   "purple","blue",  null,   "blue",  "purple","yellow"],
-    ["green", null,   "yellow","purple",null,   "purple","yellow","green" ],
-    ["blue",  null,   "red",   "yellow",null,   "yellow","red",   "blue"  ],
-    ["purple",null,   "green", "red",   null,   "red",   "green", "purple"],
-    ["yellow",null,   "blue",  "green", null,   "green", "blue",  "yellow"]
+    ["red",    "blue",  "green",  "green",  "blue",  "red"   ],
+    ["yellow", "purple","red",    "red",    "purple","yellow"],
+    [null,     null,    null,     null,     null,    null    ],
+    ["yellow", "purple","red",    "red",    "purple","yellow"],
+    ["red",    "blue",  "green",  "green",  "blue",  "red"   ],
+    [null,     null,    null,     null,     null,    null    ]
   ],
-  "blockReleaseRule": { "type": "never" },
-  "preScenario": "scenarios/ch01_s05_pre.json",
-  "postScenario": "scenarios/ch01_s05_post.json"
+  "preScenario": "ch01_s05_pre.json"
 }

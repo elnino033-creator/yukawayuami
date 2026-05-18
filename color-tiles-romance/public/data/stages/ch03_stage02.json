@@ -3,18 +3,20 @@
   "title": "第3章 ステージ2：氷と岩",
   "chapter": 3,
   "boardWidth": 8,
-  "boardHeight": 6,
-  "timeLimitSec": 115,
+  "boardHeight": 8,
+  "timeLimitSec": 105,
   "missPenaltySec": 2,
   "hintCount": 2,
   "tilesLayout": [
-    [{"color":"red","type":"ice"},    {"color":null,"type":"block"}, {"color":"yellow","type":"ice"}, null, {"color":"yellow","type":"ice"}, {"color":null,"type":"block"}, {"color":"red","type":"ice"},    null],
-    [{"color":"green","type":"ice"},  {"color":"purple","type":"ice"}, {"color":"blue","type":"ice"}, null, {"color":"blue","type":"ice"}, {"color":"purple","type":"ice"}, {"color":"green","type":"ice"}, null],
-    ["blue",                          null,                             {"color":"green","type":"ice"}, null, {"color":"green","type":"ice"}, null,                           "blue",                          null],
-    [{"color":"purple","type":"ice"}, {"color":null,"type":"block"}, {"color":"red","type":"ice"},    null, {"color":"red","type":"ice"},   {"color":null,"type":"block"}, {"color":"purple","type":"ice"}, null],
-    ["yellow",                        null,                             {"color":"purple","type":"ice"},null, {"color":"purple","type":"ice"},null,                           "yellow",                        null],
-    [null,                           "yellow",                          null,                           "blue",null,                         "blue",                         "yellow",                        null]
+    [{"color":"red","type":"ice"},    {"color":"blue","type":"ice"},   "green",  null, null, "green",  {"color":"blue","type":"ice"},   {"color":"red","type":"ice"}   ],
+    [{"color":"yellow","type":"ice"}, "purple", null, {"color":null,"type":"block"}, {"color":null,"type":"block"}, null, "purple", {"color":"yellow","type":"ice"}],
+    [{"color":"blue","type":"ice"},   "green",  {"color":"yellow","type":"ice"}, null, null, {"color":"yellow","type":"ice"}, "green", {"color":"blue","type":"ice"}  ],
+    [{"color":"purple","type":"ice"}, "red",    null, {"color":null,"type":"block"}, {"color":null,"type":"block"}, null, "red",    {"color":"purple","type":"ice"} ],
+    ["green",  {"color":"yellow","type":"ice"}, "blue",   null, null, "blue",   {"color":"yellow","type":"ice"}, "green"  ],
+    [{"color":"red","type":"ice"},    "purple", null,     null, null, null,     "purple", {"color":"red","type":"ice"}    ],
+    ["yellow", {"color":"blue","type":"ice"},   "green",  null, null, "green",  {"color":"blue","type":"ice"},   "yellow" ],
+    [{"color":"purple","type":"ice"}, "red",    "yellow", null, null, "yellow", "red",    {"color":"purple","type":"ice"} ]
   ],
-  "blockReleaseRule": {"type": "afterPairs", "count": 4},
+  "blockReleaseRule": {"type": "afterPairs", "count": 5},
   "preScenario": "ch03_s02_pre.json"
 }

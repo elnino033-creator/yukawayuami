@@ -9,6 +9,7 @@ import { ProgressStore } from '@/store/progressStore';
 
 const LINEAR_STAGES = [
   'ch00_tutorial',
+  'ch00_tutorial2',
   'ch00_prologue',
   'ch01_stage01', 'ch01_stage02', 'ch01_stage03', 'ch01_stage04', 'ch01_stage05',
   'ch02_stage01', 'ch02_stage02', 'ch02_stage03',

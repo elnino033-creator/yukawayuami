@@ -3,18 +3,20 @@
   "title": "第3章 ステージ3：翠葉の試練",
   "chapter": 3,
   "boardWidth": 8,
-  "boardHeight": 6,
-  "timeLimitSec": 110,
+  "boardHeight": 8,
+  "timeLimitSec": 100,
   "missPenaltySec": 2,
   "hintCount": 1,
   "tilesLayout": [
-    [{"color":"blue","type":"ice"},  {"color":null,"type":"block"}, {"color":"red","type":"ice"},   {"color":"green","type":"ice"}, null, {"color":"green","type":"ice"}, {"color":"red","type":"ice"},   {"color":"blue","type":"ice"}  ],
-    [{"color":"purple","type":"ice"},{"color":"yellow","type":"ice"},{"color":"blue","type":"ice"},  null,                          null, {"color":"blue","type":"ice"},   {"color":"yellow","type":"ice"},{"color":"purple","type":"ice"}],
-    [{"color":"red","type":"ice"},   null,                           {"color":"yellow","type":"ice"},{"color":"purple","type":"ice"},null, {"color":"purple","type":"ice"},{"color":"yellow","type":"ice"},{"color":"red","type":"ice"}   ],
-    [{"color":"green","type":"ice"}, {"color":null,"type":"block"}, {"color":"blue","type":"ice"},  {"color":"red","type":"ice"},   null, {"color":"red","type":"ice"},   {"color":"blue","type":"ice"},  {"color":"green","type":"ice"} ],
-    [{"color":"yellow","type":"ice"},null,                           {"color":"purple","type":"ice"},{"color":"green","type":"ice"}, null, {"color":"green","type":"ice"}, {"color":"purple","type":"ice"},{"color":"yellow","type":"ice"}],
-    [{"color":"red","type":"ice"},   null,                           {"color":"blue","type":"ice"},  {"color":"yellow","type":"ice"},null, {"color":"yellow","type":"ice"},{"color":"blue","type":"ice"},  {"color":"red","type":"ice"}   ]
+    [{"color":"red","type":"ice"},    {"color":"blue","type":"ice"},   {"color":"green","type":"ice"},  null, null, {"color":"green","type":"ice"},  {"color":"blue","type":"ice"},   {"color":"red","type":"ice"}   ],
+    [{"color":"yellow","type":"ice"}, {"color":"purple","type":"ice"}, null, {"color":null,"type":"block"}, {"color":null,"type":"block"}, null, {"color":"purple","type":"ice"}, {"color":"yellow","type":"ice"}],
+    [{"color":"blue","type":"ice"},   {"color":"green","type":"ice"},  {"color":"yellow","type":"ice"}, null, null, {"color":"yellow","type":"ice"}, {"color":"green","type":"ice"},  {"color":"blue","type":"ice"}  ],
+    [{"color":"purple","type":"ice"}, {"color":"red","type":"ice"},    null, {"color":null,"type":"block"}, {"color":null,"type":"block"}, null, {"color":"red","type":"ice"},    {"color":"purple","type":"ice"} ],
+    [{"color":"green","type":"ice"},  {"color":"yellow","type":"ice"}, {"color":"blue","type":"ice"},   null, null, {"color":"blue","type":"ice"},   {"color":"yellow","type":"ice"}, {"color":"green","type":"ice"} ],
+    [{"color":"red","type":"ice"},    {"color":"purple","type":"ice"}, null,                            null, null, null,                            {"color":"purple","type":"ice"}, {"color":"red","type":"ice"}   ],
+    [{"color":"yellow","type":"ice"}, {"color":"blue","type":"ice"},   {"color":"green","type":"ice"},  null, null, {"color":"green","type":"ice"},  {"color":"blue","type":"ice"},   {"color":"yellow","type":"ice"}],
+    [{"color":"purple","type":"ice"}, {"color":"red","type":"ice"},    {"color":"yellow","type":"ice"}, null, null, {"color":"yellow","type":"ice"}, {"color":"red","type":"ice"},    {"color":"purple","type":"ice"} ]
   ],
-  "blockReleaseRule": {"type": "afterPairs", "count": 5},
+  "blockReleaseRule": {"type": "afterPairs", "count": 6},
   "preScenario": "ch03_s03_pre.json"
 }

@@ -1,4 +1,4 @@
-import type { StageDefinition, Tile, MatchResult } from '@/types';
+import type { StageDefinition, Tile, MatchResult, TutorialStep } from '@/types';
 import { PuzzleEngine } from '@/core/PuzzleEngine';
 import { soundEngine } from '@/core/SoundEngine';
 
@@ -50,6 +50,14 @@ interface FloatText {
   color: string;
 }
 
+interface TutorialState {
+  steps: TutorialStep[];
+  currentIndex: number;
+  stepStartTime: number;
+  /** "次へ" ボタンの canvas ピクセル矩形（描画後にセット）*/
+  nextButtonRect: { x: number; y: number; w: number; h: number } | null;
+}
+
 /**
  * パズル画面：Canvas上に盤面を描画し、クリック/ホバーを処理する。
  */
@@ -66,6 +74,7 @@ export class PuzzleScene {
   private hintHighlight: { tiles: Tile[]; clickPoint: { x: number; y: number }; until: number } | null = null;
   private shuffleFlashUntil = 0;
   private timeUpFlashUntil = 0;
+  private tutorial: TutorialState | null = null;
   /** シャドウタイルの一時的な色表示期限マップ。key: "x,y"、value: 公開期限(ms timestamp) */
   private shadowReveals: Map<string, number> = new Map();
 
@@ -115,6 +124,9 @@ export class PuzzleScene {
     this.hintHighlight = null;
     this.shuffleFlashUntil = 0;
     this.timeUpFlashUntil = 0;
+    this.tutorial = stage.tutorialSteps && stage.tutorialSteps.length > 0
+      ? { steps: stage.tutorialSteps, currentIndex: 0, stepStartTime: Date.now(), nextButtonRect: null }
+      : null;
     this.hudStatus.textContent = `${stage.title}`;
     this.startRenderLoop();
     if (!this.bgmAudio) {
@@ -167,6 +179,20 @@ export class PuzzleScene {
       this.hover = null;
     });
     this.canvas.addEventListener('click', (e) => {
+      if (this.tutorial !== null) {
+        // チュートリアルオーバーレイ中
+        if (this.handleTutorialClick(e.clientX, e.clientY)) return;
+        const step = this.tutorial.steps[this.tutorial.currentIndex];
+        if (step.type !== 'force_match') return; // explain/praise 中はゲーム入力をブロック
+        // force_match: 許可セルのみ通す
+        const cell = this.pointerToCell(e.clientX, e.clientY);
+        if (!cell) return;
+        const allowed = step.allowedCells?.some(c => c.x === cell.cx && c.y === cell.cy) ?? false;
+        if (!allowed) return;
+        soundEngine.playClick();
+        this.engine.onCellClick(cell.cx, cell.cy);
+        return;
+      }
       const cell = this.pointerToCell(e.clientX, e.clientY);
       if (cell) {
         soundEngine.playClick();
@@ -190,7 +216,15 @@ export class PuzzleScene {
     this.canvas.addEventListener('touchend', (e) => {
       e.preventDefault();
       if (this.hover) {
-        this.engine.onCellClick(this.hover.cx, this.hover.cy);
+        if (this.tutorial !== null) {
+          const step = this.tutorial.steps[this.tutorial.currentIndex];
+          if (step.type === 'force_match') {
+            const allowed = step.allowedCells?.some(c => c.x === this.hover!.cx && c.y === this.hover!.cy) ?? false;
+            if (allowed) this.engine.onCellClick(this.hover.cx, this.hover.cy);
+          }
+        } else {
+          this.engine.onCellClick(this.hover.cx, this.hover.cy);
+        }
       }
       this.hover = null;
     }, { passive: false });
@@ -239,10 +273,22 @@ export class PuzzleScene {
           if (e.bonusSec && e.bonusSec > 0) {
             this.spawnFloatText(`+${e.bonusSec}s`, '#5ec76a');
           }
+          if (this.tutorial) {
+            const step = this.tutorial.steps[this.tutorial.currentIndex];
+            if (step.type === 'force_match') {
+              setTimeout(() => this.advanceTutorial(), 500);
+            }
+          }
           break;
         case 'iceCracked':
           soundEngine.playIceCrack();
           this.spawnFloatText('Crack!', '#9ed3ff');
+          if (this.tutorial) {
+            const step = this.tutorial.steps[this.tutorial.currentIndex];
+            if (step.type === 'force_match') {
+              setTimeout(() => this.advanceTutorial(), 500);
+            }
+          }
           break;
         case 'miss':
           soundEngine.playMiss();
@@ -317,6 +363,9 @@ export class PuzzleScene {
 
     // フロートテキスト
     this.drawFloatTexts(now);
+
+    // チュートリアルオーバーレイ
+    this.drawTutorialOverlay(now);
 
     // シャッフル / タイムアップフラッシュ
     if (now < this.shuffleFlashUntil) {
@@ -563,6 +612,147 @@ export class PuzzleScene {
       this.ctx.fillText(f.text, f.x, f.y - t * 30);
       this.ctx.globalAlpha = 1;
     }
+  }
+
+  // ---------- チュートリアル ----------
+
+  private advanceTutorial(): void {
+    if (!this.tutorial) return;
+    this.tutorial.currentIndex++;
+    this.tutorial.stepStartTime = Date.now();
+    this.tutorial.nextButtonRect = null;
+    if (this.tutorial.currentIndex >= this.tutorial.steps.length) {
+      this.tutorial = null;
+    }
+  }
+
+  /** "次へ" ボタンのクリック判定。ボタンを押したら true を返す */
+  private handleTutorialClick(clientX: number, clientY: number): boolean {
+    if (!this.tutorial || !this.tutorial.nextButtonRect) return false;
+    const step = this.tutorial.steps[this.tutorial.currentIndex];
+    if (step.type === 'force_match') return false;
+
+    const rect = this.canvas.getBoundingClientRect();
+    const scaleX = this.canvas.width / rect.width;
+    const scaleY = this.canvas.height / rect.height;
+    const cx = (clientX - rect.left) * scaleX;
+    const cy = (clientY - rect.top) * scaleY;
+
+    const btn = this.tutorial.nextButtonRect;
+    if (cx >= btn.x && cx <= btn.x + btn.w && cy >= btn.y && cy <= btn.y + btn.h) {
+      this.advanceTutorial();
+      return true;
+    }
+    return false;
+  }
+
+  private drawTutorialOverlay(now: number): void {
+    if (!this.tutorial) return;
+    const step = this.tutorial.steps[this.tutorial.currentIndex];
+
+    // praise ステップの自動進行
+    if (step.type === 'praise' && step.autoAdvanceMs) {
+      if (now - this.tutorial.stepStartTime >= step.autoAdvanceMs) {
+        this.advanceTutorial();
+        return;
+      }
+    }
+
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+
+    // 半透明オーバーレイ
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.52)';
+    this.ctx.fillRect(0, 0, w, h);
+
+    // ハイライトセル（指定タイルに黄色の枠と光彩）
+    const pulse = 0.5 + 0.5 * Math.sin(now / 280);
+    if (step.highlightCells && step.highlightCells.length > 0) {
+      for (const cell of step.highlightCells) {
+        const p = this.cellToPixel(cell.x, cell.y);
+        this.ctx.strokeStyle = `rgba(255, 210, 52, ${0.55 + 0.45 * pulse})`;
+        this.ctx.lineWidth = 4;
+        this.ctx.strokeRect(p.x - 4, p.y - 4, TILE_SIZE + 8, TILE_SIZE + 8);
+        this.ctx.strokeStyle = `rgba(255, 210, 52, ${0.15 * pulse})`;
+        this.ctx.lineWidth = 12;
+        this.ctx.strokeRect(p.x - 10, p.y - 10, TILE_SIZE + 20, TILE_SIZE + 20);
+      }
+    }
+
+    // force_match: 許可セルを点滅で示す
+    if (step.type === 'force_match' && step.allowedCells) {
+      for (const cell of step.allowedCells) {
+        const p = this.cellToPixel(cell.x, cell.y);
+        this.ctx.fillStyle = `rgba(255, 255, 255, ${0.12 + 0.1 * pulse})`;
+        this.ctx.fillRect(p.x, p.y, TILE_SIZE, TILE_SIZE);
+        this.ctx.strokeStyle = `rgba(255, 255, 255, ${0.5 + 0.5 * pulse})`;
+        this.ctx.lineWidth = 3;
+        this.ctx.strokeRect(p.x, p.y, TILE_SIZE, TILE_SIZE);
+      }
+    }
+
+    // メッセージボックス
+    const boxPad = 16;
+    const boxH = 110;
+    const boxY = h - boxH - 12;
+    const boxX = 12;
+    const boxW = w - 24;
+
+    this.ctx.fillStyle = 'rgba(20, 24, 44, 0.96)';
+    this.drawRoundRect(boxX, boxY, boxW, boxH, 12);
+    this.ctx.fill();
+    this.ctx.strokeStyle = step.type === 'praise' ? '#ffd234' : step.type === 'force_match' ? '#5ec76a' : '#4a90e2';
+    this.ctx.lineWidth = 2;
+    this.drawRoundRect(boxX, boxY, boxW, boxH, 12);
+    this.ctx.stroke();
+
+    // テキスト描画（\n 改行対応）
+    this.ctx.fillStyle = '#ffffff';
+    this.ctx.font = '13px sans-serif';
+    this.ctx.textAlign = 'left';
+    this.ctx.textBaseline = 'top';
+    const lines = step.text.split('\n');
+    lines.forEach((line, i) => {
+      this.ctx.fillText(line, boxX + boxPad, boxY + boxPad + i * 22);
+    });
+
+    // "次へ" ボタン（explain / praise のみ）
+    if (step.type !== 'force_match') {
+      const btnW = 90;
+      const btnH = 34;
+      const btnX = boxX + boxW - btnW - boxPad;
+      const btnY = boxY + boxH - btnH - boxPad;
+
+      this.ctx.fillStyle = step.type === 'praise' ? '#ffd234' : '#4a90e2';
+      this.drawRoundRect(btnX, btnY, btnW, btnH, 8);
+      this.ctx.fill();
+
+      this.ctx.fillStyle = step.type === 'praise' ? '#1c1f2a' : '#ffffff';
+      this.ctx.font = 'bold 14px sans-serif';
+      this.ctx.textAlign = 'center';
+      this.ctx.textBaseline = 'middle';
+      this.ctx.fillText('次へ ▶', btnX + btnW / 2, btnY + btnH / 2);
+
+      if (this.tutorial) {
+        this.tutorial.nextButtonRect = { x: btnX, y: btnY, w: btnW, h: btnH };
+      }
+    } else if (this.tutorial) {
+      this.tutorial.nextButtonRect = null;
+    }
+  }
+
+  private drawRoundRect(x: number, y: number, w: number, h: number, r: number): void {
+    this.ctx.beginPath();
+    this.ctx.moveTo(x + r, y);
+    this.ctx.lineTo(x + w - r, y);
+    this.ctx.arcTo(x + w, y, x + w, y + r, r);
+    this.ctx.lineTo(x + w, y + h - r);
+    this.ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    this.ctx.lineTo(x + r, y + h);
+    this.ctx.arcTo(x, y + h, x, y + h - r, r);
+    this.ctx.lineTo(x, y + r);
+    this.ctx.arcTo(x, y, x + r, y, r);
+    this.ctx.closePath();
   }
 
   private cleanupExpired(now: number): void {
