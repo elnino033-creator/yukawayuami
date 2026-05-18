@@ -9,6 +9,7 @@ import { ProgressStore } from '@/store/progressStore';
 
 const LINEAR_STAGES = [
   'ch00_tutorial',
+  'ch00_tutorial2',
   'ch00_prologue',
   'ch01_stage01', 'ch01_stage02', 'ch01_stage03', 'ch01_stage04', 'ch01_stage05',
   'ch02_stage01', 'ch02_stage02', 'ch02_stage03',
@@ -265,6 +266,19 @@ export class SceneManager {
     const { PuzzleScene } = await import('@/scenes/PuzzleScene');
     const { StageValidator } = await import('@/core/StageValidator');
 
+    // tilesLayout が無く generationParams がある場合は自動生成する
+    if (!stageDef.tilesLayout && stageDef.generationParams) {
+      const { StageGenerator } = await import('@/core/StageGenerator');
+      stageDef = {
+        ...stageDef,
+        tilesLayout: StageGenerator.generate(
+          stageDef.boardWidth,
+          stageDef.boardHeight,
+          stageDef.generationParams
+        )
+      };
+    }
+
     // コンテナをクリアして再構築
     this.appContainer.innerHTML = '';
 
@@ -273,7 +287,9 @@ export class SceneManager {
 
     const hud = this.createPuzzleHud(wrapper);
     const canvas = document.createElement('canvas');
-    canvas.style.cssText = 'margin:auto;display:block;';
+    // max-width:100% + height:auto でボードが画面幅を超えても縮小表示される
+    // pointerToCell は getBoundingClientRect() でスケールを補正するので座標ずれなし
+    canvas.style.cssText = 'margin:auto;display:block;max-width:100%;height:auto;';
     wrapper.appendChild(canvas);
     this.appContainer.appendChild(wrapper);
 
@@ -281,7 +297,7 @@ export class SceneManager {
 
     // 解検証（24枚以下のみ）
     let count = 0;
-    for (const row of stageDef.tilesLayout) {
+    for (const row of stageDef.tilesLayout ?? []) {
       for (const cell of row) {
         if (cell !== null) count++;
       }

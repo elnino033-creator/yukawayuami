@@ -1,17 +1,40 @@
 {
   "id": "ch00_tutorial",
-  "title": "チュートリアル：最初の一手",
+  "title": "チュートリアル1：横に消してみよう",
   "chapter": 0,
   "boardWidth": 6,
   "boardHeight": 4,
-  "timeLimitSec": 90,
+  "timeLimitSec": 300,
   "missPenaltySec": 0,
   "hintCount": 3,
   "tilesLayout": [
-    [null,    "red",   null,   null,   "red",   null  ],
-    [null,    "blue",  null,   null,   "blue",  null  ],
-    [null,    "green", null,   null,   "green", null  ],
-    [null,    "yellow",null,   null,   "yellow",null  ]
+    [null, "red",    null, null, "red",    null],
+    [null, "blue",   null, null, "blue",   null],
+    [null, "green",  null, null, "green",  null],
+    [null, "yellow", null, null, "yellow", null]
   ],
-  "blockReleaseRule": { "type": "never" }
+  "blockReleaseRule": { "type": "never" },
+  "tutorialSteps": [
+    {
+      "type": "explain",
+      "text": "ようこそ！ここはパズル画面です。\n上のタイマーが0になる前に、すべてのタイルを消しましょう！\nスコアやコンボも右上に表示されています。",
+      "highlightCells": []
+    },
+    {
+      "type": "explain",
+      "text": "同じ色のタイルが横に2つ並んでいます。\n2つのタイルの間にある空マスをクリックすると消えます！\nまずは赤いタイルを消してみましょう。",
+      "highlightCells": [{"x":1,"y":0},{"x":4,"y":0}]
+    },
+    {
+      "type": "force_match",
+      "text": "赤いタイルの間（光っている空マス）をクリック！",
+      "highlightCells": [{"x":1,"y":0},{"x":4,"y":0}],
+      "allowedCells": [{"x":2,"y":0},{"x":3,"y":0}]
+    },
+    {
+      "type": "praise",
+      "text": "すごい！上手です！\nその調子で残りの青・緑・黄色タイルも消してみましょう！",
+      "autoAdvanceMs": 2500
+    }
+  ]
 }

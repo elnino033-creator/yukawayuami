@@ -3,18 +3,37 @@
   "title": "第3章 ステージ1：障害の壁",
   "chapter": 3,
   "boardWidth": 8,
-  "boardHeight": 6,
-  "timeLimitSec": 120,
+  "boardHeight": 8,
+  "timeLimitSec": 110,
   "missPenaltySec": 2,
   "hintCount": 2,
   "tilesLayout": [
-    [{"color":"red","type":"ice"},    null, {"color":null,"type":"block"}, null, {"color":null,"type":"block"}, null, {"color":"red","type":"ice"},    null],
-    [{"color":"green","type":"ice"},  null, {"color":"yellow","type":"ice"},null, {"color":"yellow","type":"ice"},null, {"color":"green","type":"ice"},  null],
-    [{"color":"purple","type":"ice"}, null, {"color":null,"type":"block"}, null, {"color":null,"type":"block"}, null, {"color":"purple","type":"ice"},  null],
-    ["blue",                          null, {"color":"green","type":"ice"}, null, {"color":"green","type":"ice"}, null, "blue",                          null],
-    ["yellow",                        null, {"color":"red","type":"ice"},   null, {"color":"red","type":"ice"},   null, "yellow",                        null],
-    ["red",                          "blue", null,                          "purple", null,                      "purple","blue",                       "red"]
+    ["red",    "blue",   "green",  null, null, "green",  "blue",   "red"   ],
+    ["yellow", "purple", null,     {"color":null,"type":"block"}, {"color":null,"type":"block"}, null, "purple", "yellow"],
+    ["blue",   "green",  "yellow", null, null, "yellow", "green",  "blue"  ],
+    ["purple", "red",    null,     {"color":null,"type":"block"}, {"color":null,"type":"block"}, null, "red",    "purple"],
+    ["green",  "yellow", "blue",   null, null, "blue",   "yellow", "green" ],
+    ["red",    "purple", null,     null, null, null,     "purple", "red"   ],
+    ["yellow", "blue",   "green",  null, null, "green",  "blue",   "yellow"],
+    ["purple", "red",    "yellow", null, null, "yellow", "red",    "purple"]
   ],
-  "blockReleaseRule": {"type": "afterPairs", "count": 3},
-  "preScenario": "ch03_s01_pre.json"
+  "blockReleaseRule": {"type": "afterPairs", "count": 4},
+  "preScenario": "ch03_s01_pre.json",
+  "tutorialSteps": [
+    {
+      "type": "explain",
+      "text": "障害ブロック（▣）が登場！\nブロックは直接消せませんが、他のタイルを消すと解除されます。",
+      "highlightCells": [{"x":3,"y":1},{"x":4,"y":1},{"x":3,"y":3},{"x":4,"y":3}]
+    },
+    {
+      "type": "explain",
+      "text": "タイルペアを4組消すとブロックが一斉に消えて、隠れたマスが開きます！\nまずは消せるタイルを探して消していきましょう！",
+      "highlightCells": []
+    },
+    {
+      "type": "praise",
+      "text": "ブロックの仕組みがわかりました！\n全部消してクリアを目指しましょう！",
+      "autoAdvanceMs": 2000
+    }
+  ]
 }

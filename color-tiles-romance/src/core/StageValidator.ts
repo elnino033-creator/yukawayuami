@@ -15,7 +15,7 @@ export class StageValidator {
    * ステージに解（全消去ルート）が存在するか確認。
    */
   static hasSolution(stage: StageDefinition): boolean {
-    const board = this.layoutToBoard(stage.tilesLayout);
+    const board = this.layoutToBoard(stage.tilesLayout ?? []);
     return this.dfs(board, new Set());
   }
 
@@ -24,7 +24,7 @@ export class StageValidator {
    * 見つからなければ null。
    */
   static findSolution(stage: StageDefinition): string[] | null {
-    const board = this.layoutToBoard(stage.tilesLayout);
+    const board = this.layoutToBoard(stage.tilesLayout ?? []);
     const path: string[] = [];
     return this.dfs(board, new Set(), path) ? path : null;
   }

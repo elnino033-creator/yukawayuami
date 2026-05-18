@@ -115,7 +115,7 @@ describe('Phase 1 新ステージ バリデーション', () => {
 
   it('ch00_prologue: タイル数が偶数である', () => {
     let count = 0;
-    for (const row of ch00Prologue.tilesLayout) {
+    for (const row of (ch00Prologue.tilesLayout ?? [])) {
       for (const cell of row) { if (cell !== null) count++; }
     }
     expect(count % 2).toBe(0);
@@ -141,7 +141,7 @@ describe('Phase 1 新ステージ バリデーション', () => {
     const stages = [ch00Prologue, ch01Stage02, ch01Stage03, ch01Stage04, ch01Stage05];
     for (const stage of stages) {
       let count = 0;
-      for (const row of stage.tilesLayout) {
+      for (const row of (stage.tilesLayout ?? [])) {
         for (const cell of row) { if (cell !== null) count++; }
       }
       expect(count % 2, `${stage.id} tile count ${count} is odd`).toBe(0);

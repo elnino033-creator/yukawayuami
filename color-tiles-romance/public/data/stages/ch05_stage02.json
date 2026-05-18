@@ -2,19 +2,20 @@
   "id": "ch05_stage02",
   "title": "第5章 ステージ2：混沌の嵐",
   "chapter": 5,
-  "boardWidth": 8,
-  "boardHeight": 6,
-  "timeLimitSec": 105,
+  "boardWidth": 10,
+  "boardHeight": 8,
+  "timeLimitSec": 150,
   "missPenaltySec": 3,
   "hintCount": 1,
-  "tilesLayout": [
-    ["green", {"color":"red","type":"linked","linkGroupId":"lg1"}, {"color":"purple","type":"ice"},  {"color":null,"type":"block"}, {"color":null,"type":"block"}, {"color":"purple","type":"ice"},  {"color":"red","type":"linked","linkGroupId":"lg1"}, "green"],
-    [{"color":"yellow","type":"time"}, {"color":"blue","type":"linked","linkGroupId":"lg2"}, {"color":"green","type":"ice"}, null, null, {"color":"green","type":"ice"}, {"color":"blue","type":"linked","linkGroupId":"lg2"}, {"color":"yellow","type":"time"}],
-    [{"color":"red","type":"linked","linkGroupId":"lg1"}, null, {"color":"purple","type":"ice"},  null, null, {"color":"purple","type":"ice"},  null, {"color":"red","type":"linked","linkGroupId":"lg1"}],
-    [{"color":"blue","type":"linked","linkGroupId":"lg2"},null, {"color":"yellow","type":"ice"}, null, null, {"color":"yellow","type":"ice"}, null, {"color":"blue","type":"linked","linkGroupId":"lg2"}],
-    [{"color":"purple","type":"ice"}, {"color":"green","type":"ice"}, null, {"color":"red","type":"ice"}, null, {"color":"red","type":"ice"}, {"color":"green","type":"ice"}, {"color":"purple","type":"ice"}],
-    [{"color":"yellow","type":"time"},null, {"color":"purple","type":"ice"}, {"color":"green","type":"ice"}, null, {"color":"green","type":"ice"}, {"color":"purple","type":"ice"}, {"color":"yellow","type":"time"}]
-  ],
-  "blockReleaseRule": {"type": "afterPairs", "count": 4},
+  "generationParams": {
+    "seed": 5002,
+    "targetPairs": 50,
+    "colors": ["red","blue","green","yellow","purple","orange","cyan"],
+    "iceChance": 0.25,
+    "timeTileChance": 0.10,
+    "blockCount": 3,
+    "dense": true
+  },
+  "blockReleaseRule": { "type": "afterPairs", "count": 5 },
   "preScenario": "ch05_s02_pre.json"
 }

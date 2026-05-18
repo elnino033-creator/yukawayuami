@@ -2,18 +2,11 @@
   "id": "ch02_stage02",
   "title": "第2章 ステージ2：氷の深み",
   "chapter": 2,
-  "boardWidth": 8,
-  "boardHeight": 6,
+  "boardWidth": 7,
+  "boardHeight": 7,
   "timeLimitSec": 110,
   "missPenaltySec": 2,
   "hintCount": 2,
-  "tilesLayout": [
-    [{"color":"red","type":"ice"},    {"color":"blue","type":"ice"},   {"color":"purple","type":"ice"}, null, {"color":"purple","type":"ice"}, {"color":"blue","type":"ice"},   {"color":"red","type":"ice"},    null],
-    ["green",                          "yellow",                         "blue",                          null, "blue",                          "yellow",                         "green",                          null],
-    [{"color":"yellow","type":"ice"}, null,                              {"color":"red","type":"ice"},    "green", null, "green",                         {"color":"red","type":"ice"},    {"color":"yellow","type":"ice"}],
-    ["blue",                           null,                              {"color":"purple","type":"ice"}, {"color":"red","type":"ice"}, null, {"color":"red","type":"ice"},    {"color":"purple","type":"ice"}, "blue"],
-    [{"color":"green","type":"ice"},   null,                              "yellow",                        {"color":"blue","type":"ice"}, null, {"color":"blue","type":"ice"},   "yellow",                         {"color":"green","type":"ice"}],
-    [{"color":"purple","type":"ice"}, null,                              {"color":"red","type":"ice"},    "green", null, "green",                         {"color":"red","type":"ice"},    {"color":"purple","type":"ice"}]
-  ],
+  "generationParams": { "seed": 2002, "targetPairs": 14, "iceChance": 0.25 },
   "preScenario": "ch02_s02_pre.json"
 }

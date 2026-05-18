@@ -55,6 +55,32 @@ export type BlockReleaseRule =
   | { type: 'onLastTile' }                  // 最後の色付きタイル消去と同時
   | { type: 'never' };                      // 消滅しない（演出のみ）
 
+/** 自動生成パラメータ（StageGeneratorに渡す） */
+export interface StageGenerationParams {
+  seed: number;
+  targetPairs: number;
+  colors?: string[];
+  iceChance?: number;
+  timeTileChance?: number;
+  blockCount?: number;
+  /** true のとき端点優先のdense戦略を使用し密度を70〜75%に引き上げる */
+  dense?: boolean;
+}
+
+/** チュートリアルステップ */
+export interface TutorialStep {
+  /** ステップ種別: 説明表示 / 強制操作 / 称賛 */
+  type: 'explain' | 'force_match' | 'praise';
+  /** 表示テキスト（\n で改行） */
+  text: string;
+  /** ハイライトするタイルのセル座標 */
+  highlightCells?: Array<{ x: number; y: number }>;
+  /** force_match のみ：クリックを許可する空マス座標（それ以外はブロック） */
+  allowedCells?: Array<{ x: number; y: number }>;
+  /** praise のみ：指定 ms 後に自動進行 */
+  autoAdvanceMs?: number;
+}
+
 /** ステージ定義 */
 export interface StageDefinition {
   id: string;
@@ -67,8 +93,10 @@ export interface StageDefinition {
   missPenaltySec: number;
   /** ヒント使用可能回数 */
   hintCount: number;
-  /** 2次元タイルレイアウト [y][x] */
-  tilesLayout: LayoutCell[][];
+  /** 2次元タイルレイアウト [y][x]。generationParams がある場合は省略可 */
+  tilesLayout?: LayoutCell[][];
+  /** 自動生成パラメータ。tilesLayout の代わりに指定する */
+  generationParams?: StageGenerationParams;
   /** 障害ブロック解除ルール */
   blockReleaseRule?: BlockReleaseRule;
   /** パズル前シナリオのJSONパス（public/data/scenarios/以下） */
@@ -79,6 +107,8 @@ export interface StageDefinition {
   failScenario?: string;
   /** クリア報酬 */
   rewards?: { S?: string[]; A?: string[]; B?: string[]; C?: string[] };
+  /** チュートリアルステップ（指定時はガイド付きモードで進行） */
+  tutorialSteps?: TutorialStep[];
 }
 
 /** クリック結果 */

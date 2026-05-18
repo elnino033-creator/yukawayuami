@@ -195,7 +195,7 @@ describe('Phase 2 ギミックステージ バリデーション', () => {
   it('全ステージの色付きタイル数が偶数', () => {
     for (const stage of ALL_STAGES) {
       let count = 0;
-      for (const row of stage.tilesLayout) {
+      for (const row of (stage.tilesLayout ?? [])) {
         for (const cell of row) {
           if (cell === null) continue;
           if (typeof cell === 'string') { count++; continue; }

@@ -1,0 +1,42 @@
+{
+  "id": "ch00_tutorial2",
+  "title": "チュートリアル2：縦にも消してみよう",
+  "chapter": 0,
+  "boardWidth": 6,
+  "boardHeight": 6,
+  "timeLimitSec": 300,
+  "missPenaltySec": 0,
+  "hintCount": 3,
+  "tilesLayout": [
+    ["purple", "red",   "blue",  "green", "yellow", null],
+    [null,     null,    null,    null,    null,      null],
+    [null,     null,    null,    null,    null,      null],
+    [null,     null,    null,    null,    null,      null],
+    ["purple", "red",   "blue",  "green", "yellow", null],
+    [null,     null,    null,    null,    null,      null]
+  ],
+  "blockReleaseRule": { "type": "never" },
+  "tutorialSteps": [
+    {
+      "type": "explain",
+      "text": "今度は縦方向の消し方を覚えましょう！\n同じ色のタイルが上下に並んでいます。\nこのボードでは横には消せません。縦だけが正解です！",
+      "highlightCells": [{"x":0,"y":0},{"x":0,"y":4}]
+    },
+    {
+      "type": "explain",
+      "text": "上下に同じ色のタイルがあれば、その間の空マスをクリックすれば消えます！\n紫タイルの間（行1〜行3、列0）をクリックしてみましょう。",
+      "highlightCells": [{"x":0,"y":0},{"x":0,"y":4}]
+    },
+    {
+      "type": "force_match",
+      "text": "上下の紫タイルの間（↑↓）の光る空マスをクリック！",
+      "highlightCells": [{"x":0,"y":0},{"x":0,"y":4}],
+      "allowedCells": [{"x":0,"y":1},{"x":0,"y":2},{"x":0,"y":3}]
+    },
+    {
+      "type": "praise",
+      "text": "縦にも消せましたね！\n横にも縦にも消せるから、いろんな組み合わせが楽しめます！\n残りのタイルも全部消してみましょう！",
+      "autoAdvanceMs": 2800
+    }
+  ]
+}

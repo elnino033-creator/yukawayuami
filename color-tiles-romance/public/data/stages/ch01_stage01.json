@@ -1,19 +1,12 @@
 {
   "id": "ch01_stage01",
-  "title": "第1章 ステージ1：あかりとの出会い",
+  "title": "第1章 ステージ1：はじめての壁",
   "chapter": 1,
-  "boardWidth": 8,
+  "boardWidth": 6,
   "boardHeight": 6,
-  "timeLimitSec": 100,
+  "timeLimitSec": 120,
   "missPenaltySec": 1,
   "hintCount": 3,
-  "tilesLayout": [
-    ["red",   null,   "blue",   null,    "blue",   null,   "red",    null  ],
-    ["green", null,   "yellow", null,    "yellow", null,   "green",  null  ],
-    ["purple",null,   "red",    null,    "red",    null,   "purple", null  ],
-    ["blue",  null,   "green", "purple", null,  "purple",  "green",  "blue"],
-    ["yellow",null,   "red",   "green",  null,   "green",  "red",    "yellow"],
-    [null,   "blue",  null,    "yellow", null,   "yellow", "blue",   null  ]
-  ],
-  "blockReleaseRule": { "type": "never" }
+  "generationParams": { "seed": 1001, "targetPairs": 10 },
+  "preScenario": "ch01_s01_pre.json"
 }

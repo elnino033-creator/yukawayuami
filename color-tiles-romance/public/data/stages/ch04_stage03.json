@@ -3,17 +3,10 @@
   "title": "第4章 ステージ3：連鎖と時間",
   "chapter": 4,
   "boardWidth": 8,
-  "boardHeight": 6,
+  "boardHeight": 8,
   "timeLimitSec": 100,
-  "missPenaltySec": 2,
+  "missPenaltySec": 3,
   "hintCount": 1,
-  "tilesLayout": [
-    ["green", {"color":"red","type":"linked","linkGroupId":"lg1"}, {"color":"purple","type":"ice"}, null, {"color":"purple","type":"ice"}, {"color":"red","type":"linked","linkGroupId":"lg1"}, "green", null],
-    ["yellow",{"color":"blue","type":"linked","linkGroupId":"lg2"},{"color":"green","type":"ice"},  null, {"color":"green","type":"ice"},  {"color":"blue","type":"linked","linkGroupId":"lg2"},"yellow",null],
-    [{"color":"red","type":"linked","linkGroupId":"lg1"}, null, {"color":"yellow","type":"ice"}, null, {"color":"yellow","type":"ice"}, null, {"color":"red","type":"linked","linkGroupId":"lg1"}, null],
-    [{"color":"blue","type":"linked","linkGroupId":"lg2"},null, {"color":"purple","type":"ice"}, null, {"color":"purple","type":"ice"}, null, {"color":"blue","type":"linked","linkGroupId":"lg2"}, null],
-    ["purple", null, "green",  "yellow", null, "yellow", "green",  "purple"],
-    [null, "purple", null, "yellow", null, "yellow", "purple", null]
-  ],
+  "generationParams": { "seed": 4003, "targetPairs": 18, "iceChance": 0.35 },
   "preScenario": "ch04_s03_pre.json"
 }

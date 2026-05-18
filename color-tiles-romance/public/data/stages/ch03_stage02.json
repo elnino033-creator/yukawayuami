@@ -3,18 +3,11 @@
   "title": "第3章 ステージ2：氷と岩",
   "chapter": 3,
   "boardWidth": 8,
-  "boardHeight": 6,
-  "timeLimitSec": 115,
+  "boardHeight": 8,
+  "timeLimitSec": 105,
   "missPenaltySec": 2,
   "hintCount": 2,
-  "tilesLayout": [
-    [{"color":"red","type":"ice"},    {"color":null,"type":"block"}, {"color":"yellow","type":"ice"}, null, {"color":"yellow","type":"ice"}, {"color":null,"type":"block"}, {"color":"red","type":"ice"},    null],
-    [{"color":"green","type":"ice"},  {"color":"purple","type":"ice"}, {"color":"blue","type":"ice"}, null, {"color":"blue","type":"ice"}, {"color":"purple","type":"ice"}, {"color":"green","type":"ice"}, null],
-    ["blue",                          null,                             {"color":"green","type":"ice"}, null, {"color":"green","type":"ice"}, null,                           "blue",                          null],
-    [{"color":"purple","type":"ice"}, {"color":null,"type":"block"}, {"color":"red","type":"ice"},    null, {"color":"red","type":"ice"},   {"color":null,"type":"block"}, {"color":"purple","type":"ice"}, null],
-    ["yellow",                        null,                             {"color":"purple","type":"ice"},null, {"color":"purple","type":"ice"},null,                           "yellow",                        null],
-    [null,                           "yellow",                          null,                           "blue",null,                         "blue",                         "yellow",                        null]
-  ],
-  "blockReleaseRule": {"type": "afterPairs", "count": 4},
+  "generationParams": { "seed": 3002, "targetPairs": 16, "iceChance": 0.20, "blockCount": 4 },
+  "blockReleaseRule": { "type": "afterPairs", "count": 4 },
   "preScenario": "ch03_s02_pre.json"
 }
