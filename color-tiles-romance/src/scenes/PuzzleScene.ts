@@ -703,13 +703,30 @@ export class PuzzleScene {
       }
     }
 
-    // メッセージボックス
-    const boxPad = 16;
-    const boxH = 110;
-    const boxY = h - boxH - 12;
-    const boxX = 12;
-    const boxW = w - 24;
+    // レイアウト定数
+    const FONT_SIZE = 15;
+    const LINE_H = 26;
+    const BOX_PAD = 18;
+    const BTN_H = 36;
+    const BTN_GAP = 10;
+    const boxX = 10;
+    const boxW = w - 20;
 
+    // テキスト折り返し（\n 改行 + 幅超過で自動折り返し）
+    this.ctx.font = `${FONT_SIZE}px sans-serif`;
+    const maxTextW = boxW - BOX_PAD * 2;
+    const rawLines = step.text.split('\n');
+    const wrappedLines: string[] = [];
+    for (const raw of rawLines) {
+      wrappedLines.push(...this.wrapTextLine(raw, maxTextW));
+    }
+
+    const hasButton = step.type !== 'force_match';
+    const textH = wrappedLines.length * LINE_H;
+    const boxH = BOX_PAD + textH + (hasButton ? BTN_GAP + BTN_H + BOX_PAD : BOX_PAD);
+    const boxY = h - boxH - 10;
+
+    // ボックス背景と枠線
     this.ctx.fillStyle = 'rgba(20, 24, 44, 0.96)';
     this.drawRoundRect(boxX, boxY, boxW, boxH, 12);
     this.ctx.fill();
@@ -718,39 +735,55 @@ export class PuzzleScene {
     this.drawRoundRect(boxX, boxY, boxW, boxH, 12);
     this.ctx.stroke();
 
-    // テキスト描画（\n 改行対応）
+    // テキスト描画
     this.ctx.fillStyle = '#ffffff';
-    this.ctx.font = '13px sans-serif';
+    this.ctx.font = `${FONT_SIZE}px sans-serif`;
     this.ctx.textAlign = 'left';
     this.ctx.textBaseline = 'top';
-    const lines = step.text.split('\n');
-    lines.forEach((line, i) => {
-      this.ctx.fillText(line, boxX + boxPad, boxY + boxPad + i * 22);
+    wrappedLines.forEach((line, i) => {
+      this.ctx.fillText(line, boxX + BOX_PAD, boxY + BOX_PAD + i * LINE_H);
     });
 
     // "次へ" ボタン（explain / praise のみ）
-    if (step.type !== 'force_match') {
+    if (hasButton) {
       const btnW = 90;
-      const btnH = 34;
-      const btnX = boxX + boxW - btnW - boxPad;
-      const btnY = boxY + boxH - btnH - boxPad;
+      const btnX = boxX + boxW - btnW - BOX_PAD;
+      const btnY = boxY + boxH - BTN_H - BOX_PAD;
 
       this.ctx.fillStyle = step.type === 'praise' ? '#ffd234' : '#4a90e2';
-      this.drawRoundRect(btnX, btnY, btnW, btnH, 8);
+      this.drawRoundRect(btnX, btnY, btnW, BTN_H, 8);
       this.ctx.fill();
 
       this.ctx.fillStyle = step.type === 'praise' ? '#1c1f2a' : '#ffffff';
       this.ctx.font = 'bold 14px sans-serif';
       this.ctx.textAlign = 'center';
       this.ctx.textBaseline = 'middle';
-      this.ctx.fillText('次へ ▶', btnX + btnW / 2, btnY + btnH / 2);
+      this.ctx.fillText('次へ ▶', btnX + btnW / 2, btnY + BTN_H / 2);
 
       if (this.tutorial) {
-        this.tutorial.nextButtonRect = { x: btnX, y: btnY, w: btnW, h: btnH };
+        this.tutorial.nextButtonRect = { x: btnX, y: btnY, w: btnW, h: BTN_H };
       }
     } else if (this.tutorial) {
       this.tutorial.nextButtonRect = null;
     }
+  }
+
+  /** 1行のテキストを maxWidth に収まるよう文字単位で折り返す */
+  private wrapTextLine(text: string, maxWidth: number): string[] {
+    if (!text) return [''];
+    const result: string[] = [];
+    let current = '';
+    for (const char of text) {
+      const candidate = current + char;
+      if (this.ctx.measureText(candidate).width > maxWidth && current.length > 0) {
+        result.push(current);
+        current = char;
+      } else {
+        current = candidate;
+      }
+    }
+    if (current) result.push(current);
+    return result.length > 0 ? result : [''];
   }
 
   private drawRoundRect(x: number, y: number, w: number, h: number, r: number): void {
