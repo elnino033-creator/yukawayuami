@@ -122,6 +122,7 @@ export class LineChecker {
     if (a === b) return false;
     if (a.color === null || b.color === null) return false; // ブロック
     if (a.color !== b.color) return false;
+    if (a.type === 'ice' || b.type === 'ice') return false; // 氷は直接マッチ不可
 
     // ペア固定タイルのチェック
     if (a.type === 'paired' || b.type === 'paired') {
