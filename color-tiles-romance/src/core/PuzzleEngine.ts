@@ -118,9 +118,6 @@ export class PuzzleEngine {
     // 交点同時消し（水平+垂直の両マッチ）または単一マッチ
     if (matches.length === 1) {
       const { a, b } = matches[0];
-      if (a.type === 'ice' || b.type === 'ice') {
-        return this.handleIceMatch(a, b);
-      }
       if (a.type === 'linked' && b.type === 'linked' && a.linkGroupId && a.linkGroupId === b.linkGroupId) {
         return this.handleLinkedChainRemoval(a, b);
       }
@@ -132,38 +129,46 @@ export class PuzzleEngine {
   }
 
   /**
-   * 氷タイルがマッチした際の処理。
-   * - 両方が cracked でなければ両方を cracked に変える（消えない）
-   * - どちらかが既に cracked なら通常通り消える
+   * 消去されたタイルに隣接する氷タイルを処理する。
+   * - normal 状態 → cracked に変える
+   * - cracked 状態 → 消去（再帰的に周囲の氷も処理）
    */
-  private handleIceMatch(a: Tile, b: Tile): ClickResult {
-    const aIsIce = a.type === 'ice';
-    const bIsIce = b.type === 'ice';
+  private checkAdjacentIce(removedTiles: Tile[]): void {
+    const toCrack: Tile[] = [];
+    const toMelt: Tile[] = [];
 
-    const aReady = !aIsIce || a.state === 'cracked';
-    const bReady = !bIsIce || b.state === 'cracked';
-
-    if (aReady && bReady) {
-      // 両方が消える条件を満たす
-      return this.applyRemoval(a, b);
+    const dirs = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    for (const removed of removedTiles) {
+      for (const [dx, dy] of dirs) {
+        const nx = removed.x + dx;
+        const ny = removed.y + dy;
+        if (nx < 0 || ny < 0 || nx >= this.width || ny >= this.height) continue;
+        const neighbor = this.board[ny][nx];
+        if (!neighbor || neighbor.type !== 'ice') continue;
+        if (neighbor.state === 'normal') {
+          if (!toCrack.includes(neighbor)) toCrack.push(neighbor);
+        } else if (neighbor.state === 'cracked') {
+          if (!toMelt.includes(neighbor)) toMelt.push(neighbor);
+        }
+      }
     }
 
-    // 状態を進める
-    const cracked: Tile[] = [];
-    if (aIsIce && a.state === 'normal') {
-      a.state = 'cracked';
-      cracked.push(a);
+    // cracked になるタイルを toMelt から除外（同一タイルが両方に入らないよう）
+    const meltOnly = toMelt.filter(t => !toCrack.includes(t));
+
+    if (toCrack.length > 0) {
+      for (const t of toCrack) t.state = 'cracked';
+      this.emit({ type: 'iceCracked', tiles: toCrack });
     }
-    if (bIsIce && b.state === 'normal') {
-      b.state = 'cracked';
-      cracked.push(b);
+
+    if (meltOnly.length > 0) {
+      for (const t of meltOnly) {
+        this.board[t.y][t.x] = null;
+      }
+      this.emit({ type: 'tilesRemoved', tiles: meltOnly });
+      // 溶けた氷の周囲もチェック（連鎖）
+      this.checkAdjacentIce(meltOnly);
     }
-    // 通常タイルがある場合はそれだけ消す…のは仕様矛盾になるので
-    // 「両方残してヒビを入れる」だけにとどめる（コンボは継続させない）
-    this.combo = 0;
-    this.emit({ type: 'iceCracked', tiles: cracked });
-    // ペアの消去自体は成功扱い：手数を進めたとみなす
-    return { type: 'success', removed: [] };
   }
 
   /**
@@ -210,6 +215,9 @@ export class PuzzleEngine {
     this.pairsCleared++;
 
     this.emit({ type: 'tilesRemoved', tiles: removed, bonusSec });
+
+    // 隣接する氷タイルを処理
+    this.checkAdjacentIce(removed);
 
     // 障害ブロック解除条件チェック
     this.checkBlockRelease();
@@ -287,6 +295,7 @@ export class PuzzleEngine {
 
     if (allRemoved.length > 0) {
       this.emit({ type: 'tilesRemoved', tiles: allRemoved, bonusSec });
+      this.checkAdjacentIce(allRemoved);
     }
     this.checkBlockRelease();
 
@@ -339,6 +348,9 @@ export class PuzzleEngine {
     this.pairsCleared++;
 
     this.emit({ type: 'tilesRemoved', tiles: [a, b], bonusSec });
+
+    // 隣接する氷タイルを処理
+    this.checkAdjacentIce([a, b]);
 
     // 障害ブロック解除条件チェック
     this.checkBlockRelease();

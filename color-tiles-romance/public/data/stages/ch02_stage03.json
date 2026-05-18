@@ -7,6 +7,6 @@
   "timeLimitSec": 105,
   "missPenaltySec": 30,
   "hintCount": 1,
-  "generationParams": { "seed": 2003, "targetPairs": 16, "iceChance": 0.40 },
+  "generationParams": { "seed": 2003, "targetPairs": 16, "iceChance": 0 },
   "preScenario": "ch02_s03_pre.json"
 }

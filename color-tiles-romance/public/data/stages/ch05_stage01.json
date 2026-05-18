@@ -7,7 +7,7 @@
   "timeLimitSec": 110,
   "missPenaltySec": 30,
   "hintCount": 1,
-  "generationParams": { "seed": 5001, "targetPairs": 18, "iceChance": 0.20, "timeTileChance": 0.10, "blockCount": 2 },
+  "generationParams": { "seed": 5001, "targetPairs": 18, "iceChance": 0, "timeTileChance": 0.10, "blockCount": 2 },
   "blockReleaseRule": { "type": "afterPairs", "count": 4 },
   "preScenario": "ch05_s01_pre.json"
 }

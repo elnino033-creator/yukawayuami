@@ -11,7 +11,7 @@
     "seed": 5002,
     "targetPairs": 50,
     "colors": ["red","blue","green","yellow","purple","orange","cyan"],
-    "iceChance": 0.25,
+    "iceChance": 0,
     "timeTileChance": 0.10,
     "blockCount": 3,
     "dense": true
