@@ -287,7 +287,9 @@ export class SceneManager {
 
     const hud = this.createPuzzleHud(wrapper);
     const canvas = document.createElement('canvas');
-    canvas.style.cssText = 'margin:auto;display:block;';
+    // max-width:100% + height:auto でボードが画面幅を超えても縮小表示される
+    // pointerToCell は getBoundingClientRect() でスケールを補正するので座標ずれなし
+    canvas.style.cssText = 'margin:auto;display:block;max-width:100%;height:auto;';
     wrapper.appendChild(canvas);
     this.appContainer.appendChild(wrapper);
 

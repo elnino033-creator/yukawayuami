@@ -10,9 +10,17 @@ export interface StageGenerationParams {
   timeTileChance?: number;
   /** nullセルに配置する障害ブロック数 */
   blockCount?: number;
+  /**
+   * true のとき「dense戦略」を使用:
+   * nullスパンの端点を優先してペアを配置し、密度を最大化する。
+   * 最終章の高難易度ステージ向け。
+   */
+  dense?: boolean;
 }
 
-const DEFAULT_COLORS = ['red', 'blue', 'green', 'yellow', 'purple'];
+/** 全10色。chapterが上がるにつれて色が追加されていく */
+const ALL_COLORS = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan', 'teal', 'brown'];
+const DEFAULT_COLORS = ALL_COLORS.slice(0, 5);
 
 // ---------- Mulberry32 シード付き疑似乱数 ----------
 
@@ -36,16 +44,14 @@ class SeededRng {
 /**
  * ランダムなタイルレイアウトを生成する。
  *
- * アルゴリズム（正確には「コリドークリア保証ペア配置法」）:
- *   1. 空ボードにペアを1組ずつ配置する。
- *      新しいペア (A, B) を配置するとき、A-B間のコリドー（同行 or 同列内で
- *      A〜Bを結ぶセル列）に既存タイルが存在しないことを要求する。
- *   2. 解手順は「配置の逆順」になる。
- *      配置順 1,2,...,N に対して解順 N,N-1,...,1 で必ず全ペアが消える。
+ * アルゴリズム（コリドークリア保証ペア配置法）:
+ *   1. 空ボードにペアを1組ずつ配置。
+ *      新ペア (A,B) の配置時、A-B間のコリドーに既存タイルが無いことを保証。
+ *   2. 解手順 = 配置の逆順 で全ペアが消える（理論保証）。
  *
- * 証明の要点: ペアKを配置した時点でそのコリドーは空。
- * 後から配置されたペアK+1..Nを先に消せばコリドーが復活し、Kが消せる。
- * これを帰納的に繰り返すと全ペアが消える。
+ * dense=true の場合:
+ *   nullスパンの端点ペア (spanStart, spanEnd) を 70% の確率で優先使用。
+ *   スパンを効率よく消費して密度を 70〜75% まで引き上げる。
  */
 export class StageGenerator {
   static generate(
@@ -55,9 +61,9 @@ export class StageGenerator {
   ): LayoutCell[][] {
     const rng = new SeededRng(params.seed);
     const colors = params.colors ?? DEFAULT_COLORS;
-    const { targetPairs, iceChance = 0, timeTileChance = 0, blockCount = 0 } = params;
+    const { targetPairs, iceChance = 0, timeTileChance = 0, blockCount = 0, dense = false } = params;
 
-    // Phase 1: 空ボードに通常タイルペアを配置
+    // Phase 1: ペアを順番に配置
     const raw: (string | null)[][] = Array.from({ length: boardHeight }, () =>
       Array<string | null>(boardWidth).fill(null)
     );
@@ -71,14 +77,14 @@ export class StageGenerator {
 
       if (horiz) {
         const row = rng.int(boardHeight);
-        pair = this.pickPair(raw[row], rng);
+        pair = dense ? this.pickPairDense(raw[row], rng) : this.pickPair(raw[row], rng);
         if (!pair) continue;
         raw[row][pair[0]] = colors[colorIdx % colors.length];
         raw[row][pair[1]] = colors[colorIdx % colors.length];
       } else {
         const col = rng.int(boardWidth);
         const colSlice = raw.map(r => r[col]);
-        pair = this.pickPair(colSlice, rng);
+        pair = dense ? this.pickPairDense(colSlice, rng) : this.pickPair(colSlice, rng);
         if (!pair) continue;
         raw[pair[0]][col] = colors[colorIdx % colors.length];
         raw[pair[1]][col] = colors[colorIdx % colors.length];
@@ -112,7 +118,6 @@ export class StageGenerator {
           if (result[y][x] === null) empties.push([y, x]);
         }
       }
-      // 部分Fisher-Yates: 後ろからblockCount個を選ぶ
       const take = Math.min(blockCount, empties.length);
       for (let i = empties.length - 1; i >= empties.length - take; i--) {
         const j = rng.int(i + 1);
@@ -128,14 +133,8 @@ export class StageGenerator {
   }
 
   /**
-   * 1Dライン内のnullスパン（連続null区間）から有効なペア (a, b) をランダムに選ぶ。
-   *
-   * 有効条件:
-   *   - line[a] === null, line[b] === null
-   *   - a+1〜b-1 もすべてnull（コリドークリア）
-   *   - b - a >= 2（間に少なくとも1つのnullセル＝クリックポイントが存在する）
-   *
-   * 実装: 各nullスパン内の全ペアを列挙して一様ランダムに選ぶ。
+   * 通常戦略: nullスパンから有効なペアをランダムに選ぶ。
+   * 有効条件: 両端がnull、間もすべてnull、距離>=2。
    */
   private static pickPair(
     line: (string | null)[],
@@ -150,7 +149,6 @@ export class StageGenerator {
         spanStart = i;
       } else if (!isNull && spanStart !== -1) {
         const spanEnd = i - 1;
-        // スパン長 >= 2 の場合のみペアを生成（b-a>=2 を満たすには最低3セル必要）
         for (let a = spanStart; a <= spanEnd - 2; a++) {
           for (let b = a + 2; b <= spanEnd; b++) {
             pairs.push([a, b]);
@@ -161,6 +159,44 @@ export class StageGenerator {
     }
 
     if (pairs.length === 0) return null;
+    return pairs[rng.int(pairs.length)];
+  }
+
+  /**
+   * Dense戦略: スパンの端点ペア (spanStart, spanEnd) を 70% の確率で優先。
+   * 残りのnullスパンを最大化し、高密度なボードを生成する。
+   */
+  private static pickPairDense(
+    line: (string | null)[],
+    rng: SeededRng
+  ): [number, number] | null {
+    const spans: Array<[number, number]> = [];
+    let spanStart = -1;
+
+    for (let i = 0; i <= line.length; i++) {
+      const isNull = i < line.length && line[i] === null;
+      if (isNull && spanStart === -1) {
+        spanStart = i;
+      } else if (!isNull && spanStart !== -1) {
+        if (i - 1 - spanStart >= 2) spans.push([spanStart, i - 1]);
+        spanStart = -1;
+      }
+    }
+
+    if (spans.length === 0) return null;
+
+    const [s, e] = spans[rng.int(spans.length)];
+
+    // 70%の確率で端点ペア → スパンフラグメントを最小化して密度を上げる
+    if (rng.bool(0.7)) return [s, e];
+
+    // 30%はランダムペア（レイアウトの多様性を保つ）
+    const pairs: Array<[number, number]> = [];
+    for (let a = s; a <= e - 2; a++) {
+      for (let b = a + 2; b <= e; b++) {
+        pairs.push([a, b]);
+      }
+    }
     return pairs[rng.int(pairs.length)];
   }
 }

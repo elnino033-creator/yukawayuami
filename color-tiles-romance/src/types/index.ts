@@ -63,6 +63,8 @@ export interface StageGenerationParams {
   iceChance?: number;
   timeTileChance?: number;
   blockCount?: number;
+  /** true のとき端点優先のdense戦略を使用し密度を70〜75%に引き上げる */
+  dense?: boolean;
 }
 
 /** チュートリアルステップ */
