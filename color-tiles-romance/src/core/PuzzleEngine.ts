@@ -88,7 +88,7 @@ export class PuzzleEngine {
 
   /**
    * 空マス (cx, cy) のクリック処理。
-   * パズル中の主たる入力エントリーポイント。
+   * 交点では水平・垂直同時消し（最大4タイル）が発生する。
    */
   onCellClick(cx: number, cy: number): ClickResult {
     if (!this.timer.isRunning) return { type: 'noop' };
@@ -99,8 +99,8 @@ export class PuzzleEngine {
       return { type: 'noop' }; // タイル上のクリックは無効
     }
 
-    const match = this.checker.checkClick(cx, cy);
-    if (!match) {
+    const matches = this.checker.checkClickAll(cx, cy);
+    if (matches.length === 0) {
       // 誤クリック
       this.missCount++;
       this.combo = 0;
@@ -115,20 +115,20 @@ export class PuzzleEngine {
       return { type: 'miss' };
     }
 
-    const { a, b } = match;
-
-    // 氷タイル処理：少なくとも片方が ice の場合
-    if (a.type === 'ice' || b.type === 'ice') {
-      return this.handleIceMatch(a, b);
+    // 交点同時消し（水平+垂直の両マッチ）または単一マッチ
+    if (matches.length === 1) {
+      const { a, b } = matches[0];
+      if (a.type === 'ice' || b.type === 'ice') {
+        return this.handleIceMatch(a, b);
+      }
+      if (a.type === 'linked' && b.type === 'linked' && a.linkGroupId && a.linkGroupId === b.linkGroupId) {
+        return this.handleLinkedChainRemoval(a, b);
+      }
+      return this.applyRemoval(a, b);
     }
 
-    // 連結タイル: 両方が linked かつ同じ linkGroupId の場合、グループ全体を消去
-    if (a.type === 'linked' && b.type === 'linked' && a.linkGroupId && a.linkGroupId === b.linkGroupId) {
-      return this.handleLinkedChainRemoval(a, b);
-    }
-
-    // 通常消去
-    return this.applyRemoval(a, b);
+    // 2マッチ（交点同時消し）: 最大4タイルを一括処理
+    return this.applyMultiRemoval(matches);
   }
 
   /**
@@ -222,10 +222,80 @@ export class PuzzleEngine {
       if (this.missCount === 0) this.score += 500;
       this.emit({ type: 'cleared' });
     } else if (this.isStuck()) {
-      this.shuffle();
+      this.timer.stop();
+      setTimeout(() => this.emit({ type: 'gameOver' }), 1500);
     }
 
     return { type: 'success', removed, bonusSec };
+  }
+
+  /**
+   * 交点同時消し：複数のマッチを一括で処理する。
+   * 氷タイル・連結タイルは簡易処理（通常消去扱い）。
+   */
+  private applyMultiRemoval(matches: import('@/types').MatchResult[]): ClickResult {
+    const now = Date.now();
+
+    if (now - this.lastClearAt <= PuzzleEngine.COMBO_WINDOW_MS) {
+      this.combo++;
+    } else {
+      this.combo = 1;
+    }
+    this.lastClearAt = now;
+    if (this.combo > this.maxCombo) this.maxCombo = this.combo;
+
+    const allRemoved: Tile[] = [];
+    let bonusSec = 0;
+
+    for (const match of matches) {
+      const { a, b } = match;
+      const tileA = this.board[a.y]?.[a.x];
+      const tileB = this.board[b.y]?.[b.x];
+      if (!tileA || !tileB) continue;
+
+      // 氷タイル: cracked でなければヒビを入れるだけ
+      if (tileA.type === 'ice' && tileA.state === 'normal') {
+        tileA.state = 'cracked';
+        this.emit({ type: 'iceCracked', tiles: [tileA] });
+        continue;
+      }
+      if (tileB.type === 'ice' && tileB.state === 'normal') {
+        tileB.state = 'cracked';
+        this.emit({ type: 'iceCracked', tiles: [tileB] });
+        continue;
+      }
+
+      if (tileA.type === 'time') bonusSec += 10;
+      if (tileB.type === 'time') bonusSec += 10;
+
+      this.board[tileA.y][tileA.x] = null;
+      this.board[tileB.y][tileB.x] = null;
+      allRemoved.push(tileA, tileB);
+    }
+
+    if (this.combo >= 2) bonusSec += this.combo * 2;
+    if (bonusSec > 0) this.timer.add(bonusSec);
+
+    const pairsThisClick = Math.floor(allRemoved.length / 2);
+    this.score += 100 * pairsThisClick;
+    if (this.combo >= 2) this.score += this.combo * 50;
+    this.pairsCleared += pairsThisClick;
+
+    this.emit({ type: 'tilesRemoved', tiles: allRemoved, bonusSec });
+    this.checkBlockRelease();
+
+    if (this.isCleared()) {
+      this.timer.stop();
+      this.score += this.timer.remain * 10;
+      if (this.hintUsed === 0) this.score += 1000;
+      if (this.missCount === 0) this.score += 500;
+      this.emit({ type: 'cleared' });
+    } else if (this.isStuck()) {
+      this.timer.stop();
+      setTimeout(() => this.emit({ type: 'gameOver' }), 1500);
+    }
+
+    return { type: 'success', removed: allRemoved, bonusSec };
   }
 
   private applyRemoval(a: Tile, b: Tile): ClickResult {
@@ -276,8 +346,8 @@ export class PuzzleEngine {
       if (this.missCount === 0) this.score += 500;
       this.emit({ type: 'cleared' });
     } else if (this.isStuck()) {
-      // 詰みなら自動シャッフル
-      this.shuffle();
+      this.timer.stop();
+      setTimeout(() => this.emit({ type: 'gameOver' }), 1500);
     }
 
     return { type: 'success', removed: [a, b], bonusSec };
@@ -429,9 +499,9 @@ export class PuzzleEngine {
     };
   }
 
-  /** プレビュー用：空マス (cx, cy) で消えるペアの情報を返す */
-  previewClick(cx: number, cy: number) {
-    return this.checker.checkClick(cx, cy);
+  /** プレビュー用：空マス (cx, cy) で消えるすべてのマッチを返す */
+  previewClickAll(cx: number, cy: number) {
+    return this.checker.checkClickAll(cx, cy);
   }
 
   // ---------- イベント ----------

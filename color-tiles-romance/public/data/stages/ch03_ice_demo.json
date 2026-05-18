@@ -5,7 +5,7 @@
   "boardWidth": 8,
   "boardHeight": 6,
   "timeLimitSec": 150,
-  "missPenaltySec": 1,
+  "missPenaltySec": 30,
   "hintCount": 3,
   "tilesLayout": [
     [{"color":"blue","type":"ice"}, null, null, {"color":"blue","type":"ice"}, null, "red", null, "red"],

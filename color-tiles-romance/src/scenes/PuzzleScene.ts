@@ -28,7 +28,7 @@ const BOARD_PADDING = 16;
 interface HoverState {
   cx: number;
   cy: number;
-  match: MatchResult | null;
+  matches: MatchResult[];
 }
 
 interface MissEffect {
@@ -239,11 +239,11 @@ export class PuzzleScene {
       this.hover = null;
       return;
     }
-    const match = this.engine.previewClick(cell.cx, cell.cy);
-    this.hover = { cx: cell.cx, cy: cell.cy, match };
+    const matches = this.engine.previewClickAll(cell.cx, cell.cy);
+    this.hover = { cx: cell.cx, cy: cell.cy, matches };
 
     // シャドウタイルが含まれるマッチのとき、3000ms だけ色を表示する
-    if (match) {
+    for (const match of matches) {
       for (const t of [match.a, match.b]) {
         if (t.type === 'shadow') {
           this.shadowReveals.set(`${t.x},${t.y}`, Date.now() + 3000);
@@ -274,6 +274,9 @@ export class PuzzleScene {
         case 'tilesRemoved':
           soundEngine.playMatch();
           this.removedEffects.push({ tiles: e.tiles, startedAt: Date.now() });
+          if (e.tiles.length >= 4) {
+            this.spawnFloatText('CROSS!', '#ff9844');
+          }
           if (e.bonusSec && e.bonusSec > 0) {
             this.spawnFloatText(`+${e.bonusSec}s`, '#5ec76a');
           }
@@ -401,39 +404,41 @@ export class PuzzleScene {
 
   private drawHoverPreview(): void {
     if (!this.hover) return;
-    const { cx, cy, match } = this.hover;
+    const { cx, cy, matches } = this.hover;
 
     // ホバーセルの強調
     const { x, y } = this.cellToPixel(cx, cy);
-    this.ctx.strokeStyle = match ? '#ffd234' : 'rgba(255,255,255,0.4)';
-    this.ctx.lineWidth = 2;
+    const isCross = matches.length >= 2;
+    this.ctx.strokeStyle = matches.length > 0 ? (isCross ? '#ff9844' : '#ffd234') : 'rgba(255,255,255,0.4)';
+    this.ctx.lineWidth = isCross ? 3 : 2;
     this.ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
 
-    if (!match) return;
+    if (matches.length === 0) return;
 
-    // マッチ可能なら、結ぶ直線を描画
-    const a = this.cellToPixel(match.a.x, match.a.y);
-    const b = this.cellToPixel(match.b.x, match.b.y);
-    const ax = a.x + TILE_SIZE / 2;
-    const ay = a.y + TILE_SIZE / 2;
-    const bx = b.x + TILE_SIZE / 2;
-    const by = b.y + TILE_SIZE / 2;
+    // 各マッチについて接続線と両端強調を描画
+    for (const match of matches) {
+      const pa = this.cellToPixel(match.a.x, match.a.y);
+      const pb = this.cellToPixel(match.b.x, match.b.y);
+      const ax = pa.x + TILE_SIZE / 2;
+      const ay = pa.y + TILE_SIZE / 2;
+      const bx = pb.x + TILE_SIZE / 2;
+      const by_ = pb.y + TILE_SIZE / 2;
 
-    this.ctx.strokeStyle = COLOR_MAP[match.a.color ?? 'red'] ?? '#ffd234';
-    this.ctx.lineWidth = 4;
-    this.ctx.globalAlpha = 0.6;
-    this.ctx.beginPath();
-    this.ctx.moveTo(ax, ay);
-    this.ctx.lineTo(bx, by);
-    this.ctx.stroke();
-    this.ctx.globalAlpha = 1;
+      this.ctx.strokeStyle = COLOR_MAP[match.a.color ?? 'red'] ?? '#ffd234';
+      this.ctx.lineWidth = isCross ? 5 : 4;
+      this.ctx.globalAlpha = 0.7;
+      this.ctx.beginPath();
+      this.ctx.moveTo(ax, ay);
+      this.ctx.lineTo(bx, by_);
+      this.ctx.stroke();
+      this.ctx.globalAlpha = 1;
 
-    // 両端タイルの強調
-    for (const t of [match.a, match.b]) {
-      const p = this.cellToPixel(t.x, t.y);
-      this.ctx.strokeStyle = '#fff';
-      this.ctx.lineWidth = 3;
-      this.ctx.strokeRect(p.x - 2, p.y - 2, TILE_SIZE + 4, TILE_SIZE + 4);
+      for (const t of [match.a, match.b]) {
+        const p = this.cellToPixel(t.x, t.y);
+        this.ctx.strokeStyle = isCross ? '#ff9844' : '#fff';
+        this.ctx.lineWidth = 3;
+        this.ctx.strokeRect(p.x - 2, p.y - 2, TILE_SIZE + 4, TILE_SIZE + 4);
+      }
     }
   }
 
