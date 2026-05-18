@@ -8,26 +8,26 @@
   "missPenaltySec": 2,
   "hintCount": 3,
   "tilesLayout": [
-    [{"color":"red","type":"ice"},  "blue",  "green",  null, "green",  "blue",  {"color":"red","type":"ice"}  ],
-    [{"color":"blue","type":"ice"}, "red",   "purple", null, "purple", "red",   {"color":"blue","type":"ice"} ],
+    [{"color":"red","type":"ice"}, null,     null,    null,   null,    null,    {"color":"red","type":"ice"} ],
+    [{"color":"blue","type":"ice"},"red",   "green",  null,  "green",  "red",  {"color":"blue","type":"ice"}],
     ["green",  "purple", "yellow", null, "yellow", "purple", "green"  ],
     ["yellow", "green",  "blue",   null, "blue",   "green",  "yellow" ],
     ["purple", "yellow", "red",    null, "red",    "yellow", "purple" ],
-    [{"color":"red","type":"ice"},  "blue",  "green",  null, "green",  "blue",  {"color":"red","type":"ice"}  ],
-    [{"color":"blue","type":"ice"}, "red",   "purple", null, "purple", "red",   {"color":"blue","type":"ice"} ]
+    [{"color":"red","type":"ice"}, "blue",  "green",  null,  "green",  "blue", {"color":"red","type":"ice"} ],
+    [{"color":"blue","type":"ice"},"red",  "purple",  null, "purple",  "red",  {"color":"blue","type":"ice"}]
   ],
   "preScenario": "ch02_s01_pre.json",
   "tutorialSteps": [
     {
       "type": "explain",
-      "text": "氷タイル（❄）が登場！\n氷タイルは通常より硬く、同じ色のペアを2回マッチさせないと消えません。",
+      "text": "氷タイル（❄）が登場！\n氷タイルは通常より硬く、同じ色のペアを2回マッチさせないと消えません。\n赤い氷タイルに注目してください。",
       "highlightCells": [{"x":0,"y":0},{"x":6,"y":0}]
     },
     {
       "type": "force_match",
       "text": "まず1回目！赤い氷タイルの間の空マス（列3、行0）をクリック！",
       "highlightCells": [{"x":0,"y":0},{"x":6,"y":0}],
-      "allowedCells": [{"x":3,"y":0}]
+      "allowedCells": [{"x":1,"y":0},{"x":2,"y":0},{"x":3,"y":0},{"x":4,"y":0},{"x":5,"y":0}]
     },
     {
       "type": "explain",
@@ -36,9 +36,9 @@
     },
     {
       "type": "force_match",
-      "text": "もう1回！同じ空マスをクリック！",
+      "text": "もう1回！同じ空マスをクリックして氷を完全に砕こう！",
       "highlightCells": [{"x":0,"y":0},{"x":6,"y":0}],
-      "allowedCells": [{"x":3,"y":0}]
+      "allowedCells": [{"x":1,"y":0},{"x":2,"y":0},{"x":3,"y":0},{"x":4,"y":0},{"x":5,"y":0}]
     },
     {
       "type": "praise",

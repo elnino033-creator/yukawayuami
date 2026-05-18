@@ -220,9 +220,13 @@ export class PuzzleScene {
           const step = this.tutorial.steps[this.tutorial.currentIndex];
           if (step.type === 'force_match') {
             const allowed = step.allowedCells?.some(c => c.x === this.hover!.cx && c.y === this.hover!.cy) ?? false;
-            if (allowed) this.engine.onCellClick(this.hover.cx, this.hover.cy);
+            if (allowed) {
+              soundEngine.playClick();
+              this.engine.onCellClick(this.hover.cx, this.hover.cy);
+            }
           }
         } else {
+          soundEngine.playClick();
           this.engine.onCellClick(this.hover.cx, this.hover.cy);
         }
       }
@@ -276,7 +280,8 @@ export class PuzzleScene {
           if (this.tutorial) {
             const step = this.tutorial.steps[this.tutorial.currentIndex];
             if (step.type === 'force_match') {
-              setTimeout(() => this.advanceTutorial(), 500);
+              const idx = this.tutorial.currentIndex;
+              setTimeout(() => this.advanceTutorial(idx), 500);
             }
           }
           break;
@@ -286,7 +291,8 @@ export class PuzzleScene {
           if (this.tutorial) {
             const step = this.tutorial.steps[this.tutorial.currentIndex];
             if (step.type === 'force_match') {
-              setTimeout(() => this.advanceTutorial(), 500);
+              const idx = this.tutorial.currentIndex;
+              setTimeout(() => this.advanceTutorial(idx), 500);
             }
           }
           break;
@@ -616,8 +622,9 @@ export class PuzzleScene {
 
   // ---------- チュートリアル ----------
 
-  private advanceTutorial(): void {
+  private advanceTutorial(fromIndex?: number): void {
     if (!this.tutorial) return;
+    if (fromIndex !== undefined && this.tutorial.currentIndex !== fromIndex) return;
     this.tutorial.currentIndex++;
     this.tutorial.stepStartTime = Date.now();
     this.tutorial.nextButtonRect = null;
