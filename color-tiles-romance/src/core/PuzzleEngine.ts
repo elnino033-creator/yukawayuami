@@ -230,8 +230,10 @@ export class PuzzleEngine {
   }
 
   /**
-   * 交点同時消し：複数のマッチを一括で処理する。
-   * 氷タイル・連結タイルは簡易処理（通常消去扱い）。
+   * 交点・T字・L字同時消し：複数マッチを一括処理する。
+   *
+   * 各マッチが参照するタイルを位置キーで重複排除してから消去するため、
+   * T字（3方向）などで同一タイルが複数マッチに登場しても正しく1回だけ消える。
    */
   private applyMultiRemoval(matches: import('@/types').MatchResult[]): ClickResult {
     const now = Date.now();
@@ -244,34 +246,36 @@ export class PuzzleEngine {
     this.lastClearAt = now;
     if (this.combo > this.maxCombo) this.maxCombo = this.combo;
 
+    // 全マッチのタイルを位置キーで重複排除して収集
+    const tileMap = new Map<string, Tile>();
+    for (const match of matches) {
+      for (const tile of [match.a, match.b]) {
+        const key = `${tile.x},${tile.y}`;
+        if (!tileMap.has(key)) {
+          const t = this.board[tile.y]?.[tile.x];
+          if (t) tileMap.set(key, t);
+        }
+      }
+    }
+
     const allRemoved: Tile[] = [];
+    const cracked: Tile[] = [];
     let bonusSec = 0;
 
-    for (const match of matches) {
-      const { a, b } = match;
-      const tileA = this.board[a.y]?.[a.x];
-      const tileB = this.board[b.y]?.[b.x];
-      if (!tileA || !tileB) continue;
-
-      // 氷タイル: cracked でなければヒビを入れるだけ
-      if (tileA.type === 'ice' && tileA.state === 'normal') {
-        tileA.state = 'cracked';
-        this.emit({ type: 'iceCracked', tiles: [tileA] });
-        continue;
-      }
-      if (tileB.type === 'ice' && tileB.state === 'normal') {
-        tileB.state = 'cracked';
-        this.emit({ type: 'iceCracked', tiles: [tileB] });
+    for (const tile of tileMap.values()) {
+      // 氷タイル: normal 状態ならヒビを入れるだけ（消去しない）
+      if (tile.type === 'ice' && tile.state === 'normal') {
+        tile.state = 'cracked';
+        cracked.push(tile);
         continue;
       }
 
-      if (tileA.type === 'time') bonusSec += 10;
-      if (tileB.type === 'time') bonusSec += 10;
-
-      this.board[tileA.y][tileA.x] = null;
-      this.board[tileB.y][tileB.x] = null;
-      allRemoved.push(tileA, tileB);
+      if (tile.type === 'time') bonusSec += 10;
+      this.board[tile.y][tile.x] = null;
+      allRemoved.push(tile);
     }
+
+    if (cracked.length > 0) this.emit({ type: 'iceCracked', tiles: cracked });
 
     if (this.combo >= 2) bonusSec += this.combo * 2;
     if (bonusSec > 0) this.timer.add(bonusSec);
@@ -281,7 +285,9 @@ export class PuzzleEngine {
     if (this.combo >= 2) this.score += this.combo * 50;
     this.pairsCleared += pairsThisClick;
 
-    this.emit({ type: 'tilesRemoved', tiles: allRemoved, bonusSec });
+    if (allRemoved.length > 0) {
+      this.emit({ type: 'tilesRemoved', tiles: allRemoved, bonusSec });
+    }
     this.checkBlockRelease();
 
     if (this.isCleared()) {

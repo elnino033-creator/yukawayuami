@@ -276,6 +276,8 @@ export class PuzzleScene {
           this.removedEffects.push({ tiles: e.tiles, startedAt: Date.now() });
           if (e.tiles.length >= 4) {
             this.spawnFloatText('CROSS!', '#ff9844');
+          } else if (e.tiles.length === 3) {
+            this.spawnFloatText('T字！', '#ff9844');
           }
           if (e.bonusSec && e.bonusSec > 0) {
             this.spawnFloatText(`+${e.bonusSec}s`, '#5ec76a');
