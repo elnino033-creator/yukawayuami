@@ -531,51 +531,97 @@ export class ScenarioPlayer {
   private drawCharacters(w: number, h: number): void {
     for (const chara of this.characters) {
       let cx = w / 2;
-      if (chara.pos === 'left') cx = w * 0.25;
-      else if (chara.pos === 'right') cx = w * 0.75;
+      if (chara.pos === 'left') cx = w * 0.27;
+      else if (chara.pos === 'right') cx = w * 0.73;
 
       const img = this.charaImageCache.get(`${chara.id}_${chara.expr}`);
       if (img) {
-        const winY = h - h * 0.28 - 16;
-        const displayH = Math.min(h * 0.65, winY * 0.92);
+        // 一般的なVNレイアウト: 画面高さの 85% のサイズで画面下端に揃える
+        const displayH = h * 0.85;
         const displayW = displayH * (img.naturalWidth / img.naturalHeight);
-        this.ctx.drawImage(img, cx - displayW / 2, winY - displayH, displayW, displayH);
+        const spriteY = h - displayH; // 足元が画面下端
+        this.ctx.drawImage(img, cx - displayW / 2, spriteY, displayW, displayH);
+      } else {
+        // 画像未ロード時のプレースホルダ（縦長の色付き矩形）
+        const phW = 110;
+        const phH = h * 0.75;
+        const phX = cx - phW / 2;
+        const phY = h - phH;
+        this.ctx.fillStyle = chara.color + 'cc';
+        this.ctx.fillRect(phX, phY, phW, phH);
+        this.ctx.fillStyle = '#fff';
+        this.ctx.font = 'bold 13px sans-serif';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'top';
+        this.ctx.fillText(chara.id, cx, phY + 8);
       }
     }
   }
 
   private drawTextWindow(w: number, h: number): void {
-    const winH = h * 0.28;
-    const winY = h - winH - 16;
-    const pad = 16;
+    const winH = h * 0.26;
+    const winY = h - winH; // 画面底辺ぴったり
+    const padX = 20;
+    const padY = 14;
+    const namePlateH = 32;
+    const namePlateW = 160;
 
-    // 半透明背景
-    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-    this.ctx.fillRect(8, winY, w - 16, winH);
+    // テキストウィンドウ背景
+    this.ctx.fillStyle = 'rgba(8, 10, 24, 0.82)';
+    this.ctx.fillRect(0, winY, w, winH);
 
-    // 枠線
-    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-    this.ctx.lineWidth = 1;
-    this.ctx.strokeRect(8, winY, w - 16, winH);
+    // 上辺ライン
+    this.ctx.strokeStyle = 'rgba(180, 160, 255, 0.5)';
+    this.ctx.lineWidth = 1.5;
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, winY);
+    this.ctx.lineTo(w, winY);
+    this.ctx.stroke();
 
-    // 名前プレート
+    // 名前プレート（ウィンドウ上端左）
     if (this.currentName) {
-      const nameW = Math.min(180, w * 0.4);
-      this.ctx.fillStyle = 'rgba(80, 40, 120, 0.9)';
-      this.ctx.fillRect(8, winY - 30, nameW, 28);
-      this.ctx.fillStyle = '#fff';
-      this.ctx.font = 'bold 16px sans-serif';
+      const nameColor = this.currentNameColor();
+      this.ctx.fillStyle = nameColor;
+      this.roundRect(padX - 4, winY - namePlateH + 2, namePlateW, namePlateH, 6);
+      this.ctx.fill();
+
+      this.ctx.fillStyle = '#ffffff';
+      this.ctx.font = 'bold 17px sans-serif';
       this.ctx.textAlign = 'left';
       this.ctx.textBaseline = 'middle';
-      this.ctx.fillText(this.currentName, 8 + pad, winY - 16);
+      this.ctx.fillText(this.currentName, padX + 6, winY - namePlateH / 2 + 2);
     }
 
     // 本文テキスト（折り返し）
-    this.ctx.fillStyle = '#f0f0f0';
-    this.ctx.font = '16px sans-serif';
+    this.ctx.fillStyle = '#f4f0ff';
+    this.ctx.font = '17px sans-serif';
     this.ctx.textAlign = 'left';
     this.ctx.textBaseline = 'top';
-    this.wrapText(this.displayedText, 8 + pad, winY + pad, w - 32, 24);
+    this.wrapText(this.displayedText, padX, winY + padY, w - padX * 2, 26);
+  }
+
+  /** 話者に応じた名前プレートの色を返す */
+  private currentNameColor(): string {
+    const found = this.characters.find(c => c.id !== '' &&
+      (this.currentName.includes(c.id) || c.id === this.currentName));
+    if (found) return found.color + 'e0';
+    // デフォルトは紫系
+    return 'rgba(80, 40, 130, 0.92)';
+  }
+
+  /** 角丸矩形パスを作成 */
+  private roundRect(x: number, y: number, w: number, h: number, r: number): void {
+    this.ctx.beginPath();
+    this.ctx.moveTo(x + r, y);
+    this.ctx.lineTo(x + w - r, y);
+    this.ctx.arcTo(x + w, y, x + w, y + r, r);
+    this.ctx.lineTo(x + w, y + h - r);
+    this.ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    this.ctx.lineTo(x + r, y + h);
+    this.ctx.arcTo(x, y + h, x, y + h - r, r);
+    this.ctx.lineTo(x, y + r);
+    this.ctx.arcTo(x, y, x + r, y, r);
+    this.ctx.closePath();
   }
 
   private drawChoices(): void {
@@ -598,12 +644,12 @@ export class ScenarioPlayer {
 
   private drawClickPrompt(w: number, h: number): void {
     const t = (Date.now() / 600) % 1;
-    this.ctx.globalAlpha = 0.5 + 0.5 * Math.sin(t * Math.PI * 2);
+    this.ctx.globalAlpha = 0.4 + 0.6 * Math.abs(Math.sin(t * Math.PI));
     this.ctx.fillStyle = '#ffd234';
-    this.ctx.font = '14px sans-serif';
+    this.ctx.font = 'bold 18px sans-serif';
     this.ctx.textAlign = 'right';
     this.ctx.textBaseline = 'bottom';
-    this.ctx.fillText('▼', w - 24, h - 24);
+    this.ctx.fillText('▼', w - 20, h - 14);
     this.ctx.globalAlpha = 1;
   }
 
