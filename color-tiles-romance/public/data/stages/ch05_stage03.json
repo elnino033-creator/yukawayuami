@@ -5,7 +5,7 @@
   "boardWidth": 14,
   "boardHeight": 10,
   "timeLimitSec": 200,
-  "missPenaltySec": 3,
+  "missPenaltySec": 30,
   "hintCount": 1,
   "generationParams": {
     "seed": 5003,

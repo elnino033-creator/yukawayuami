@@ -31,24 +31,35 @@ export class LineChecker {
    * 見つからなければ null。
    */
   checkClick(cx: number, cy: number): MatchResult | null {
-    if (!this.isInBounds(cx, cy)) return null;
-    if (this.board[cy][cx] !== null) return null;
+    const all = this.checkClickAll(cx, cy);
+    return all.length > 0 ? all[0] : null;
+  }
+
+  /**
+   * 空マス (cx, cy) をクリックされた時、消えるペアをすべて返す。
+   * 水平・垂直の両方が成立する場合は2件（交点同時消し）。
+   */
+  checkClickAll(cx: number, cy: number): MatchResult[] {
+    if (!this.isInBounds(cx, cy)) return [];
+    if (this.board[cy][cx] !== null) return [];
+
+    const results: MatchResult[] = [];
 
     // 水平方向
     const left = this.scanLeft(cx, cy);
     const right = this.scanRight(cx, cy);
     if (this.canPair(left, right)) {
-      return { a: left!, b: right!, direction: 'horizontal' };
+      results.push({ a: left!, b: right!, direction: 'horizontal' });
     }
 
     // 垂直方向
     const up = this.scanUp(cx, cy);
     const down = this.scanDown(cx, cy);
     if (this.canPair(up, down)) {
-      return { a: up!, b: down!, direction: 'vertical' };
+      results.push({ a: up!, b: down!, direction: 'vertical' });
     }
 
-    return null;
+    return results;
   }
 
   /**

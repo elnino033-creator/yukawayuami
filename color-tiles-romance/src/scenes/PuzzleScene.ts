@@ -28,7 +28,7 @@ const BOARD_PADDING = 16;
 interface HoverState {
   cx: number;
   cy: number;
-  match: MatchResult | null;
+  matches: MatchResult[];
 }
 
 interface MissEffect {
@@ -239,11 +239,11 @@ export class PuzzleScene {
       this.hover = null;
       return;
     }
-    const match = this.engine.previewClick(cell.cx, cell.cy);
-    this.hover = { cx: cell.cx, cy: cell.cy, match };
+    const matches = this.engine.previewClickAll(cell.cx, cell.cy);
+    this.hover = { cx: cell.cx, cy: cell.cy, matches };
 
     // シャドウタイルが含まれるマッチのとき、3000ms だけ色を表示する
-    if (match) {
+    for (const match of matches) {
       for (const t of [match.a, match.b]) {
         if (t.type === 'shadow') {
           this.shadowReveals.set(`${t.x},${t.y}`, Date.now() + 3000);
@@ -274,6 +274,9 @@ export class PuzzleScene {
         case 'tilesRemoved':
           soundEngine.playMatch();
           this.removedEffects.push({ tiles: e.tiles, startedAt: Date.now() });
+          if (e.tiles.length >= 4) {
+            this.spawnFloatText('CROSS!', '#ff9844');
+          }
           if (e.bonusSec && e.bonusSec > 0) {
             this.spawnFloatText(`+${e.bonusSec}s`, '#5ec76a');
           }
@@ -401,39 +404,41 @@ export class PuzzleScene {
 
   private drawHoverPreview(): void {
     if (!this.hover) return;
-    const { cx, cy, match } = this.hover;
+    const { cx, cy, matches } = this.hover;
 
     // ホバーセルの強調
     const { x, y } = this.cellToPixel(cx, cy);
-    this.ctx.strokeStyle = match ? '#ffd234' : 'rgba(255,255,255,0.4)';
-    this.ctx.lineWidth = 2;
+    const isCross = matches.length >= 2;
+    this.ctx.strokeStyle = matches.length > 0 ? (isCross ? '#ff9844' : '#ffd234') : 'rgba(255,255,255,0.4)';
+    this.ctx.lineWidth = isCross ? 3 : 2;
     this.ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
 
-    if (!match) return;
+    if (matches.length === 0) return;
 
-    // マッチ可能なら、結ぶ直線を描画
-    const a = this.cellToPixel(match.a.x, match.a.y);
-    const b = this.cellToPixel(match.b.x, match.b.y);
-    const ax = a.x + TILE_SIZE / 2;
-    const ay = a.y + TILE_SIZE / 2;
-    const bx = b.x + TILE_SIZE / 2;
-    const by = b.y + TILE_SIZE / 2;
+    // 各マッチについて接続線と両端強調を描画
+    for (const match of matches) {
+      const pa = this.cellToPixel(match.a.x, match.a.y);
+      const pb = this.cellToPixel(match.b.x, match.b.y);
+      const ax = pa.x + TILE_SIZE / 2;
+      const ay = pa.y + TILE_SIZE / 2;
+      const bx = pb.x + TILE_SIZE / 2;
+      const by_ = pb.y + TILE_SIZE / 2;
 
-    this.ctx.strokeStyle = COLOR_MAP[match.a.color ?? 'red'] ?? '#ffd234';
-    this.ctx.lineWidth = 4;
-    this.ctx.globalAlpha = 0.6;
-    this.ctx.beginPath();
-    this.ctx.moveTo(ax, ay);
-    this.ctx.lineTo(bx, by);
-    this.ctx.stroke();
-    this.ctx.globalAlpha = 1;
+      this.ctx.strokeStyle = COLOR_MAP[match.a.color ?? 'red'] ?? '#ffd234';
+      this.ctx.lineWidth = isCross ? 5 : 4;
+      this.ctx.globalAlpha = 0.7;
+      this.ctx.beginPath();
+      this.ctx.moveTo(ax, ay);
+      this.ctx.lineTo(bx, by_);
+      this.ctx.stroke();
+      this.ctx.globalAlpha = 1;
 
-    // 両端タイルの強調
-    for (const t of [match.a, match.b]) {
-      const p = this.cellToPixel(t.x, t.y);
-      this.ctx.strokeStyle = '#fff';
-      this.ctx.lineWidth = 3;
-      this.ctx.strokeRect(p.x - 2, p.y - 2, TILE_SIZE + 4, TILE_SIZE + 4);
+      for (const t of [match.a, match.b]) {
+        const p = this.cellToPixel(t.x, t.y);
+        this.ctx.strokeStyle = isCross ? '#ff9844' : '#fff';
+        this.ctx.lineWidth = 3;
+        this.ctx.strokeRect(p.x - 2, p.y - 2, TILE_SIZE + 4, TILE_SIZE + 4);
+      }
     }
   }
 
@@ -698,13 +703,30 @@ export class PuzzleScene {
       }
     }
 
-    // メッセージボックス
-    const boxPad = 16;
-    const boxH = 110;
-    const boxY = h - boxH - 12;
-    const boxX = 12;
-    const boxW = w - 24;
+    // レイアウト定数
+    const FONT_SIZE = 15;
+    const LINE_H = 26;
+    const BOX_PAD = 18;
+    const BTN_H = 36;
+    const BTN_GAP = 10;
+    const boxX = 10;
+    const boxW = w - 20;
 
+    // テキスト折り返し（\n 改行 + 幅超過で自動折り返し）
+    this.ctx.font = `${FONT_SIZE}px sans-serif`;
+    const maxTextW = boxW - BOX_PAD * 2;
+    const rawLines = step.text.split('\n');
+    const wrappedLines: string[] = [];
+    for (const raw of rawLines) {
+      wrappedLines.push(...this.wrapTextLine(raw, maxTextW));
+    }
+
+    const hasButton = step.type !== 'force_match';
+    const textH = wrappedLines.length * LINE_H;
+    const boxH = BOX_PAD + textH + (hasButton ? BTN_GAP + BTN_H + BOX_PAD : BOX_PAD);
+    const boxY = h - boxH - 10;
+
+    // ボックス背景と枠線
     this.ctx.fillStyle = 'rgba(20, 24, 44, 0.96)';
     this.drawRoundRect(boxX, boxY, boxW, boxH, 12);
     this.ctx.fill();
@@ -713,39 +735,55 @@ export class PuzzleScene {
     this.drawRoundRect(boxX, boxY, boxW, boxH, 12);
     this.ctx.stroke();
 
-    // テキスト描画（\n 改行対応）
+    // テキスト描画
     this.ctx.fillStyle = '#ffffff';
-    this.ctx.font = '13px sans-serif';
+    this.ctx.font = `${FONT_SIZE}px sans-serif`;
     this.ctx.textAlign = 'left';
     this.ctx.textBaseline = 'top';
-    const lines = step.text.split('\n');
-    lines.forEach((line, i) => {
-      this.ctx.fillText(line, boxX + boxPad, boxY + boxPad + i * 22);
+    wrappedLines.forEach((line, i) => {
+      this.ctx.fillText(line, boxX + BOX_PAD, boxY + BOX_PAD + i * LINE_H);
     });
 
     // "次へ" ボタン（explain / praise のみ）
-    if (step.type !== 'force_match') {
+    if (hasButton) {
       const btnW = 90;
-      const btnH = 34;
-      const btnX = boxX + boxW - btnW - boxPad;
-      const btnY = boxY + boxH - btnH - boxPad;
+      const btnX = boxX + boxW - btnW - BOX_PAD;
+      const btnY = boxY + boxH - BTN_H - BOX_PAD;
 
       this.ctx.fillStyle = step.type === 'praise' ? '#ffd234' : '#4a90e2';
-      this.drawRoundRect(btnX, btnY, btnW, btnH, 8);
+      this.drawRoundRect(btnX, btnY, btnW, BTN_H, 8);
       this.ctx.fill();
 
       this.ctx.fillStyle = step.type === 'praise' ? '#1c1f2a' : '#ffffff';
       this.ctx.font = 'bold 14px sans-serif';
       this.ctx.textAlign = 'center';
       this.ctx.textBaseline = 'middle';
-      this.ctx.fillText('次へ ▶', btnX + btnW / 2, btnY + btnH / 2);
+      this.ctx.fillText('次へ ▶', btnX + btnW / 2, btnY + BTN_H / 2);
 
       if (this.tutorial) {
-        this.tutorial.nextButtonRect = { x: btnX, y: btnY, w: btnW, h: btnH };
+        this.tutorial.nextButtonRect = { x: btnX, y: btnY, w: btnW, h: BTN_H };
       }
     } else if (this.tutorial) {
       this.tutorial.nextButtonRect = null;
     }
+  }
+
+  /** 1行のテキストを maxWidth に収まるよう文字単位で折り返す */
+  private wrapTextLine(text: string, maxWidth: number): string[] {
+    if (!text) return [''];
+    const result: string[] = [];
+    let current = '';
+    for (const char of text) {
+      const candidate = current + char;
+      if (this.ctx.measureText(candidate).width > maxWidth && current.length > 0) {
+        result.push(current);
+        current = char;
+      } else {
+        current = candidate;
+      }
+    }
+    if (current) result.push(current);
+    return result.length > 0 ? result : [''];
   }
 
   private drawRoundRect(x: number, y: number, w: number, h: number, r: number): void {

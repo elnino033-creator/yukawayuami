@@ -5,7 +5,7 @@
   "boardWidth": 8,
   "boardHeight": 8,
   "timeLimitSec": 110,
-  "missPenaltySec": 3,
+  "missPenaltySec": 30,
   "hintCount": 1,
   "generationParams": { "seed": 5001, "targetPairs": 18, "iceChance": 0.20, "timeTileChance": 0.10, "blockCount": 2 },
   "blockReleaseRule": { "type": "afterPairs", "count": 4 },

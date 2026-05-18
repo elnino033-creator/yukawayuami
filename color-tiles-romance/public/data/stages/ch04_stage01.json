@@ -5,7 +5,7 @@
   "boardWidth": 8,
   "boardHeight": 8,
   "timeLimitSec": 110,
-  "missPenaltySec": 3,
+  "missPenaltySec": 30,
   "hintCount": 2,
   "tilesLayout": [
     [{"color":"red","type":"linked","linkGroupId":"lg1"}, {"color":"blue","type":"linked","linkGroupId":"lg2"}, "green",  null, null, "green",  {"color":"blue","type":"linked","linkGroupId":"lg2"}, {"color":"red","type":"linked","linkGroupId":"lg1"}],

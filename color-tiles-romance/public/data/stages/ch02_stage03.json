@@ -5,7 +5,7 @@
   "boardWidth": 7,
   "boardHeight": 7,
   "timeLimitSec": 105,
-  "missPenaltySec": 2,
+  "missPenaltySec": 30,
   "hintCount": 1,
   "generationParams": { "seed": 2003, "targetPairs": 16, "iceChance": 0.40 },
   "preScenario": "ch02_s03_pre.json"
