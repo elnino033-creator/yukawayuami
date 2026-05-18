@@ -109,6 +109,8 @@ export interface StageDefinition {
   rewards?: { S?: string[]; A?: string[]; B?: string[]; C?: string[] };
   /** チュートリアルステップ（指定時はガイド付きモードで進行） */
   tutorialSteps?: TutorialStep[];
+  /** パズル中に再生するBGMファイル名（省略時はデフォルトのpuzzle BGM） */
+  puzzleBgm?: string;
 }
 
 /** クリック結果 */
