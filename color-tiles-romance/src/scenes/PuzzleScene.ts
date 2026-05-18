@@ -216,20 +216,24 @@ export class PuzzleScene {
     }, { passive: false });
     this.canvas.addEventListener('touchend', (e) => {
       e.preventDefault();
-      if (this.hover) {
-        if (this.tutorial !== null) {
-          const step = this.tutorial.steps[this.tutorial.currentIndex];
-          if (step.type === 'force_match') {
-            const allowed = step.allowedCells?.some(c => c.x === this.hover!.cx && c.y === this.hover!.cy) ?? false;
-            if (allowed) {
-              soundEngine.playClick();
-              this.engine.onCellClick(this.hover.cx, this.hover.cy);
-            }
-          }
-        } else {
-          soundEngine.playClick();
-          this.engine.onCellClick(this.hover.cx, this.hover.cy);
+      const touch = e.changedTouches[0];
+      if (this.tutorial !== null) {
+        // チュートリアルオーバーレイ中：「次へ」ボタンを先にチェック
+        if (touch && this.handleTutorialClick(touch.clientX, touch.clientY)) {
+          this.hover = null;
+          return;
         }
+        const step = this.tutorial.steps[this.tutorial.currentIndex];
+        if (step.type === 'force_match' && this.hover) {
+          const allowed = step.allowedCells?.some(c => c.x === this.hover!.cx && c.y === this.hover!.cy) ?? false;
+          if (allowed) {
+            soundEngine.playClick();
+            this.engine.onCellClick(this.hover.cx, this.hover.cy);
+          }
+        }
+      } else if (this.hover) {
+        soundEngine.playClick();
+        this.engine.onCellClick(this.hover.cx, this.hover.cy);
       }
       this.hover = null;
     }, { passive: false });
