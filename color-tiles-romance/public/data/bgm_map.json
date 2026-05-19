@@ -1,0 +1,16 @@
+{
+  "bgm_prologue":           "op_色彩の塔へ.mp3",
+  "bgm_mysterious_wind":    "The_Unfolding_Hour.mp3",
+  "bgm_cold_wind":          "The_Frost_Bound_Spire.mp3",
+  "bgm_forest_ambient":     "The_Keeper_s_Garden.mp3",
+  "bgm_clockwork":          "The_Pendulum_s_Grace.mp3",
+  "bgm_chapter_clear":      "Golden_Spires_Rising.mp3",
+  "bgm_tension":            "Steel_and_Shadows.mp3",
+  "bgm_tension_high":       "Tooth_And_Lever.mp3",
+  "bgm_epic_climax":        "Vow_Of_The_Gilded_Hall.mp3",
+  "bgm_climax_tension":     "The_Dissolving_Spire.mp3",
+  "bgm_vocal_ending":       "ed_色彩の塔.mp3",
+  "bgm_piano_gentle_morning": "エンディング_穏やか_bgm_春の約束.mp3",
+  "bgm_piano_sad_loop":     "君のいない色彩.mp3",
+  "bgm_tutorial":           "amaotonomeiro.mp3"
+}

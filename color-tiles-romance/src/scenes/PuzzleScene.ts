@@ -1,6 +1,7 @@
 import type { StageDefinition, Tile, MatchResult, TutorialStep } from '@/types';
 import { PuzzleEngine } from '@/core/PuzzleEngine';
 import { soundEngine } from '@/core/SoundEngine';
+import { BgmManager } from '@/audio/BgmManager';
 
 /**
  * 色名 → 表示色のマッピング（仮素材）
@@ -79,7 +80,6 @@ export class PuzzleScene {
   private shadowReveals: Map<string, number> = new Map();
 
   private rafId: number | null = null;
-  private bgmAudio: HTMLAudioElement | null = null;
 
   // HUD要素
   private hudTimer: HTMLElement;
@@ -129,13 +129,7 @@ export class PuzzleScene {
       : null;
     this.hudStatus.textContent = `${stage.title}`;
     this.startRenderLoop();
-    if (!this.bgmAudio) {
-      const bgmFile = stage.puzzleBgm ?? 'Steel_and_Shadows.mp3';
-      this.bgmAudio = new Audio(`${import.meta.env.BASE_URL}assets/bgm/${encodeURIComponent(bgmFile)}`);
-      this.bgmAudio.loop = true;
-      this.bgmAudio.volume = 0.4;
-      this.bgmAudio.play().catch(() => {});
-    }
+    BgmManager.play(stage.puzzleBgm ?? 'Steel_and_Shadows.mp3');
   }
 
   /** ヒントボタン用 */
@@ -162,11 +156,7 @@ export class PuzzleScene {
   destroy(): void {
     if (this.rafId !== null) cancelAnimationFrame(this.rafId);
     this.engine.timer.stop();
-    if (this.bgmAudio) {
-      this.bgmAudio.pause();
-      this.bgmAudio.src = '';
-      this.bgmAudio = null;
-    }
+    BgmManager.stop();
   }
 
   // ---------- 入力 ----------
