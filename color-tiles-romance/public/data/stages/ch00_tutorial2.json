@@ -16,6 +16,7 @@
     [null,     null,    null,    null,    null,      null]
   ],
   "blockReleaseRule": { "type": "never" },
+  "postScenario": "ch00_tutorial2_post.json",
   "tutorialSteps": [
     {
       "type": "explain",
