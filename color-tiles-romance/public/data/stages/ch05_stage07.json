@@ -1,0 +1,21 @@
+{
+  "id": "ch05_stage07",
+  "title": "第5章 最終決戦：黒を塗りつぶせ",
+  "chapter": 5,
+  "boardWidth": 14,
+  "boardHeight": 10,
+  "timeLimitSec": 240,
+  "missPenaltySec": 30,
+  "hintCount": 0,
+  "generationParams": {
+    "seed": 5007,
+    "targetPairs": 90,
+    "colors": ["red","blue","green","yellow","purple","orange","pink","cyan","teal","brown"],
+    "iceChance": 0,
+    "timeTileChance": 0.20,
+    "blockCount": 10,
+    "dense": true
+  },
+  "blockReleaseRule": { "type": "afterPairs", "count": 12 },
+  "preScenario": "ch05_s07_pre.json"
+}

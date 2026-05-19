@@ -1,0 +1,22 @@
+{
+  "id": "ch05_stage04",
+  "title": "第5章 ステージ4：記憶の奔流",
+  "chapter": 5,
+  "boardWidth": 12,
+  "boardHeight": 10,
+  "timeLimitSec": 180,
+  "missPenaltySec": 30,
+  "hintCount": 1,
+  "generationParams": {
+    "seed": 5004,
+    "targetPairs": 65,
+    "colors": ["red","blue","green","yellow","purple","orange","pink","cyan"],
+    "iceChance": 0,
+    "timeTileChance": 0.12,
+    "blockCount": 8,
+    "dense": true
+  },
+  "blockReleaseRule": { "type": "afterPairs", "count": 10 },
+  "preScenario": "ch05_s04_pre.json",
+  "postScenario": "ch05_s04_post.json"
+}
