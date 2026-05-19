@@ -1,6 +1,6 @@
 [
   { "bg": "stage1_bef" },
-  { "bgm": "bgm_chapter_clear" },
+  { "bgm": "The_Frost_Bound_Spire.mp3" },
   {
     "text": {
       "name": "",
@@ -79,22 +79,29 @@
   },
   {
     "text": {
-      "name": "",
-      "body": "あかりの輪郭が、赤い光の粒子となって、ほどけていく。"
-    }
-  },
-  { "bg": "stage1_after" },
-  {
-    "chara": {
-      "id": "akari",
-      "expr": "smile",
-      "pos": "center"
+      "name": "あかり",
+      "body": "……上に行きなさい。みおは意地っ張りだけど、本当はずっと泣いてたから。優しくしてあげてね。"
     }
   },
   {
     "text": {
-      "name": "あかり",
-      "body": "……上に行きなさい。みおは意地っ張りだけど、本当はずっと泣いてたから。優しくしてあげてね。"
+      "name": "",
+      "body": "その言葉を最後に——\nあかりの全身が、眩い赤い光を放ち始めた。"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "smile",
+      "pos": "center",
+      "hide": true
+    }
+  },
+  { "bg": "stage1_after" },
+  {
+    "text": {
+      "name": "",
+      "body": "輪郭が滲み、粒子へと解けていく。\n赤い光の粒子はゆっくりと舞い上がり、世界ごと紅に染め上げながら——消えた。"
     }
   },
   {
