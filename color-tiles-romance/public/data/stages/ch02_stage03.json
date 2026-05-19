@@ -13,6 +13,6 @@
     "iceChance": 0
   },
   "preScenario": "ch02_s03_pre.json",
-  "postScenario": "ch02_final_flashback.json",
+  "postScenario": "ch02_end.json",
   "puzzleBgm": "氷鈴の世界.mp3"
 }

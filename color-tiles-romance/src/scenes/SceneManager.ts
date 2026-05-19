@@ -137,11 +137,6 @@ export class SceneManager {
     return null;
   }
 
-  private isAllStagesComplete(): boolean {
-    const records = this.saveStore.getData().stageRecords;
-    return (LINEAR_STAGES as readonly string[]).every(id => records[id]?.cleared);
-  }
-
   // ---------- 各シーンのマウント ----------
 
   private async mountTitleScene(): Promise<void> {
@@ -153,7 +148,6 @@ export class SceneManager {
 
     const hasSave = this.saveStore.getData().currentChapter > 0 ||
       Object.keys(this.saveStore.getData().stageRecords).length > 0;
-    const allComplete = this.isAllStagesComplete();
 
     const scene = new TitleScene(canvas, (choice) => {
       switch (choice) {
@@ -174,7 +168,7 @@ export class SceneManager {
           this.transition({ to: 'stageSelect' });
           break;
       }
-    }, hasSave, allComplete);
+    }, hasSave, hasSave);
 
     this.currentScene = scene;
     scene.start();
@@ -371,6 +365,30 @@ export class SceneManager {
           });
         } else if (data.stageId === 'ch01_stage05' && data.cleared) {
           void this.mountNovelSceneWithCallback('ch01_final_flashback', () => {
+            const next = this.getNextStage(data.stageId);
+            void this.transition(next
+              ? { to: 'puzzle', stageId: next }
+              : { to: 'stageSelect' }
+            );
+          });
+        } else if (data.stageId === 'ch02_stage03' && data.cleared) {
+          void this.mountNovelSceneWithCallback('ch02_final_flashback', () => {
+            const next = this.getNextStage(data.stageId);
+            void this.transition(next
+              ? { to: 'puzzle', stageId: next }
+              : { to: 'stageSelect' }
+            );
+          });
+        } else if (data.stageId === 'ch03_stage03' && data.cleared) {
+          void this.mountNovelSceneWithCallback('ch03_final_flashback', () => {
+            const next = this.getNextStage(data.stageId);
+            void this.transition(next
+              ? { to: 'puzzle', stageId: next }
+              : { to: 'stageSelect' }
+            );
+          });
+        } else if (data.stageId === 'ch04_stage03' && data.cleared) {
+          void this.mountNovelSceneWithCallback('ch04_final_flashback', () => {
             const next = this.getNextStage(data.stageId);
             void this.transition(next
               ? { to: 'puzzle', stageId: next }
