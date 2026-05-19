@@ -8,9 +8,9 @@ import type { ScenarioContext } from '@/store/progressStore';
 import { BgmManager } from '@/audio/BgmManager';
 import { playSe } from '@/audio/SeManager';
 
-/** 背景変更ステップ */
+/** 背景変更ステップ（null で背景をリセット） */
 export interface BgStep {
-  bg: string;
+  bg: string | null;
 }
 
 /** BGM変更ステップ（null で停止） */
@@ -253,16 +253,21 @@ export class ScenarioPlayer {
     this.stepIndex++;
 
     if ('bg' in step) {
-      this.bgColor = this.filenameToColor(step.bg);
-      this.bgImage = null;
-      const img = new Image();
-      img.onload = () => { this.bgImage = img; };
-      img.onerror = () => {
-        const fallback = new Image();
-        fallback.onload = () => { this.bgImage = fallback; };
-        fallback.src = `${import.meta.env.BASE_URL}assets/bg/${step.bg}.jpg`;
-      };
-      img.src = `${import.meta.env.BASE_URL}assets/bg/${step.bg}.png`;
+      if (step.bg === null) {
+        this.bgColor = '#1a1a2e';
+        this.bgImage = null;
+      } else {
+        this.bgColor = this.filenameToColor(step.bg);
+        this.bgImage = null;
+        const img = new Image();
+        img.onload = () => { this.bgImage = img; };
+        img.onerror = () => {
+          const fallback = new Image();
+          fallback.onload = () => { this.bgImage = fallback; };
+          fallback.src = `${import.meta.env.BASE_URL}assets/bg/${step.bg}.jpg`;
+        };
+        img.src = `${import.meta.env.BASE_URL}assets/bg/${step.bg}.png`;
+      }
       this.advanceStep();
     } else if ('bgm' in step) {
       if (step.bgm !== null) {
