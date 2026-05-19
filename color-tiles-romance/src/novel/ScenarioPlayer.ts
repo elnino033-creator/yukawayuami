@@ -6,6 +6,7 @@
 
 import type { ScenarioContext } from '@/store/progressStore';
 import { BgmManager } from '@/audio/BgmManager';
+import { playSe } from '@/audio/SeManager';
 
 /** 背景変更ステップ */
 export interface BgStep {
@@ -266,9 +267,7 @@ export class ScenarioPlayer {
       }
       this.advanceStep();
     } else if ('se' in step) {
-      const audio = new Audio(`${import.meta.env.BASE_URL}assets/se/${step.se.src}`);
-      audio.loop = step.se.loop ?? false;
-      audio.play().catch(() => {});
+      playSe(step.se.src);
       this.advanceStep();
     } else if ('effect' in step) {
       // エフェクトは duration 後に自動進行

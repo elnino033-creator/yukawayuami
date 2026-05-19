@@ -160,7 +160,7 @@ export class SceneManager {
         case 'new':
           this.saveStore.reset();
           this.progressStore.resetScenarioContext();
-          this.transition({ to: 'novel', scenarioId: 'prologue_pre' });
+          this.transition({ to: 'puzzle', stageId: LINEAR_STAGES[0] });
           break;
         case 'continue': {
           const next = this.getFirstUncompletedStage();
