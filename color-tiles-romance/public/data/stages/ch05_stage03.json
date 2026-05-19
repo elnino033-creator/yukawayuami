@@ -17,5 +17,6 @@
     "dense": true
   },
   "blockReleaseRule": { "type": "afterPairs", "count": 8 },
-  "preScenario": "ch05_s03_pre.json"
+  "preScenario": "ch05_s03_pre.json",
+  "postScenario": "ch05_final_flashback.json"
 }
