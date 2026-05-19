@@ -44,6 +44,7 @@
   "blockReleaseRule": {
     "type": "never"
   },
+  "preScenario": "tutorial_intro.json",
   "tutorialSteps": [
     {
       "type": "explain",
