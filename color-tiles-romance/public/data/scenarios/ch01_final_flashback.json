@@ -1,6 +1,6 @@
 [
   { "bg": "bg_atelier_morning" },
-  { "bgm": "bgm_piano_gentle_morning" },
+  { "bgm": "bgm_flashback" },
   { "text": { "name": "", "body": "──大学の美術展。\n初めて自分の絵を、人に見せた日のこと。" } },
   { "text": { "name": "", "body": "壁に貼られた自分の作品の前で、しばらく立ち尽くしていた一人の女の子がいた。" } },
   { "text": { "name": "??", "body": "……この絵を描いたの、あなた？" } },

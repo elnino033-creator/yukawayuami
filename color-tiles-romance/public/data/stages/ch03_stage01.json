@@ -8,22 +8,126 @@
   "missPenaltySec": 30,
   "hintCount": 2,
   "tilesLayout": [
-    ["red",    "blue",   "green",  null, null, "green",  "blue",   "red"   ],
-    ["yellow", "purple", null,     {"color":null,"type":"block"}, {"color":null,"type":"block"}, null, "purple", "yellow"],
-    ["blue",   "green",  "yellow", null, null, "yellow", "green",  "blue"  ],
-    ["purple", "red",    null,     {"color":null,"type":"block"}, {"color":null,"type":"block"}, null, "red",    "purple"],
-    ["green",  "yellow", "blue",   null, null, "blue",   "yellow", "green" ],
-    ["red",    "purple", null,     null, null, null,     "purple", "red"   ],
-    ["yellow", "blue",   "green",  null, null, "green",  "blue",   "yellow"],
-    ["purple", "red",    "yellow", null, null, "yellow", "red",    "purple"]
+    [
+      "red",
+      "blue",
+      "green",
+      null,
+      null,
+      "green",
+      "blue",
+      "red"
+    ],
+    [
+      "yellow",
+      "purple",
+      null,
+      {
+        "color": null,
+        "type": "block"
+      },
+      {
+        "color": null,
+        "type": "block"
+      },
+      null,
+      "purple",
+      "yellow"
+    ],
+    [
+      "blue",
+      "green",
+      "yellow",
+      null,
+      null,
+      "yellow",
+      "green",
+      "blue"
+    ],
+    [
+      "purple",
+      "red",
+      null,
+      {
+        "color": null,
+        "type": "block"
+      },
+      {
+        "color": null,
+        "type": "block"
+      },
+      null,
+      "red",
+      "purple"
+    ],
+    [
+      "green",
+      "yellow",
+      "blue",
+      null,
+      null,
+      "blue",
+      "yellow",
+      "green"
+    ],
+    [
+      "red",
+      "purple",
+      null,
+      null,
+      null,
+      null,
+      "purple",
+      "red"
+    ],
+    [
+      "yellow",
+      "blue",
+      "green",
+      null,
+      null,
+      "green",
+      "blue",
+      "yellow"
+    ],
+    [
+      "purple",
+      "red",
+      "yellow",
+      null,
+      null,
+      "yellow",
+      "red",
+      "purple"
+    ]
   ],
-  "blockReleaseRule": {"type": "afterPairs", "count": 4},
+  "blockReleaseRule": {
+    "type": "afterPairs",
+    "count": 4
+  },
   "preScenario": "ch03_s01_pre.json",
   "tutorialSteps": [
     {
       "type": "explain",
       "text": "障害ブロック（▣）が登場！\nブロックは直接消せませんが、他のタイルを消すと解除されます。",
-      "highlightCells": [{"x":3,"y":1},{"x":4,"y":1},{"x":3,"y":3},{"x":4,"y":3}]
+      "highlightCells": [
+        {
+          "x": 3,
+          "y": 1
+        },
+        {
+          "x": 4,
+          "y": 1
+        },
+        {
+          "x": 3,
+          "y": 3
+        },
+        {
+          "x": 4,
+          "y": 3
+        }
+      ]
     },
     {
       "type": "explain",
@@ -35,5 +139,6 @@
       "text": "ブロックの仕組みがわかりました！\n全部消してクリアを目指しましょう！",
       "autoAdvanceMs": 2000
     }
-  ]
+  ],
+  "puzzleBgm": "翠葉の迷宮.mp3"
 }

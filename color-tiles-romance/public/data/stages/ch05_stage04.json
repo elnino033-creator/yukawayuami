@@ -10,13 +10,26 @@
   "generationParams": {
     "seed": 5004,
     "targetPairs": 65,
-    "colors": ["red","blue","green","yellow","purple","orange","pink","cyan"],
+    "colors": [
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      "purple",
+      "orange",
+      "pink",
+      "cyan"
+    ],
     "iceChance": 0,
     "timeTileChance": 0.12,
     "blockCount": 8,
     "dense": true
   },
-  "blockReleaseRule": { "type": "afterPairs", "count": 10 },
+  "blockReleaseRule": {
+    "type": "afterPairs",
+    "count": 10
+  },
   "preScenario": "ch05_s04_pre.json",
-  "postScenario": "ch05_s04_post.json"
+  "postScenario": "ch05_s04_post.json",
+  "puzzleBgm": "紫塔の終章.mp3"
 }

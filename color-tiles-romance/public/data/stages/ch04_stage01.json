@@ -8,14 +8,118 @@
   "missPenaltySec": 30,
   "hintCount": 2,
   "tilesLayout": [
-    [{"color":"red","type":"linked","linkGroupId":"lg1"}, {"color":"blue","type":"linked","linkGroupId":"lg2"}, "green",  null, null, "green",  {"color":"blue","type":"linked","linkGroupId":"lg2"}, {"color":"red","type":"linked","linkGroupId":"lg1"}],
-    [{"color":"red","type":"linked","linkGroupId":"lg1"}, {"color":"blue","type":"linked","linkGroupId":"lg2"}, "purple", null, null, "purple", {"color":"blue","type":"linked","linkGroupId":"lg2"}, {"color":"red","type":"linked","linkGroupId":"lg1"}],
-    ["yellow", "purple", "blue",   null, null, "blue",   "purple", "yellow"],
-    ["green",  "yellow", "red",    null, null, "red",    "yellow", "green" ],
-    ["purple", "green",  "yellow", null, null, "yellow", "green",  "purple"],
-    ["blue",   "red",    "green",  null, null, "green",  "red",    "blue"  ],
-    ["red",    "purple", "yellow", null, null, "yellow", "purple", "red"   ],
-    ["yellow", "blue",   "purple", null, null, "purple", "blue",   "yellow"]
+    [
+      {
+        "color": "red",
+        "type": "linked",
+        "linkGroupId": "lg1"
+      },
+      {
+        "color": "blue",
+        "type": "linked",
+        "linkGroupId": "lg2"
+      },
+      "green",
+      null,
+      null,
+      "green",
+      {
+        "color": "blue",
+        "type": "linked",
+        "linkGroupId": "lg2"
+      },
+      {
+        "color": "red",
+        "type": "linked",
+        "linkGroupId": "lg1"
+      }
+    ],
+    [
+      {
+        "color": "red",
+        "type": "linked",
+        "linkGroupId": "lg1"
+      },
+      {
+        "color": "blue",
+        "type": "linked",
+        "linkGroupId": "lg2"
+      },
+      "purple",
+      null,
+      null,
+      "purple",
+      {
+        "color": "blue",
+        "type": "linked",
+        "linkGroupId": "lg2"
+      },
+      {
+        "color": "red",
+        "type": "linked",
+        "linkGroupId": "lg1"
+      }
+    ],
+    [
+      "yellow",
+      "purple",
+      "blue",
+      null,
+      null,
+      "blue",
+      "purple",
+      "yellow"
+    ],
+    [
+      "green",
+      "yellow",
+      "red",
+      null,
+      null,
+      "red",
+      "yellow",
+      "green"
+    ],
+    [
+      "purple",
+      "green",
+      "yellow",
+      null,
+      null,
+      "yellow",
+      "green",
+      "purple"
+    ],
+    [
+      "blue",
+      "red",
+      "green",
+      null,
+      null,
+      "green",
+      "red",
+      "blue"
+    ],
+    [
+      "red",
+      "purple",
+      "yellow",
+      null,
+      null,
+      "yellow",
+      "purple",
+      "red"
+    ],
+    [
+      "yellow",
+      "blue",
+      "purple",
+      null,
+      null,
+      "purple",
+      "blue",
+      "yellow"
+    ]
   ],
   "preScenario": "ch04_s01_pre.json",
   "tutorialSteps": [
@@ -23,8 +127,38 @@
       "type": "explain",
       "text": "連結タイル（⛓）が登場！\n同じグループの⛓タイルはすべてマッチさせないと消えません。",
       "highlightCells": [
-        {"x":0,"y":0},{"x":7,"y":0},{"x":0,"y":1},{"x":7,"y":1},
-        {"x":1,"y":0},{"x":6,"y":0},{"x":1,"y":1},{"x":6,"y":1}
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 7,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 1
+        },
+        {
+          "x": 7,
+          "y": 1
+        },
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 6,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 1
+        },
+        {
+          "x": 6,
+          "y": 1
+        }
       ]
     },
     {
@@ -37,5 +171,6 @@
       "text": "連結タイルの仕組みがわかりました！\n残りのタイルも消してクリアを目指しましょう！",
       "autoAdvanceMs": 2000
     }
-  ]
+  ],
+  "puzzleBgm": "オレンジ宮殿.mp3"
 }

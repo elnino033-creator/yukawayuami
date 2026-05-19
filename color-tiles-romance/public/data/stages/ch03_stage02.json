@@ -7,7 +7,16 @@
   "timeLimitSec": 105,
   "missPenaltySec": 30,
   "hintCount": 2,
-  "generationParams": { "seed": 3002, "targetPairs": 16, "iceChance": 0, "blockCount": 4 },
-  "blockReleaseRule": { "type": "afterPairs", "count": 4 },
-  "preScenario": "ch03_s02_pre.json"
+  "generationParams": {
+    "seed": 3002,
+    "targetPairs": 16,
+    "iceChance": 0,
+    "blockCount": 4
+  },
+  "blockReleaseRule": {
+    "type": "afterPairs",
+    "count": 4
+  },
+  "preScenario": "ch03_s02_pre.json",
+  "puzzleBgm": "翠葉の迷宮.mp3"
 }

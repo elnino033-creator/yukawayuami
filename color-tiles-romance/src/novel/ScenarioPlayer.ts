@@ -257,7 +257,12 @@ export class ScenarioPlayer {
       this.bgImage = null;
       const img = new Image();
       img.onload = () => { this.bgImage = img; };
-      img.src = `${import.meta.env.BASE_URL}assets/bg/${step.bg}.jpg`;
+      img.onerror = () => {
+        const fallback = new Image();
+        fallback.onload = () => { this.bgImage = fallback; };
+        fallback.src = `${import.meta.env.BASE_URL}assets/bg/${step.bg}.jpg`;
+      };
+      img.src = `${import.meta.env.BASE_URL}assets/bg/${step.bg}.png`;
       this.advanceStep();
     } else if ('bgm' in step) {
       if (step.bgm !== null) {
