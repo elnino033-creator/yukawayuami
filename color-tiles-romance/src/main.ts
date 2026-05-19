@@ -3,9 +3,11 @@
  * SceneManager を使ってタイトル画面から起動する。
  */
 import './style.css';
+import { BgmManager } from '@/audio/BgmManager';
 import { SceneManager } from '@/scenes/SceneManager';
 
 async function main() {
+  await BgmManager.init();
   const appContainer = document.getElementById('app');
   if (!appContainer) {
     throw new Error('#app element not found');
