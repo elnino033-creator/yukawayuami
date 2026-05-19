@@ -10,7 +10,6 @@ import { ProgressStore } from '@/store/progressStore';
 const LINEAR_STAGES = [
   'ch00_tutorial',
   'ch00_tutorial2',
-  'ch00_prologue',
   'ch01_stage01', 'ch01_stage02', 'ch01_stage03', 'ch01_stage04', 'ch01_stage05',
   'ch02_stage01', 'ch02_stage02', 'ch02_stage03',
   'ch03_stage01', 'ch03_stage02', 'ch03_stage03',
@@ -318,6 +317,9 @@ export class SceneManager {
   private async mountNovelSceneWithCallback(scenarioId: string, onEnd: () => void): Promise<void> {
     const { NovelScene } = await import('@/scenes/NovelScene');
 
+    // 前のシーン（PuzzleScene など）の BGM とリソースを明示的に解放する
+    this.currentScene?.destroy();
+    this.currentScene = null;
     this.appContainer.innerHTML = '';
     const div = document.createElement('div');
     div.style.cssText = 'width:100%;height:100%;position:relative;';
