@@ -15,6 +15,7 @@ const LINEAR_STAGES = [
   'ch03_stage01', 'ch03_stage02', 'ch03_stage03',
   'ch04_stage01', 'ch04_stage02', 'ch04_stage03',
   'ch05_stage01', 'ch05_stage02', 'ch05_stage03',
+  'ch05_stage04', 'ch05_stage05', 'ch05_stage06', 'ch05_stage07',
 ] as const;
 
 /** アプリ内のシーン種別 */
@@ -250,7 +251,12 @@ export class SceneManager {
           scenarioId,
           () => {
             this.progressStore.markLineRead(`pre:${stageId}`);
-            this.launchPuzzleWithDef(stageDef);
+            // BAD ルートが選ばれた場合はパズルを起動せずタイトルへ戻る
+            if (this.progressStore.getFlag('route_bad') > 0) {
+              void this.transition({ to: 'title' });
+            } else {
+              this.launchPuzzleWithDef(stageDef);
+            }
           }
         );
         return;
@@ -356,12 +362,20 @@ export class SceneManager {
         this.transition({ to: 'puzzle', stageId: data.stageId });
       },
       () => {
-        // 次のステージへ（全完了ならステージセレクト）
-        const next = this.getNextStage(data.stageId);
-        this.transition(next
-          ? { to: 'puzzle', stageId: next }
-          : { to: 'stageSelect' }
-        );
+        // 最終ステージクリアならエンディングシーケンスへ
+        if (data.stageId === 'ch05_stage07' && data.cleared) {
+          void this.mountNovelSceneWithCallback('ch05_final_flashback', () => {
+            void this.mountNovelSceneWithCallback('epilogue_true', () => {
+              void this.transition({ to: 'title' });
+            });
+          });
+        } else {
+          const next = this.getNextStage(data.stageId);
+          void this.transition(next
+            ? { to: 'puzzle', stageId: next }
+            : { to: 'stageSelect' }
+          );
+        }
       },
       () => {
         this.transition({ to: 'title' });
