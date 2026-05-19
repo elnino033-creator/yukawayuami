@@ -47,6 +47,7 @@ export class ResultScene {
   /** イベントリスナー保持 */
   private boundMouseMove: (e: MouseEvent) => void;
   private boundClick: (e: MouseEvent) => void;
+  private boundTouchEnd: (e: TouchEvent) => void;
   private boundResize: () => void;
 
   /**
@@ -87,10 +88,12 @@ export class ResultScene {
 
     this.boundMouseMove = (e: MouseEvent) => this.handleMouseMove(e);
     this.boundClick = (e: MouseEvent) => this.handleClick(e);
+    this.boundTouchEnd = (e: TouchEvent) => this.handleTouchEnd(e);
     this.boundResize = () => this.handleResize();
 
     this.canvas.addEventListener('mousemove', this.boundMouseMove);
     this.canvas.addEventListener('click', this.boundClick);
+    this.canvas.addEventListener('touchend', this.boundTouchEnd, { passive: false });
     window.addEventListener('resize', this.boundResize);
   }
 
@@ -109,6 +112,7 @@ export class ResultScene {
     if (this.rafId !== null) cancelAnimationFrame(this.rafId);
     this.canvas.removeEventListener('mousemove', this.boundMouseMove);
     this.canvas.removeEventListener('click', this.boundClick);
+    this.canvas.removeEventListener('touchend', this.boundTouchEnd);
     window.removeEventListener('resize', this.boundResize);
   }
 
@@ -135,7 +139,7 @@ export class ResultScene {
 
     this.buttons = [
       {
-        label: 'RETRY',
+        label: 'リトライ',
         action: 'retry',
         x: startX,
         y: startY,
@@ -145,7 +149,7 @@ export class ResultScene {
         color: 'rgba(180, 80, 80, 0.8)'
       },
       {
-        label: 'NEXT STAGE',
+        label: '次へ',
         action: 'next',
         x: startX + bw + gap,
         y: startY,
@@ -155,7 +159,7 @@ export class ResultScene {
         color: 'rgba(60, 140, 60, 0.8)'
       },
       {
-        label: 'TITLE',
+        label: 'タイトル',
         action: 'title',
         x: startX + (bw + gap) * 2,
         y: startY,
@@ -349,7 +353,20 @@ export class ResultScene {
     const rect = this.canvas.getBoundingClientRect();
     const mx = (e.clientX - rect.left) * (this.canvas.width / rect.width);
     const my = (e.clientY - rect.top) * (this.canvas.height / rect.height);
+    this.activateButton(mx, my);
+  }
 
+  private handleTouchEnd(e: TouchEvent): void {
+    e.preventDefault();
+    const touch = e.changedTouches[0];
+    if (!touch) return;
+    const rect = this.canvas.getBoundingClientRect();
+    const mx = (touch.clientX - rect.left) * (this.canvas.width / rect.width);
+    const my = (touch.clientY - rect.top) * (this.canvas.height / rect.height);
+    this.activateButton(mx, my);
+  }
+
+  private activateButton(mx: number, my: number): void {
     for (const btn of this.buttons) {
       if (mx >= btn.x && mx <= btn.x + btn.w &&
         my >= btn.y && my <= btn.y + btn.h) {

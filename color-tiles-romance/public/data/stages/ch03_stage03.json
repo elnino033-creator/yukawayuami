@@ -18,6 +18,6 @@
     "count": 5
   },
   "preScenario": "ch03_s03_pre.json",
-  "postScenario": "ch03_final_flashback.json",
+  "postScenario": "ch03_end.json",
   "puzzleBgm": "翠葉の迷宮.mp3"
 }

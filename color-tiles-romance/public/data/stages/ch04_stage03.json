@@ -13,6 +13,6 @@
     "iceChance": 0
   },
   "preScenario": "ch04_s03_pre.json",
-  "postScenario": "ch04_final_flashback.json",
+  "postScenario": "ch04_end.json",
   "puzzleBgm": "オレンジ宮殿.mp3"
 }

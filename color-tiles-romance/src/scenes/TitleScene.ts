@@ -28,7 +28,6 @@ export class TitleScene {
   private ctx: CanvasRenderingContext2D;
   private onSelect: (choice: TitleChoice) => void;
   private hasSave: boolean;
-  private allStagesComplete: boolean;
   private buttons: TitleButton[] = [];
   private rafId: number | null = null;
   private startTime: number = Date.now();
@@ -41,6 +40,7 @@ export class TitleScene {
   /** イベントリスナー（後でremoveするため保持） */
   private boundMouseMove: (e: MouseEvent) => void;
   private boundClick: (e: MouseEvent) => void;
+  private boundTouchEnd: (e: TouchEvent) => void;
   private boundResize: () => void;
 
   /**
@@ -52,7 +52,7 @@ export class TitleScene {
     canvas: HTMLCanvasElement,
     onSelect: (choice: TitleChoice) => void,
     hasSave: boolean,
-    allStagesComplete: boolean = false
+    _allStagesComplete: boolean = false
   ) {
     this.canvas = canvas;
     const ctx = canvas.getContext('2d');
@@ -60,14 +60,15 @@ export class TitleScene {
     this.ctx = ctx;
     this.onSelect = onSelect;
     this.hasSave = hasSave;
-    this.allStagesComplete = allStagesComplete;
 
     this.boundMouseMove = (e: MouseEvent) => this.handleMouseMove(e);
     this.boundClick = (e: MouseEvent) => this.handleClick(e);
+    this.boundTouchEnd = (e: TouchEvent) => this.handleTouchEnd(e);
     this.boundResize = () => this.handleResize();
 
     this.canvas.addEventListener('mousemove', this.boundMouseMove);
     this.canvas.addEventListener('click', this.boundClick);
+    this.canvas.addEventListener('touchend', this.boundTouchEnd, { passive: false });
     window.addEventListener('resize', this.boundResize);
   }
 
@@ -96,6 +97,7 @@ export class TitleScene {
     if (this.rafId !== null) cancelAnimationFrame(this.rafId);
     this.canvas.removeEventListener('mousemove', this.boundMouseMove);
     this.canvas.removeEventListener('click', this.boundClick);
+    this.canvas.removeEventListener('touchend', this.boundTouchEnd);
     window.removeEventListener('resize', this.boundResize);
     if (this.bgmAudio) {
       this.bgmAudio.pause();
@@ -153,7 +155,7 @@ export class TitleScene {
         w: bw,
         h: bh,
         hovered: false,
-        disabled: !this.allStagesComplete
+        disabled: !this.hasSave
       }
     ];
   }
@@ -232,7 +234,7 @@ export class TitleScene {
     this.ctx.font = '12px monospace';
     this.ctx.textAlign = 'right';
     this.ctx.textBaseline = 'bottom';
-    this.ctx.fillText('Phase 1 MVP', w - 12, h - 10);
+    this.ctx.fillText('ver 1.0', w - 12, h - 10);
   }
 
   private drawStars(w: number, h: number, elapsed: number): void {
@@ -308,6 +310,24 @@ export class TitleScene {
     const rect = this.canvas.getBoundingClientRect();
     const mx = (e.clientX - rect.left) * (this.canvas.width / rect.width);
     const my = (e.clientY - rect.top) * (this.canvas.height / rect.height);
+
+    for (const btn of this.buttons) {
+      if (!btn.disabled &&
+        mx >= btn.x && mx <= btn.x + btn.w &&
+        my >= btn.y && my <= btn.y + btn.h) {
+        this.onSelect(btn.choice);
+        return;
+      }
+    }
+  }
+
+  private handleTouchEnd(e: TouchEvent): void {
+    e.preventDefault();
+    const touch = e.changedTouches[0];
+    if (!touch) return;
+    const rect = this.canvas.getBoundingClientRect();
+    const mx = (touch.clientX - rect.left) * (this.canvas.width / rect.width);
+    const my = (touch.clientY - rect.top) * (this.canvas.height / rect.height);
 
     for (const btn of this.buttons) {
       if (!btn.disabled &&
