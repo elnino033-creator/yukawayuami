@@ -249,7 +249,7 @@ export class SceneManager {
             if (this.progressStore.getFlag('route_bad') > 0) {
               void this.transition({ to: 'title' });
             } else {
-              this.launchPuzzleWithDef(stageDef);
+              void this.launchPuzzleWithDef(stageDef);
             }
           }
         );
