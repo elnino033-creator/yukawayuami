@@ -12,6 +12,6 @@
     "targetPairs": 12
   },
   "preScenario": "ch01_s05_pre.json",
-  "postScenario": "ch01_final_flashback.json",
+  "postScenario": "ch01_end.json",
   "puzzleBgm": "妖精の小径.mp3"
 }

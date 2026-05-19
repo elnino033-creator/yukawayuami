@@ -1,10 +1,6 @@
 [
-  {
-    "bg": "bg_tower_floor1_red_bright"
-  },
-  {
-    "bgm": "bgm_chapter_clear"
-  },
+  { "bg": "stage1_bef" },
+  { "bgm": "bgm_chapter_clear" },
   {
     "text": {
       "name": "",
@@ -87,6 +83,7 @@
       "body": "あかりの輪郭が、赤い光の粒子となって、ほどけていく。"
     }
   },
+  { "bg": "stage1_after" },
   {
     "chara": {
       "id": "akari",

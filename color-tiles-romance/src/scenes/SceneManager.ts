@@ -369,6 +369,14 @@ export class SceneManager {
               void this.transition({ to: 'title' });
             });
           });
+        } else if (data.stageId === 'ch01_stage05' && data.cleared) {
+          void this.mountNovelSceneWithCallback('ch01_final_flashback', () => {
+            const next = this.getNextStage(data.stageId);
+            void this.transition(next
+              ? { to: 'puzzle', stageId: next }
+              : { to: 'stageSelect' }
+            );
+          });
         } else {
           const next = this.getNextStage(data.stageId);
           void this.transition(next
