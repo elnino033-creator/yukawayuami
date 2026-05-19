@@ -8,12 +8,91 @@
   "missPenaltySec": 30,
   "hintCount": 3,
   "tilesLayout": [
-    [{"color":"blue","type":"ice"}, null, null, {"color":"blue","type":"ice"}, null, "red", null, "red"],
-    [null, null, null, null, null, null, null, null],
-    [{"color":"yellow","type":"ice"}, null, null, {"color":"yellow","type":"ice"}, null, {"type":"block","color":null}, null, null],
-    [null, null, null, null, null, null, null, null],
-    [{"color":"green","type":"time"}, null, null, {"color":"green","type":"time"}, null, "purple", null, "purple"],
-    ["red", null, "red", null, "blue", null, "blue", null]
+    [
+      {
+        "color": "blue",
+        "type": "ice"
+      },
+      null,
+      null,
+      {
+        "color": "blue",
+        "type": "ice"
+      },
+      null,
+      "red",
+      null,
+      "red"
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      {
+        "color": "yellow",
+        "type": "ice"
+      },
+      null,
+      null,
+      {
+        "color": "yellow",
+        "type": "ice"
+      },
+      null,
+      {
+        "type": "block",
+        "color": null
+      },
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      {
+        "color": "green",
+        "type": "time"
+      },
+      null,
+      null,
+      {
+        "color": "green",
+        "type": "time"
+      },
+      null,
+      "purple",
+      null,
+      "purple"
+    ],
+    [
+      "red",
+      null,
+      "red",
+      null,
+      "blue",
+      null,
+      "blue",
+      null
+    ]
   ],
-  "blockReleaseRule": { "type": "afterPairs", "count": 3 }
+  "blockReleaseRule": {
+    "type": "afterPairs",
+    "count": 3
+  },
+  "puzzleBgm": "翠葉の迷宮.mp3"
 }

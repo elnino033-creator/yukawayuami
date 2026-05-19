@@ -1,9 +1,9 @@
 [
   {
-    "bg": "bg_tower_floor5_purple_dark"
+    "bg": "stage5"
   },
   {
-    "bgm": "bgm_tension"
+    "bgm": "bgm_ch05"
   },
   {
     "text": {

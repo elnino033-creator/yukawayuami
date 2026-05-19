@@ -1,6 +1,6 @@
 [
   { "bg": "bg_atelier_morning" },
-  { "bgm": "bgm_piano_sad_loop" },
+  { "bgm": "bgm_flashback" },
   { "text": { "name": "", "body": "──三年前。" } },
   { "text": { "name": "", "body": "深夜のアトリエ。\nキャンバスの前に座ったまま、もう二時間、何も描けずにいた。" } },
   { "text": { "name": "主人公", "body": "（何を描きたいんだ……）" } },

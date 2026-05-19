@@ -1,5 +1,5 @@
 [
-  { "bg": "bg_ch01_crimson" },
+  { "bg": "stage1_after" },
   { "bgm": "bgm_ch01_clear" },
   { "chara": { "id": "akari", "expr": "surprise", "pos": "center" } },
   { "text": { "name": "あかり", "body": "クリア……クリアした！　本当に！！" } },
