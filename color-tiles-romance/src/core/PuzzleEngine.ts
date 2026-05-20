@@ -182,10 +182,7 @@ export class PuzzleEngine {
     }
 
     // 時間タイル相当の bonus（linked グループ内の time タイルも考慮）
-    let bonusSec = 0;
-    if (this.combo >= 2) {
-      bonusSec += this.combo * 2;
-    }
+    const bonusSec = 0;
     if (bonusSec > 0) this.timer.add(bonusSec);
 
     // スコア加算（ペア1組分 + グループ追加タイル分）
@@ -265,7 +262,6 @@ export class PuzzleEngine {
 
     if (cracked.length > 0) this.emit({ type: 'iceCracked', tiles: cracked });
 
-    if (this.combo >= 2) bonusSec += this.combo * 2;
     if (bonusSec > 0) this.timer.add(bonusSec);
 
     const pairsThisClick = Math.floor(allRemoved.length / 2);
@@ -309,11 +305,6 @@ export class PuzzleEngine {
     let bonusSec = 0;
     if (a.type === 'time') bonusSec += 10;
     if (b.type === 'time') bonusSec += 10;
-
-    // コンボボーナス（連鎖回数 × 2秒）
-    if (this.combo >= 2) {
-      bonusSec += this.combo * 2;
-    }
 
     if (bonusSec > 0) this.timer.add(bonusSec);
 
