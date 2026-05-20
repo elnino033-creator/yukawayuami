@@ -4,14 +4,20 @@
   "chapter": 2,
   "boardWidth": 9,
   "boardHeight": 8,
-  "timeLimitSec": 110,
+  "timeLimitSec": 85,
   "missPenaltySec": 30,
   "hintCount": 2,
   "generationParams": {
     "seed": 2002,
     "targetPairs": 21,
     "iceChance": 0.2,
-    "colors": ["red", "blue", "green", "yellow", "purple"]
+    "colors": [
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      "purple"
+    ]
   },
   "preScenario": "ch02_s02_pre.json",
   "puzzleBgm": "氷鈴の世界.mp3"

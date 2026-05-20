@@ -12,7 +12,13 @@
     "targetPairs": 30,
     "blockCount": 4,
     "dense": true,
-    "colors": ["red", "blue", "green", "yellow", "purple"]
+    "colors": [
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      "purple"
+    ]
   },
   "blockReleaseRule": {
     "type": "afterPairs",

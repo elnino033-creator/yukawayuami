@@ -4,14 +4,20 @@
   "chapter": 2,
   "boardWidth": 9,
   "boardHeight": 9,
-  "timeLimitSec": 105,
+  "timeLimitSec": 95,
   "missPenaltySec": 30,
   "hintCount": 1,
   "generationParams": {
     "seed": 2003,
     "targetPairs": 24,
     "iceChance": 0.25,
-    "colors": ["red", "blue", "green", "yellow", "purple"]
+    "colors": [
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      "purple"
+    ]
   },
   "preScenario": "ch02_s03_pre.json",
   "postScenario": "ch02_end.json",

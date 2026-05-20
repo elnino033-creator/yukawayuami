@@ -4,7 +4,7 @@
   "chapter": 5,
   "boardWidth": 16,
   "boardHeight": 14,
-  "timeLimitSec": 220,
+  "timeLimitSec": 120,
   "missPenaltySec": 30,
   "hintCount": 1,
   "generationParams": {

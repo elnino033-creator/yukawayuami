@@ -4,7 +4,7 @@
   "chapter": 4,
   "boardWidth": 10,
   "boardHeight": 8,
-  "timeLimitSec": 110,
+  "timeLimitSec": 100,
   "missPenaltySec": 30,
   "hintCount": 2,
   "generationParams": {
@@ -12,7 +12,14 @@
     "targetPairs": 36,
     "timeTileChance": 0.15,
     "dense": true,
-    "colors": ["red", "blue", "green", "yellow", "purple", "orange"]
+    "colors": [
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      "purple",
+      "orange"
+    ]
   },
   "preScenario": "ch04_s01_pre.json",
   "tutorialSteps": [
