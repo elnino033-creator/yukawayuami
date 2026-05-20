@@ -114,7 +114,14 @@ export class StageGenerator {
         if (!color) continue;
         const r = rng.next();
         if (r < iceChance) {
-          result[y][x] = { color, type: 'ice' };
+          // 隣接タイルがないと氷は永遠にヒビが入らず攻略不可になるためスキップ
+          const hasAdjacentTile = [[-1,0],[1,0],[0,-1],[0,1]].some(([dx, dy]) => {
+            const nx = x + dx, ny = y + dy;
+            return nx >= 0 && ny >= 0 && nx < boardWidth && ny < boardHeight && raw[ny][nx] !== null;
+          });
+          if (hasAdjacentTile) {
+            result[y][x] = { color, type: 'ice' };
+          }
         } else if (r < iceChance + timeTileChance) {
           result[y][x] = { color, type: 'time' };
         }
