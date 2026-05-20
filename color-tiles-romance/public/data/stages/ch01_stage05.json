@@ -2,14 +2,14 @@
   "id": "ch01_stage05",
   "title": "第1章 ステージ5：決意",
   "chapter": 1,
-  "boardWidth": 6,
-  "boardHeight": 6,
-  "timeLimitSec": 40,
+  "boardWidth": 8,
+  "boardHeight": 7,
+  "timeLimitSec": 55,
   "missPenaltySec": 30,
   "hintCount": 2,
   "generationParams": {
     "seed": 1005,
-    "targetPairs": 12
+    "targetPairs": 18
   },
   "preScenario": "ch01_s05_pre.json",
   "postScenario": "ch01_end.json",

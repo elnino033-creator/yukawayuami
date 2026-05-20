@@ -4,12 +4,12 @@
   "chapter": 4,
   "boardWidth": 10,
   "boardHeight": 9,
-  "timeLimitSec": 75,
+  "timeLimitSec": 90,
   "missPenaltySec": 30,
   "hintCount": 2,
   "generationParams": {
     "seed": 4002,
-    "targetPairs": 24,
+    "targetPairs": 33,
     "timeTileChance": 0.15,
     "colors": [
       "red",

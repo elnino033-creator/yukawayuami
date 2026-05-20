@@ -4,12 +4,12 @@
   "chapter": 1,
   "boardWidth": 6,
   "boardHeight": 6,
-  "timeLimitSec": 45,
+  "timeLimitSec": 43,
   "missPenaltySec": 30,
   "hintCount": 3,
   "generationParams": {
     "seed": 1002,
-    "targetPairs": 11
+    "targetPairs": 12
   },
   "preScenario": "ch01_s02_pre.json",
   "puzzleBgm": "妖精の小径.mp3"

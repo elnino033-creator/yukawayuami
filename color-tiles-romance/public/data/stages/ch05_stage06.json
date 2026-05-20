@@ -3,13 +3,13 @@
   "title": "第5章 ステージ6：最後の儀式",
   "chapter": 5,
   "boardWidth": 16,
-  "boardHeight": 14,
-  "timeLimitSec": 120,
+  "boardHeight": 12,
+  "timeLimitSec": 115,
   "missPenaltySec": 30,
   "hintCount": 1,
   "generationParams": {
     "seed": 5006,
-    "targetPairs": 150,
+    "targetPairs": 130,
     "iceChance": 0.05,
     "timeTileChance": 0.18,
     "blockCount": 15,
@@ -26,7 +26,7 @@
       "teal",
       "brown"
     ],
-    "minFreePairs": 18
+    "minFreePairs": 15
   },
   "blockReleaseRule": {
     "type": "afterPairs",

@@ -4,12 +4,12 @@
   "chapter": 3,
   "boardWidth": 10,
   "boardHeight": 9,
-  "timeLimitSec": 90,
+  "timeLimitSec": 100,
   "missPenaltySec": 30,
   "hintCount": 2,
   "generationParams": {
     "seed": 3002,
-    "targetPairs": 24,
+    "targetPairs": 33,
     "blockCount": 5,
     "colors": [
       "red",
@@ -17,7 +17,8 @@
       "green",
       "yellow",
       "purple"
-    ]
+    ],
+    "minFreePairs": 5
   },
   "blockReleaseRule": {
     "type": "afterPairs",
