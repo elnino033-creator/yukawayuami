@@ -2,15 +2,16 @@
   "id": "ch04_stage03",
   "title": "第4章 ステージ3：連鎖と時間",
   "chapter": 4,
-  "boardWidth": 8,
-  "boardHeight": 8,
+  "boardWidth": 10,
+  "boardHeight": 10,
   "timeLimitSec": 100,
   "missPenaltySec": 30,
   "hintCount": 1,
   "generationParams": {
     "seed": 4003,
-    "targetPairs": 18,
-    "iceChance": 0
+    "targetPairs": 27,
+    "timeTileChance": 0.18,
+    "colors": ["red", "blue", "green", "yellow", "purple", "orange"]
   },
   "preScenario": "ch04_s03_pre.json",
   "postScenario": "ch04_end.json",

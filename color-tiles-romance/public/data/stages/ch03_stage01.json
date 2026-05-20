@@ -2,105 +2,18 @@
   "id": "ch03_stage01",
   "title": "第3章 ステージ1：障害の壁",
   "chapter": 3,
-  "boardWidth": 8,
+  "boardWidth": 10,
   "boardHeight": 8,
   "timeLimitSec": 110,
   "missPenaltySec": 30,
   "hintCount": 2,
-  "tilesLayout": [
-    [
-      "red",
-      "blue",
-      "green",
-      null,
-      null,
-      "green",
-      "blue",
-      "red"
-    ],
-    [
-      "yellow",
-      "purple",
-      null,
-      {
-        "color": null,
-        "type": "block"
-      },
-      {
-        "color": null,
-        "type": "block"
-      },
-      null,
-      "purple",
-      "yellow"
-    ],
-    [
-      "blue",
-      "green",
-      "yellow",
-      null,
-      null,
-      "yellow",
-      "green",
-      "blue"
-    ],
-    [
-      "purple",
-      "red",
-      null,
-      {
-        "color": null,
-        "type": "block"
-      },
-      {
-        "color": null,
-        "type": "block"
-      },
-      null,
-      "red",
-      "purple"
-    ],
-    [
-      "green",
-      "yellow",
-      "blue",
-      null,
-      null,
-      "blue",
-      "yellow",
-      "green"
-    ],
-    [
-      "red",
-      "purple",
-      null,
-      null,
-      null,
-      null,
-      "purple",
-      "red"
-    ],
-    [
-      "yellow",
-      "blue",
-      "green",
-      null,
-      null,
-      "green",
-      "blue",
-      "yellow"
-    ],
-    [
-      "purple",
-      "red",
-      "yellow",
-      null,
-      null,
-      "yellow",
-      "red",
-      "purple"
-    ]
-  ],
+  "generationParams": {
+    "seed": 3001,
+    "targetPairs": 30,
+    "blockCount": 4,
+    "dense": true,
+    "colors": ["red", "blue", "green", "yellow", "purple"]
+  },
   "blockReleaseRule": {
     "type": "afterPairs",
     "count": 4

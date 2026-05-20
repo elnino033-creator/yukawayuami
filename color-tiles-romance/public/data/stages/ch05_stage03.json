@@ -2,34 +2,23 @@
   "id": "ch05_stage03",
   "title": "第5章 ステージ3：彼女の真心",
   "chapter": 5,
-  "boardWidth": 14,
-  "boardHeight": 10,
+  "boardWidth": 16,
+  "boardHeight": 12,
   "timeLimitSec": 200,
   "missPenaltySec": 30,
   "hintCount": 1,
   "generationParams": {
     "seed": 5003,
-    "targetPairs": 80,
-    "colors": [
-      "red",
-      "blue",
-      "green",
-      "yellow",
-      "purple",
-      "orange",
-      "pink",
-      "cyan",
-      "teal",
-      "brown"
-    ],
-    "iceChance": 0,
+    "targetPairs": 120,
+    "iceChance": 0.05,
     "timeTileChance": 0.1,
-    "blockCount": 6,
-    "dense": true
+    "blockCount": 8,
+    "dense": true,
+    "colors": ["red", "blue", "green", "yellow", "purple", "orange", "pink", "cyan", "teal", "brown"]
   },
   "blockReleaseRule": {
     "type": "afterPairs",
-    "count": 8
+    "count": 10
   },
   "preScenario": "ch05_s03_pre.json",
   "postScenario": "ch05_s03_post.json",

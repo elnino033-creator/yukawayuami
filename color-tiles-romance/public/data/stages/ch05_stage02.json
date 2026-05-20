@@ -2,31 +2,23 @@
   "id": "ch05_stage02",
   "title": "第5章 ステージ2：混沌の嵐",
   "chapter": 5,
-  "boardWidth": 10,
-  "boardHeight": 8,
+  "boardWidth": 12,
+  "boardHeight": 10,
   "timeLimitSec": 150,
   "missPenaltySec": 30,
   "hintCount": 1,
   "generationParams": {
     "seed": 5002,
-    "targetPairs": 50,
-    "colors": [
-      "red",
-      "blue",
-      "green",
-      "yellow",
-      "purple",
-      "orange",
-      "cyan"
-    ],
-    "iceChance": 0,
+    "targetPairs": 75,
+    "iceChance": 0.05,
     "timeTileChance": 0.1,
-    "blockCount": 3,
-    "dense": true
+    "blockCount": 4,
+    "dense": true,
+    "colors": ["red", "blue", "green", "yellow", "purple", "orange", "cyan"]
   },
   "blockReleaseRule": {
     "type": "afterPairs",
-    "count": 5
+    "count": 6
   },
   "preScenario": "ch05_s02_pre.json",
   "postScenario": "ch05_s02_post.json",

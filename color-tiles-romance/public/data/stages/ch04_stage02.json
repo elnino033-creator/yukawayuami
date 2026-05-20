@@ -2,15 +2,16 @@
   "id": "ch04_stage02",
   "title": "第4章 ステージ2：氷の連鎖",
   "chapter": 4,
-  "boardWidth": 8,
-  "boardHeight": 8,
+  "boardWidth": 10,
+  "boardHeight": 9,
   "timeLimitSec": 105,
   "missPenaltySec": 30,
   "hintCount": 2,
   "generationParams": {
     "seed": 4002,
-    "targetPairs": 16,
-    "iceChance": 0
+    "targetPairs": 24,
+    "timeTileChance": 0.15,
+    "colors": ["red", "blue", "green", "yellow", "purple", "orange"]
   },
   "preScenario": "ch04_s02_pre.json",
   "puzzleBgm": "オレンジ宮殿.mp3"
