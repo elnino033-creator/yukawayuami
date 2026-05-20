@@ -45,7 +45,7 @@
     "type": "never"
   },
   "preScenario": "intro_main.json",
-  "postScenario": "ch00_tutorial_post.json",
+
   "tutorialSteps": [
     {
       "type": "explain",
