@@ -9,7 +9,7 @@
   "hintCount": 1,
   "generationParams": {
     "seed": 5002,
-    "targetPairs": 75,
+    "targetPairs": 60,
     "iceChance": 0.05,
     "timeTileChance": 0.1,
     "blockCount": 4,
@@ -23,7 +23,7 @@
       "orange",
       "cyan"
     ],
-    "minFreePairs": 6
+    "minFreePairs": 4
   },
   "blockReleaseRule": {
     "type": "afterPairs",

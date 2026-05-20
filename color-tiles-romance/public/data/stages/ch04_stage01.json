@@ -9,7 +9,7 @@
   "hintCount": 2,
   "generationParams": {
     "seed": 4001,
-    "targetPairs": 36,
+    "targetPairs": 30,
     "timeTileChance": 0.15,
     "dense": true,
     "colors": [

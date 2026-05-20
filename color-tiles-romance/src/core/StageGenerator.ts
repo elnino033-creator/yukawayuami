@@ -114,7 +114,14 @@ export class StageGenerator {
         if (!color) continue;
         const r = rng.next();
         if (r < iceChance) {
-          result[y][x] = { color, type: 'ice' };
+          // 隣接タイルがないと氷は永遠にヒビが入らず攻略不可になるためスキップ
+          const hasAdjacentTile = [[-1,0],[1,0],[0,-1],[0,1]].some(([dx, dy]) => {
+            const nx = x + dx, ny = y + dy;
+            return nx >= 0 && ny >= 0 && nx < boardWidth && ny < boardHeight && raw[ny][nx] !== null;
+          });
+          if (hasAdjacentTile) {
+            result[y][x] = { color, type: 'ice' };
+          }
         } else if (r < iceChance + timeTileChance) {
           result[y][x] = { color, type: 'time' };
         }
@@ -187,6 +194,30 @@ export class StageGenerator {
             result[y][x] = { color: null, type: 'block' } as LayoutCell;
             blocksPlaced++;
           }
+        }
+      }
+    }
+
+    // Phase 4: ブロック配置後に孤立した氷タイルを通常タイルに戻す
+    // （Phase 3のブロックが氷タイルの全隣接セルを塞いだ場合の詰み防止）
+    for (let y = 0; y < boardHeight; y++) {
+      for (let x = 0; x < boardWidth; x++) {
+        const cell = result[y][x];
+        if (!cell || typeof cell === 'string') continue;
+        const c = cell as { color: string | null; type?: string; state?: string };
+        if (c.type !== 'ice') continue;
+
+        const hasNonBlockNeighbor = [[-1,0],[1,0],[0,-1],[0,1]].some(([dx, dy]) => {
+          const nx = x + dx, ny = y + dy;
+          if (nx < 0 || ny < 0 || nx >= boardWidth || ny >= boardHeight) return false;
+          const n = result[ny][nx];
+          if (n === null) return false;
+          if (typeof n === 'string') return true;
+          return (n as { color: string | null; type?: string }).type !== 'block';
+        });
+
+        if (!hasNonBlockNeighbor) {
+          result[y][x] = c.color as LayoutCell;
         }
       }
     }

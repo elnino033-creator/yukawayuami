@@ -18,7 +18,8 @@
       "green",
       "yellow",
       "purple"
-    ]
+    ],
+    "minFreePairs": 4
   },
   "blockReleaseRule": {
     "type": "afterPairs",

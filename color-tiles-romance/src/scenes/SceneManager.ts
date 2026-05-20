@@ -10,7 +10,7 @@ import { ProgressStore } from '@/store/progressStore';
 const LINEAR_STAGES = [
   'ch00_tutorial',
   'ch00_tutorial2',
-  'ch01_stage01', 'ch01_stage02', 'ch01_stage03', 'ch01_stage04', 'ch01_stage05',
+  'ch01_stage01', 'ch01_stage02', 'ch01_stage03',
   'ch02_stage01', 'ch02_stage02', 'ch02_stage03',
   'ch03_stage01', 'ch03_stage02', 'ch03_stage03',
   'ch04_stage01', 'ch04_stage02', 'ch04_stage03',
@@ -363,7 +363,7 @@ export class SceneManager {
               void this.transition({ to: 'title' });
             });
           });
-        } else if (data.stageId === 'ch01_stage05' && data.cleared) {
+        } else if (data.stageId === 'ch01_stage03' && data.cleared) {
           void this.mountNovelSceneWithCallback('ch01_final_flashback', () => {
             const next = this.getNextStage(data.stageId);
             void this.transition(next

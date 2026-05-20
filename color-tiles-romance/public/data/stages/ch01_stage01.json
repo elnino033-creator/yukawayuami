@@ -3,8 +3,8 @@
   "title": "第1章 ステージ1：はじめての壁",
   "chapter": 1,
   "boardWidth": 6,
-  "boardHeight": 6,
-  "timeLimitSec": 45,
+  "boardHeight": 5,
+  "timeLimitSec": 40,
   "missPenaltySec": 30,
   "hintCount": 3,
   "generationParams": {
@@ -12,5 +12,6 @@
     "targetPairs": 10
   },
   "preScenario": "ch01_s01_pre.json",
-  "puzzleBgm": "妖精の小径.mp3"
+  "puzzleBgm": "妖精の小径.mp3",
+  "postScenario": "ch01_s01_post.json"
 }
