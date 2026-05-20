@@ -33,5 +33,6 @@
     "count": 15
   },
   "preScenario": "ch05_s07_pre.json",
+  "postScenario": "ch05_end.json",
   "puzzleBgm": "紫塔の終章.mp3"
 }
