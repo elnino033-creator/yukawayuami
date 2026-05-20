@@ -2,34 +2,23 @@
   "id": "ch05_stage06",
   "title": "第5章 ステージ6：最後の儀式",
   "chapter": 5,
-  "boardWidth": 14,
-  "boardHeight": 12,
+  "boardWidth": 16,
+  "boardHeight": 14,
   "timeLimitSec": 220,
   "missPenaltySec": 30,
   "hintCount": 1,
   "generationParams": {
     "seed": 5006,
-    "targetPairs": 100,
-    "colors": [
-      "red",
-      "blue",
-      "green",
-      "yellow",
-      "purple",
-      "orange",
-      "pink",
-      "cyan",
-      "teal",
-      "brown"
-    ],
-    "iceChance": 0,
+    "targetPairs": 150,
+    "iceChance": 0.05,
     "timeTileChance": 0.18,
-    "blockCount": 12,
-    "dense": true
+    "blockCount": 15,
+    "dense": true,
+    "colors": ["red", "blue", "green", "yellow", "purple", "orange", "pink", "cyan", "teal", "brown"]
   },
   "blockReleaseRule": {
     "type": "afterPairs",
-    "count": 15
+    "count": 18
   },
   "preScenario": "ch05_s06_pre.json",
   "postScenario": "ch05_s06_post.json",

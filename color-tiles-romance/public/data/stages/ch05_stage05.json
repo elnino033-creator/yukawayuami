@@ -2,33 +2,23 @@
   "id": "ch05_stage05",
   "title": "第5章 ステージ5：封印された真実",
   "chapter": 5,
-  "boardWidth": 14,
-  "boardHeight": 10,
+  "boardWidth": 16,
+  "boardHeight": 12,
   "timeLimitSec": 200,
   "missPenaltySec": 30,
   "hintCount": 1,
   "generationParams": {
     "seed": 5005,
-    "targetPairs": 85,
-    "colors": [
-      "red",
-      "blue",
-      "green",
-      "yellow",
-      "purple",
-      "orange",
-      "pink",
-      "cyan",
-      "teal"
-    ],
-    "iceChance": 0,
+    "targetPairs": 128,
+    "iceChance": 0.05,
     "timeTileChance": 0.15,
-    "blockCount": 10,
-    "dense": true
+    "blockCount": 12,
+    "dense": true,
+    "colors": ["red", "blue", "green", "yellow", "purple", "orange", "pink", "cyan", "teal"]
   },
   "blockReleaseRule": {
     "type": "afterPairs",
-    "count": 12
+    "count": 14
   },
   "preScenario": "ch05_s05_pre.json",
   "postScenario": "ch05_s05_post.json",
