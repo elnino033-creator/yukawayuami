@@ -158,7 +158,7 @@ export class PuzzleScene {
   destroy(): void {
     if (this.rafId !== null) cancelAnimationFrame(this.rafId);
     this.engine.timer.stop();
-    BgmManager.stop();
+    // BGM は呼び出し元シーンが制御するためここでは止めない
   }
 
   // ---------- 入力 ----------

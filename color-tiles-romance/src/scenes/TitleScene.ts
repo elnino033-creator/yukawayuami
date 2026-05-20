@@ -3,6 +3,7 @@
  * タイトル画面を Canvas API で描画するシーン。
  * グラデーション背景、タイトルテキスト、メニューボタンを表示する。
  */
+import { BgmManager } from '@/audio/BgmManager';
 
 /** メニュー選択肢の種別 */
 export type TitleChoice = 'new' | 'continue' | 'stage';
@@ -76,6 +77,7 @@ export class TitleScene {
    * シーンを開始してアニメーションループを起動する。
    */
   start(): void {
+    BgmManager.stop();
     this.handleResize();
     this.buildButtons();
     this.startRenderLoop();
