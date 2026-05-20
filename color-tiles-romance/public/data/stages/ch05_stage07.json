@@ -2,14 +2,18 @@
   "id": "ch05_stage07",
   "title": "第5章 最終決戦：黒を塗りつぶせ",
   "chapter": 5,
-  "boardWidth": 14,
-  "boardHeight": 10,
-  "timeLimitSec": 240,
+  "boardWidth": 16,
+  "boardHeight": 12,
+  "timeLimitSec": 90,
   "missPenaltySec": 30,
   "hintCount": 0,
   "generationParams": {
     "seed": 5007,
-    "targetPairs": 90,
+    "targetPairs": 135,
+    "iceChance": 0.05,
+    "timeTileChance": 0.2,
+    "blockCount": 12,
+    "dense": true,
     "colors": [
       "red",
       "blue",
@@ -22,14 +26,11 @@
       "teal",
       "brown"
     ],
-    "iceChance": 0,
-    "timeTileChance": 0.2,
-    "blockCount": 10,
-    "dense": true
+    "minFreePairs": 15
   },
   "blockReleaseRule": {
     "type": "afterPairs",
-    "count": 12
+    "count": 15
   },
   "preScenario": "ch05_s07_pre.json",
   "puzzleBgm": "紫塔の終章.mp3"

@@ -2,125 +2,25 @@
   "id": "ch04_stage01",
   "title": "第4章 ステージ1：連鎖の目覚め",
   "chapter": 4,
-  "boardWidth": 8,
+  "boardWidth": 10,
   "boardHeight": 8,
-  "timeLimitSec": 110,
+  "timeLimitSec": 100,
   "missPenaltySec": 30,
   "hintCount": 2,
-  "tilesLayout": [
-    [
-      {
-        "color": "red",
-        "type": "linked",
-        "linkGroupId": "lg1"
-      },
-      {
-        "color": "blue",
-        "type": "linked",
-        "linkGroupId": "lg2"
-      },
-      "green",
-      null,
-      null,
-      "green",
-      {
-        "color": "blue",
-        "type": "linked",
-        "linkGroupId": "lg2"
-      },
-      {
-        "color": "red",
-        "type": "linked",
-        "linkGroupId": "lg1"
-      }
-    ],
-    [
-      {
-        "color": "red",
-        "type": "linked",
-        "linkGroupId": "lg1"
-      },
-      {
-        "color": "blue",
-        "type": "linked",
-        "linkGroupId": "lg2"
-      },
-      "purple",
-      null,
-      null,
-      "purple",
-      {
-        "color": "blue",
-        "type": "linked",
-        "linkGroupId": "lg2"
-      },
-      {
-        "color": "red",
-        "type": "linked",
-        "linkGroupId": "lg1"
-      }
-    ],
-    [
-      "yellow",
-      "purple",
-      "blue",
-      null,
-      null,
-      "blue",
-      "purple",
-      "yellow"
-    ],
-    [
-      "green",
-      "yellow",
+  "generationParams": {
+    "seed": 4001,
+    "targetPairs": 36,
+    "timeTileChance": 0.15,
+    "dense": true,
+    "colors": [
       "red",
-      null,
-      null,
-      "red",
-      "yellow",
-      "green"
-    ],
-    [
-      "purple",
-      "green",
-      "yellow",
-      null,
-      null,
-      "yellow",
-      "green",
-      "purple"
-    ],
-    [
       "blue",
-      "red",
       "green",
-      null,
-      null,
-      "green",
-      "red",
-      "blue"
-    ],
-    [
-      "red",
-      "purple",
-      "yellow",
-      null,
-      null,
       "yellow",
       "purple",
-      "red"
-    ],
-    [
-      "yellow",
-      "blue",
-      "purple",
-      null,
-      null,
-      "purple",
-      "blue",
-      "yellow"
+      "orange"
     ]
-  ],
+  },
   "preScenario": "ch04_s01_pre.json",
   "tutorialSteps": [
     {

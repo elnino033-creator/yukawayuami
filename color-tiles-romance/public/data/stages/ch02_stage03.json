@@ -2,15 +2,22 @@
   "id": "ch02_stage03",
   "title": "第2章 ステージ3：氷の迷宮",
   "chapter": 2,
-  "boardWidth": 7,
-  "boardHeight": 7,
-  "timeLimitSec": 105,
+  "boardWidth": 9,
+  "boardHeight": 9,
+  "timeLimitSec": 95,
   "missPenaltySec": 30,
   "hintCount": 1,
   "generationParams": {
     "seed": 2003,
-    "targetPairs": 16,
-    "iceChance": 0
+    "targetPairs": 24,
+    "iceChance": 0.25,
+    "colors": [
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      "purple"
+    ]
   },
   "preScenario": "ch02_s03_pre.json",
   "postScenario": "ch02_end.json",

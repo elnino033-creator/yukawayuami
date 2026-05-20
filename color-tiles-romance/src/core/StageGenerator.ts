@@ -8,7 +8,7 @@ export interface StageGenerationParams {
   iceChance?: number;
   /** 0-1: タイルをランダムにタイムタイルへ変換する確率 */
   timeTileChance?: number;
-  /** nullセルに配置する障害ブロック数 */
+  /** アクティブな経路マスに優先配置する障害ブロック数 */
   blockCount?: number;
   /**
    * true のとき「dense戦略」を使用:
@@ -16,6 +16,11 @@ export interface StageGenerationParams {
    * 最終章の高難易度ステージ向け。
    */
   dense?: boolean;
+  /**
+   * ブロック配置後に保証する最小アクティブクリックポイント数。
+   * blockReleaseRule.count と同値にするとちょうど良い。省略時は blockCount と同値。
+   */
+  minFreePairs?: number;
 }
 
 /** 全10色。chapterが上がるにつれて色が追加されていく */
@@ -52,6 +57,11 @@ class SeededRng {
  * dense=true の場合:
  *   nullスパンの端点ペア (spanStart, spanEnd) を 70% の確率で優先使用。
  *   スパンを効率よく消費して密度を 70〜75% まで引き上げる。
+ *
+ * 障害ブロック配置（blockCount > 0 の場合）:
+ *   ランダムな空マスではなく「現在マッチが成立する経路上のマス（ホットセル）」を
+ *   優先的にブロックする。ただし「残存ホットセル >= minFreePairs」を保証し、
+ *   条件を満たせない場合はそのマスへの配置を却下する。
  */
 export class StageGenerator {
   static generate(
@@ -62,6 +72,7 @@ export class StageGenerator {
     const rng = new SeededRng(params.seed);
     const colors = params.colors ?? DEFAULT_COLORS;
     const { targetPairs, iceChance = 0, timeTileChance = 0, blockCount = 0, dense = false } = params;
+    const minFreePairs = params.minFreePairs ?? blockCount;
 
     // Phase 1: ペアを順番に配置
     const raw: (string | null)[][] = Array.from({ length: boardHeight }, () =>
@@ -110,26 +121,130 @@ export class StageGenerator {
       }
     }
 
-    // Phase 3: 障害ブロックをランダムなnullセルに配置
+    // Phase 3: 障害ブロックを「アクティブな経路マス（ホットセル）」に優先配置
     if (blockCount > 0) {
-      const empties: Array<[number, number]> = [];
+      const hotCells: Array<[number, number]> = [];
+      const coldCells: Array<[number, number]> = [];
+
       for (let y = 0; y < boardHeight; y++) {
         for (let x = 0; x < boardWidth; x++) {
-          if (result[y][x] === null) empties.push([y, x]);
+          if (result[y][x] !== null) continue;
+          if (this.isHotCell(result, x, y, boardWidth, boardHeight)) {
+            hotCells.push([y, x]);
+          } else {
+            coldCells.push([y, x]);
+          }
         }
       }
-      const take = Math.min(blockCount, empties.length);
-      for (let i = empties.length - 1; i >= empties.length - take; i--) {
+
+      // ホットセルをシャッフル（多様性確保）
+      for (let i = hotCells.length - 1; i > 0; i--) {
         const j = rng.int(i + 1);
-        [empties[i], empties[j]] = [empties[j], empties[i]];
+        [hotCells[i], hotCells[j]] = [hotCells[j], hotCells[i]];
       }
-      for (let i = empties.length - take; i < empties.length; i++) {
-        const [y, x] = empties[i];
-        result[y][x] = { color: null, type: 'block' } as LayoutCell;
+
+      // ホットセルにブロックを1つずつ配置しながら「残存ホットセル >= minFreePairs」を保証
+      const workBoard = result.map(row => [...row] as LayoutCell[]);
+      let blocksPlaced = 0;
+
+      for (const [y, x] of hotCells) {
+        if (blocksPlaced >= blockCount) break;
+
+        // 仮配置
+        workBoard[y][x] = { color: null, type: 'block' } as LayoutCell;
+
+        // 残存ホットセル数をカウント（minFreePairs 到達で早期打ち切り）
+        let freeHot = 0;
+        outer: for (let ry = 0; ry < boardHeight; ry++) {
+          for (let rx = 0; rx < boardWidth; rx++) {
+            if (workBoard[ry][rx] !== null) continue;
+            if (this.isHotCell(workBoard, rx, ry, boardWidth, boardHeight)) {
+              freeHot++;
+              if (freeHot >= minFreePairs) break outer;
+            }
+          }
+        }
+
+        if (freeHot >= minFreePairs) {
+          // 配置確定
+          result[y][x] = { color: null, type: 'block' } as LayoutCell;
+          blocksPlaced++;
+        } else {
+          // 攻略不可になるため却下、仮配置を取り消す
+          workBoard[y][x] = null;
+        }
+      }
+
+      // 不足分：コールドセル（非経路の空マス）から補充
+      if (blocksPlaced < blockCount) {
+        for (let i = coldCells.length - 1; i > 0; i--) {
+          const j = rng.int(i + 1);
+          [coldCells[i], coldCells[j]] = [coldCells[j], coldCells[i]];
+        }
+        for (const [y, x] of coldCells) {
+          if (blocksPlaced >= blockCount) break;
+          if (result[y][x] === null) {
+            result[y][x] = { color: null, type: 'block' } as LayoutCell;
+            blocksPlaced++;
+          }
+        }
       }
     }
 
     return result;
+  }
+
+  /**
+   * 空マス (cx, cy) が現在いずれかのマッチを成立させる「経路上のマス」かどうかを判定。
+   * ここにブロックを置くと、そのマッチが一時的に不能になる。
+   */
+  private static isHotCell(
+    board: LayoutCell[][],
+    cx: number,
+    cy: number,
+    _boardWidth: number,
+    _boardHeight: number
+  ): boolean {
+    const L = this.scanRowColor(board[cy], cx - 1, -1);
+    const R = this.scanRowColor(board[cy], cx + 1, 1);
+    const U = this.scanColColor(board, cx, cy - 1, -1);
+    const D = this.scanColColor(board, cx, cy + 1, 1);
+
+    const match = (a: string | null, b: string | null) =>
+      a !== null && b !== null && a === b;
+
+    return (
+      match(L, R) || match(U, D) ||
+      match(U, L) || match(U, R) ||
+      match(D, L) || match(D, R)
+    );
+  }
+
+  /** 行を指定方向にスキャンし、最初に見つかった色付きタイルの色を返す。ブロックや端でnull。 */
+  private static scanRowColor(row: LayoutCell[], startX: number, dx: number): string | null {
+    for (let x = startX; x >= 0 && x < row.length; x += dx) {
+      const cell = row[x];
+      if (cell === null) continue; // 空マス：スキャン継続
+      return this.cellColor(cell); // タイル（色付き or ブロック）：停止
+    }
+    return null;
+  }
+
+  /** 列を指定方向にスキャンし、最初に見つかった色付きタイルの色を返す。ブロックや端でnull。 */
+  private static scanColColor(board: LayoutCell[][], cx: number, startY: number, dy: number): string | null {
+    for (let y = startY; y >= 0 && y < board.length; y += dy) {
+      const cell = board[y][cx];
+      if (cell === null) continue;
+      return this.cellColor(cell);
+    }
+    return null;
+  }
+
+  /** LayoutCell からタイル色を取得。ブロック（color:null）はnullを返す。 */
+  private static cellColor(cell: LayoutCell): string | null {
+    if (cell === null) return null;
+    if (typeof cell === 'string') return cell;
+    return (cell as { color: string | null }).color ?? null;
   }
 
   /**

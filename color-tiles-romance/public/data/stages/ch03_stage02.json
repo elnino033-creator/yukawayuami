@@ -2,20 +2,26 @@
   "id": "ch03_stage02",
   "title": "第3章 ステージ2：氷と岩",
   "chapter": 3,
-  "boardWidth": 8,
-  "boardHeight": 8,
-  "timeLimitSec": 105,
+  "boardWidth": 10,
+  "boardHeight": 9,
+  "timeLimitSec": 90,
   "missPenaltySec": 30,
   "hintCount": 2,
   "generationParams": {
     "seed": 3002,
-    "targetPairs": 16,
-    "iceChance": 0,
-    "blockCount": 4
+    "targetPairs": 24,
+    "blockCount": 5,
+    "colors": [
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      "purple"
+    ]
   },
   "blockReleaseRule": {
     "type": "afterPairs",
-    "count": 4
+    "count": 5
   },
   "preScenario": "ch03_s02_pre.json",
   "puzzleBgm": "翠葉の迷宮.mp3"
