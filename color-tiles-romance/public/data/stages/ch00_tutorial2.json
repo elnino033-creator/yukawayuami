@@ -7,31 +7,116 @@
   "timeLimitSec": 300,
   "missPenaltySec": 0,
   "hintCount": 3,
+  "puzzleBgm": "bgm_tutorial",
   "tilesLayout": [
-    ["purple", "red",   "blue",  "green", "yellow", null],
-    [null,     null,    null,    null,    null,      null],
-    [null,     null,    null,    null,    null,      null],
-    [null,     null,    null,    null,    null,      null],
-    ["purple", "red",   "blue",  "green", "yellow", null],
-    [null,     null,    null,    null,    null,      null]
+    [
+      "purple",
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      "purple",
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
   ],
-  "blockReleaseRule": { "type": "never" },
+  "blockReleaseRule": {
+    "type": "never"
+  },
   "tutorialSteps": [
     {
       "type": "explain",
       "text": "今度は縦方向の消し方を覚えましょう！\n同じ色のタイルが上下に並んでいます。\nこのボードでは横には消せません。縦だけが正解です！",
-      "highlightCells": [{"x":0,"y":0},{"x":0,"y":4}]
+      "highlightCells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 4
+        }
+      ]
     },
     {
       "type": "explain",
       "text": "上下に同じ色のタイルがあれば、その間の空マスをクリックすれば消えます！\n紫タイルの間（行1〜行3、列0）をクリックしてみましょう。",
-      "highlightCells": [{"x":0,"y":0},{"x":0,"y":4}]
+      "highlightCells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 4
+        }
+      ]
     },
     {
       "type": "force_match",
       "text": "上下の紫タイルの間（↑↓）の光る空マスをクリック！",
-      "highlightCells": [{"x":0,"y":0},{"x":0,"y":4}],
-      "allowedCells": [{"x":0,"y":1},{"x":0,"y":2},{"x":0,"y":3}]
+      "highlightCells": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 4
+        }
+      ],
+      "allowedCells": [
+        {
+          "x": 0,
+          "y": 1
+        },
+        {
+          "x": 0,
+          "y": 2
+        },
+        {
+          "x": 0,
+          "y": 3
+        }
+      ]
     },
     {
       "type": "praise",
