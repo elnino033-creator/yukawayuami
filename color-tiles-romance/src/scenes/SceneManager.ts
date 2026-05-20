@@ -445,18 +445,9 @@ export class SceneManager {
     hint: HTMLElement;
     status: HTMLElement;
   } {
-    // タイマーは大きく目立つ形でパズルの直上に表示
-    const timerBar = document.createElement('div');
-    timerBar.style.cssText = 'display:flex;justify-content:center;align-items:center;padding:4px 16px;background:#1a1d2e;width:100%;box-sizing:border-box;';
-    const timer = document.createElement('span');
-    timer.id = 'hud-timer-sm';
-    timer.style.cssText = 'font-family:monospace;font-size:44px;font-weight:900;color:#ffe080;letter-spacing:4px;text-shadow:0 0 12px #ffb70088;';
-    timer.textContent = '--:--';
-    timerBar.appendChild(timer);
-    parent.appendChild(timerBar);
-
+    // スコア等ステータスバーを上部に配置
     const hudBar = document.createElement('div');
-    hudBar.style.cssText = 'display:flex;gap:16px;padding:4px 16px;background:#252938;width:100%;box-sizing:border-box;align-items:center;color:#fff;font-family:monospace;font-size:13px;';
+    hudBar.style.cssText = 'display:flex;gap:16px;padding:4px 16px;background:#1a1d2e;width:100%;box-sizing:border-box;align-items:center;color:#fff;font-family:monospace;font-size:13px;';
 
     const makeEl = (label: string, id: string) => {
       const span = document.createElement('span');
@@ -471,8 +462,37 @@ export class SceneManager {
     const hint = makeEl('HINT', 'hud-hint-sm');
     const status = makeEl('', 'hud-status-sm');
     status.style.marginLeft = 'auto';
-
     parent.appendChild(hudBar);
+
+    // タイマーはパズルエリアの直上にPOPに表示
+    const timerBar = document.createElement('div');
+    timerBar.style.cssText = [
+      'display:flex;justify-content:center;align-items:center;',
+      'padding:8px 16px;',
+      'background:linear-gradient(180deg,#1a1025 0%,#0f0c1e 100%);',
+      'border-top:3px solid #ffb700;border-bottom:3px solid #ff6a00;',
+      'box-shadow:0 0 24px #ffb70055,inset 0 0 32px #ff440022;',
+      'width:100%;box-sizing:border-box;',
+    ].join('');
+
+    const timer = document.createElement('span');
+    timer.id = 'hud-timer-sm';
+    timer.style.cssText = [
+      'font-family:"Courier New",monospace;',
+      'font-size:60px;font-weight:900;',
+      'color:#ffe080;',
+      'letter-spacing:8px;',
+      'text-shadow:',
+      '0 0 6px #fff,',
+      '0 0 14px #ffcc00,',
+      '0 0 28px #ff8800,',
+      '0 0 48px #ff440088;',
+      'line-height:1;',
+    ].join('');
+    timer.textContent = '--:--';
+    timerBar.appendChild(timer);
+    parent.appendChild(timerBar);
+
     return { timer, score, combo, hint, status };
   }
 
