@@ -10,7 +10,6 @@
   "generationParams": {
     "seed": 4002,
     "targetPairs": 33,
-    "timeTileChance": 0.15,
     "colors": [
       "red",
       "blue",
@@ -18,8 +17,11 @@
       "yellow",
       "purple",
       "orange"
-    ]
+    ],
+    "bombChance": 0.15
   },
   "preScenario": "ch04_s02_pre.json",
-  "puzzleBgm": "オレンジ宮殿.mp3"
+  "puzzleBgm": "オレンジ宮殿.mp3",
+  "bombCountdown": 15,
+  "bombPenaltySec": 20
 }
