@@ -12,6 +12,6 @@
     "targetPairs": 14
   },
   "preScenario": "ch01_s02_pre.json",
-  "puzzleBgm": "妖精の小径.mp3",
+  "puzzleBgm": "緋色のあかり.mp3",
   "postScenario": "ch01_s02_post.json"
 }
