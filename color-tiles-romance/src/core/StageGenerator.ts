@@ -8,6 +8,8 @@ export interface StageGenerationParams {
   iceChance?: number;
   /** 0-1: タイルをランダムにタイムタイルへ変換する確率 */
   timeTileChance?: number;
+  /** 0-1: タイルをランダムに爆弾タイルへ変換する確率 */
+  bombChance?: number;
   /** アクティブな経路マスに優先配置する障害ブロック数 */
   blockCount?: number;
   /**
@@ -71,7 +73,7 @@ export class StageGenerator {
   ): LayoutCell[][] {
     const rng = new SeededRng(params.seed);
     const colors = params.colors ?? DEFAULT_COLORS;
-    const { targetPairs, iceChance = 0, timeTileChance = 0, blockCount = 0, dense = false } = params;
+    const { targetPairs, iceChance = 0, timeTileChance = 0, bombChance = 0, blockCount = 0, dense = false } = params;
     const minFreePairs = params.minFreePairs ?? blockCount;
 
     // Phase 1: ペアを順番に配置
@@ -124,6 +126,8 @@ export class StageGenerator {
           }
         } else if (r < iceChance + timeTileChance) {
           result[y][x] = { color, type: 'time' };
+        } else if (r < iceChance + timeTileChance + bombChance) {
+          result[y][x] = { color, type: 'bomb' };
         }
       }
     }

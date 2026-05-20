@@ -10,7 +10,6 @@
   "generationParams": {
     "seed": 4001,
     "targetPairs": 30,
-    "timeTileChance": 0.15,
     "dense": true,
     "colors": [
       "red",
@@ -19,23 +18,26 @@
       "yellow",
       "purple",
       "orange"
-    ]
+    ],
+    "bombChance": 0.15
   },
   "preScenario": "ch04_s01_pre.json",
   "tutorialSteps": [
     {
       "type": "explain",
-      "text": "タイムタイル（⏱）が登場！\nタイムタイルを消すと、制限時間が＋10秒延長されます。\n盤面を見渡して、タイムタイルを積極的に狙いましょう！"
+      "text": "爆弾タイル（💣）が登場！\nカウントダウンが表示されており、0になると爆発して制限時間が－20秒になります。\n消せばカウントダウンが止まり、ペナルティなし！"
     },
     {
       "type": "explain",
-      "text": "4章は制限時間が厳しめです。\nタイムタイルを優先して消すことで時間を稼ぎながら\n攻略できます。うまく活用しましょう！"
+      "text": "爆弾タイルは数字が赤くなると残り5秒以下の危険状態です。\n通常タイルより爆弾タイルを優先して消しましょう。\n放置すると一気に時間が削られます！"
     },
     {
       "type": "praise",
-      "text": "タイムタイルの仕組みがわかりました！\n時間を上手に管理して全部消してクリアを目指しましょう！",
+      "text": "爆弾タイルの仕組みがわかりました！\n爆発させずに消して、時間を守りきろう！",
       "autoAdvanceMs": 2000
     }
   ],
-  "puzzleBgm": "オレンジ宮殿.mp3"
+  "puzzleBgm": "オレンジ宮殿.mp3",
+  "bombCountdown": 15,
+  "bombPenaltySec": 20
 }

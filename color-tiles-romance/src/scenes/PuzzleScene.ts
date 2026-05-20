@@ -75,6 +75,7 @@ export class PuzzleScene {
   private hintHighlight: { tiles: Tile[]; clickPoint: { x: number; y: number }; until: number } | null = null;
   private shuffleFlashUntil = 0;
   private timeUpFlashUntil = 0;
+  private bombFlashUntil = 0;
   private tutorial: TutorialState | null = null;
   /** シャドウタイルの一時的な色表示期限マップ。key: "x,y"、value: 公開期限(ms timestamp) */
   private shadowReveals: Map<string, number> = new Map();
@@ -124,6 +125,7 @@ export class PuzzleScene {
     this.hintHighlight = null;
     this.shuffleFlashUntil = 0;
     this.timeUpFlashUntil = 0;
+    this.bombFlashUntil = 0;
     this.tutorial = stage.tutorialSteps && stage.tutorialSteps.length > 0
       ? { steps: stage.tutorialSteps, currentIndex: 0, stepStartTime: Date.now(), nextButtonRect: null }
       : null;
@@ -314,6 +316,11 @@ export class PuzzleScene {
         case 'blocksReleased':
           this.flashStatus('障害ブロック解除！');
           break;
+        case 'bombExploded':
+          soundEngine.playMiss();
+          this.bombFlashUntil = Date.now() + 600;
+          this.spawnFloatText(`💥 -${e.penaltySec}s`, '#ff4444');
+          break;
         case 'cleared':
           soundEngine.playClear();
           this.flashStatus('CLEAR！');
@@ -372,6 +379,13 @@ export class PuzzleScene {
 
     // チュートリアルオーバーレイ
     this.drawTutorialOverlay(now);
+
+    // 爆弾爆発フラッシュ
+    if (now < this.bombFlashUntil) {
+      const alpha = (this.bombFlashUntil - now) / 600;
+      this.ctx.fillStyle = `rgba(255, 120, 0, ${alpha * 0.5})`;
+      this.ctx.fillRect(0, 0, w, h);
+    }
 
     // シャッフル / タイムアップフラッシュ
     if (now < this.shuffleFlashUntil) {
@@ -571,6 +585,19 @@ export class PuzzleScene {
       this.ctx.textAlign = 'center';
       this.ctx.textBaseline = 'middle';
       this.ctx.fillText('⌛', x + TILE_SIZE / 2, y + TILE_SIZE / 2);
+    } else if (t.type === 'bomb') {
+      const countdown = t.countdown ?? 0;
+      const urgent = countdown <= 5;
+      // 爆弾アイコン
+      this.ctx.font = 'bold 20px sans-serif';
+      this.ctx.textAlign = 'center';
+      this.ctx.textBaseline = 'middle';
+      this.ctx.fillStyle = urgent ? 'rgba(255,80,80,0.95)' : 'rgba(255,255,255,0.85)';
+      this.ctx.fillText('💣', x + TILE_SIZE / 2, y + TILE_SIZE / 2 - 7);
+      // カウントダウン数字
+      this.ctx.font = `bold ${urgent ? 15 : 13}px sans-serif`;
+      this.ctx.fillStyle = urgent ? '#ff2222' : 'rgba(255,255,255,0.9)';
+      this.ctx.fillText(String(countdown), x + TILE_SIZE / 2, y + TILE_SIZE / 2 + 12);
     } else if (t.type === 'linked') {
       // 連結タイル：右下隅にチェーンアイコンを描画
       this.ctx.font = '14px sans-serif';

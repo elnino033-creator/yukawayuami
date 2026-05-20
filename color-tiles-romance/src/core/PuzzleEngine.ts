@@ -25,6 +25,7 @@ type EngineEvent =
   | { type: 'miss'; clickPoint: { x: number; y: number }; penaltySec: number }
   | { type: 'shuffle' }
   | { type: 'blocksReleased'; tiles: Tile[] }
+  | { type: 'bombExploded'; tile: Tile; penaltySec: number }
   | { type: 'cleared' }
   | { type: 'gameOver' };
 
@@ -51,9 +52,12 @@ export class PuzzleEngine {
   private hintUsed = 0;
   private hintRemain = 0;
   private missPenaltySec = 0;
+  private bombPenaltySec = 20;
+  private bombInitialCountdown = 15;
   private blockRule: BlockReleaseRule = { type: 'never' };
   private blocksReleased = false;
   private startedAtMs = 0;
+  private bombTickSkip = false;
 
   private listeners: EventListener[] = [];
 
@@ -78,12 +82,29 @@ export class PuzzleEngine {
     this.hintUsed = 0;
     this.hintRemain = stage.hintCount;
     this.missPenaltySec = stage.missPenaltySec;
+    this.bombPenaltySec = stage.bombPenaltySec ?? 20;
+    this.bombInitialCountdown = stage.bombCountdown ?? 15;
     this.blockRule = stage.blockReleaseRule ?? { type: 'never' };
     this.blocksReleased = false;
     this.startedAtMs = Date.now();
 
+    // 爆弾タイルの初期カウントダウンをセット
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const t = this.board[y][x];
+        if (t && t.type === 'bomb') t.countdown = this.bombInitialCountdown;
+      }
+    }
+
     this.timer.start(stage.timeLimitSec);
     this.timer.onTimeUp(() => this.emit({ type: 'gameOver' }));
+
+    // 1秒ごとに爆弾カウントダウンを減算（最初のtick=開始直後はスキップ）
+    this.bombTickSkip = true;
+    this.timer.onTick(() => {
+      if (this.bombTickSkip) { this.bombTickSkip = false; return; }
+      this.tickBombs();
+    });
   }
 
   /**
@@ -126,6 +147,30 @@ export class PuzzleEngine {
 
     // 2マッチ（交点同時消し）: 最大4タイルを一括処理
     return this.applyMultiRemoval(matches);
+  }
+
+  /** 爆弾タイルのカウントダウンを1秒減算し、0になったら爆発させる */
+  private tickBombs(): void {
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const t = this.board[y][x];
+        if (!t || t.type !== 'bomb') continue;
+        t.countdown = (t.countdown ?? 1) - 1;
+        if (t.countdown <= 0) {
+          this.board[y][x] = null;
+          this.timer.subtract(this.bombPenaltySec);
+          this.emit({ type: 'bombExploded', tile: t, penaltySec: this.bombPenaltySec });
+          // 爆弾消滅後のクリア判定
+          if (this.isCleared()) {
+            this.timer.stop();
+            this.score += this.timer.remain * 10;
+            if (this.hintUsed === 0) this.score += 1000;
+            if (this.missCount === 0) this.score += 500;
+            this.emit({ type: 'cleared' });
+          }
+        }
+      }
+    }
   }
 
   /**

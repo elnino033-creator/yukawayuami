@@ -8,6 +8,7 @@ export type TileType =
   | 'normal'  // 通常タイル
   | 'ice'     // 同色マッチ2回で消える（1回目はヒビ状態に変化）
   | 'time'    // 消去で +10秒
+  | 'bomb'    // カウントダウンが0になると爆発し時間ペナルティ。消去すれば無効化
   | 'linked'  // 連結タイル（同色チェーン消去）※Phase 0では未実装、型のみ予約
   | 'shadow'  // 色マスク ※Phase 0では未実装
   | 'paired'  // ペア固定 ※Phase 0では未実装
@@ -28,6 +29,8 @@ export interface Tile {
   type: TileType;
   /** タイルの状態 */
   state: TileState;
+  /** 爆弾タイルの残りカウントダウン秒数 */
+  countdown?: number;
   /** ペア固定タイルの相方ID（typeが'paired'のときのみ意味を持つ） */
   pairId?: string;
   /** 連結タイルのグループID（typeが'linked'のときのみ意味を持つ） */
@@ -62,6 +65,7 @@ export interface StageGenerationParams {
   colors?: string[];
   iceChance?: number;
   timeTileChance?: number;
+  bombChance?: number;
   blockCount?: number;
   /** true のとき端点優先のdense戦略を使用し密度を70〜75%に引き上げる */
   dense?: boolean;
@@ -114,6 +118,10 @@ export interface StageDefinition {
   rewards?: { S?: string[]; A?: string[]; B?: string[]; C?: string[] };
   /** チュートリアルステップ（指定時はガイド付きモードで進行） */
   tutorialSteps?: TutorialStep[];
+  /** 爆弾タイルの初期カウントダウン秒数（省略時15秒） */
+  bombCountdown?: number;
+  /** 爆弾タイル爆発時のペナルティ秒数（省略時20秒） */
+  bombPenaltySec?: number;
   /** パズル中に再生するBGMファイル名（省略時はデフォルトのpuzzle BGM） */
   puzzleBgm?: string;
 }
