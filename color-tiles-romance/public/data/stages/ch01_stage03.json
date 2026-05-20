@@ -2,15 +2,16 @@
   "id": "ch01_stage03",
   "title": "第1章 ステージ3：交差する思い",
   "chapter": 1,
-  "boardWidth": 7,
-  "boardHeight": 6,
-  "timeLimitSec": 47,
+  "boardWidth": 8,
+  "boardHeight": 7,
+  "timeLimitSec": 55,
   "missPenaltySec": 30,
   "hintCount": 2,
   "generationParams": {
     "seed": 1003,
-    "targetPairs": 14
+    "targetPairs": 18
   },
   "preScenario": "ch01_s03_pre.json",
-  "puzzleBgm": "妖精の小径.mp3"
+  "puzzleBgm": "妖精の小径.mp3",
+  "postScenario": "ch01_end.json"
 }

@@ -2,15 +2,16 @@
   "id": "ch01_stage02",
   "title": "第1章 ステージ2：広がる空間",
   "chapter": 1,
-  "boardWidth": 6,
+  "boardWidth": 7,
   "boardHeight": 6,
-  "timeLimitSec": 43,
+  "timeLimitSec": 47,
   "missPenaltySec": 30,
   "hintCount": 3,
   "generationParams": {
     "seed": 1002,
-    "targetPairs": 12
+    "targetPairs": 14
   },
   "preScenario": "ch01_s02_pre.json",
-  "puzzleBgm": "妖精の小径.mp3"
+  "puzzleBgm": "妖精の小径.mp3",
+  "postScenario": "ch01_s02_post.json"
 }
