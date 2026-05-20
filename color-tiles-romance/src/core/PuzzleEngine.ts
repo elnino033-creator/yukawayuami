@@ -149,7 +149,7 @@ export class PuzzleEngine {
     return this.applyMultiRemoval(matches);
   }
 
-  /** 爆弾タイルのカウントダウンを1秒減算し、0になったら爆発させる */
+  /** 爆弾タイルのカウントダウンを1秒減算し、0になったら爆発させる（タイルは残る） */
   private tickBombs(): void {
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
@@ -157,20 +157,21 @@ export class PuzzleEngine {
         if (!t || t.type !== 'bomb') continue;
         t.countdown = (t.countdown ?? 1) - 1;
         if (t.countdown <= 0) {
-          this.board[y][x] = null;
+          // タイルは盤上に残す（消去はプレイヤーがマッチで行う）
+          t.countdown = this.bombInitialCountdown; // カウントダウンをリセット
           this.timer.subtract(this.bombPenaltySec);
           this.emit({ type: 'bombExploded', tile: t, penaltySec: this.bombPenaltySec });
-          // 爆弾消滅後のクリア判定
-          if (this.isCleared()) {
-            this.timer.stop();
-            this.score += this.timer.remain * 10;
-            if (this.hintUsed === 0) this.score += 1000;
-            if (this.missCount === 0) this.score += 500;
-            this.emit({ type: 'cleared' });
-          }
         }
       }
     }
+  }
+
+  /** ブロック解除まで残り何ペア必要か（afterPairs ルール時のみ。解除済み or 対象外は null） */
+  get blockRemainingCount(): number | null {
+    if (this.blocksReleased) return null;
+    const rule = this.blockRule;
+    if (rule.type !== 'afterPairs') return null;
+    return Math.max(0, rule.count - this.pairsCleared);
   }
 
   /**

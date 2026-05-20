@@ -374,7 +374,7 @@ export class ScenarioPlayer {
   ): void {
     const w = this.canvas.width;
     const h = this.canvas.height;
-    const bw = Math.min(w * 0.6, 400);
+    const bw = Math.min(w * 0.82, 520);
     const bh = 48;
     const gap = 12;
     const totalH = choices.length * (bh + gap) - gap;
@@ -612,11 +612,17 @@ export class ScenarioPlayer {
       this.ctx.lineWidth = 1.5;
       this.ctx.strokeRect(btn.x, btn.y, btn.w, btn.h);
 
-      // ボタンテキスト
+      // ボタンテキスト（幅に収まるようフォントサイズを動的調整）
       this.ctx.fillStyle = '#fff';
-      this.ctx.font = 'bold 16px sans-serif';
       this.ctx.textAlign = 'center';
       this.ctx.textBaseline = 'middle';
+      const maxTextW = btn.w - 28;
+      let fs = 16;
+      this.ctx.font = `bold ${fs}px sans-serif`;
+      while (fs > 10 && this.ctx.measureText(btn.label).width > maxTextW) {
+        fs--;
+        this.ctx.font = `bold ${fs}px sans-serif`;
+      }
       this.ctx.fillText(btn.label, btn.x + btn.w / 2, btn.y + btn.h / 2);
     }
   }

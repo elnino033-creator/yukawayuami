@@ -3,6 +3,150 @@
     "bg": "stage3"
   },
   {
+    "bgm": "bgm_forest_ambient"
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "smile",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "すず",
+      "body": "少しずつ、ほどけてきましたね。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "ああ。ここに来てから、何かが変わり始めている気がする。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "うまく言えないけど……肩から、見えない荷物が、ひとつずつ下ろされていくような。"
+    }
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "normal",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "すず",
+      "body": "それは、あなたが自分で下ろしたんですよ。私はただ、そばにいただけ。"
+    }
+  },
+  {
+    "text": {
+      "name": "すず",
+      "body": "次が、この階層の最後の試練です。本当のところを、ここで一緒に見つめましょう。"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "すず",
+      "body": "今日のパズルには、壁が混じっています。でも大丈夫。たくさん色の欠片を繋ぐと、自然と崩れていきますから。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "壁も……続ければ、いつか崩れるものなんだな。"
+    }
+  },
+  {
+    "text": {
+      "name": "すず",
+      "body": "ええ。ゆっくりでいいんです。"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "smile",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "すず",
+      "body": "壁が崩れましたね。よくやりました。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "……すず、君はずっと優しいな。怒らないのか、僕に？"
+    }
+  },
+  {
+    "text": {
+      "name": "すず",
+      "body": "怒る必要がないもの。あなたはもう、十分に苦しんでいるから。"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "すず",
+      "body": "……次が最後のステージです。もし解き終えたら、少しだけ、昔の話を聞かせてください。あなたが誰を大切にしていたか。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "ありがとう。君の優しさに救われたよ。"
+    }
+  },
+  {
+    "effect": {
+      "type": "fade_out",
+      "duration": 800
+    }
+  },
+  {
     "bgm": "bgm_chapter_clear"
   },
   {
@@ -189,6 +333,38 @@
     "effect": {
       "type": "fade_out",
       "duration": 1500
+    }
+  },
+  {
+    "bg": "stage3"
+  },
+  {
+    "bgm": "bgm_forest_ambient"
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "すず",
+      "body": "最後のパズルです。これを乗り越えれば、次の階層へ進めますよ。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "すず……君は、こんなに優しくていいのか。次の章の番人も、こんなに優しければいいのだが。"
+    }
+  },
+  {
+    "text": {
+      "name": "すず",
+      "body": "ふふ。ひまりさんは……少し賑やかですよ。驚かないでくださいね。"
     }
   }
 ]

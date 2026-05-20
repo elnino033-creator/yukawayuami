@@ -27,7 +27,7 @@
   },
   "blockReleaseRule": {
     "type": "afterPairs",
-    "count": 6
+    "count": 20
   },
   "preScenario": "ch05_s02_pre.json",
   "postScenario": "ch05_s02_post.json",
