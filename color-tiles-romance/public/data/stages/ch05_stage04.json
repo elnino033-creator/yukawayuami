@@ -14,7 +14,17 @@
     "timeTileChance": 0.12,
     "blockCount": 10,
     "dense": true,
-    "colors": ["red", "blue", "green", "yellow", "purple", "orange", "pink", "cyan"]
+    "colors": [
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      "purple",
+      "orange",
+      "pink",
+      "cyan"
+    ],
+    "minFreePairs": 12
   },
   "blockReleaseRule": {
     "type": "afterPairs",

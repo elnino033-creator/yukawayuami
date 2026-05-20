@@ -65,6 +65,11 @@ export interface StageGenerationParams {
   blockCount?: number;
   /** true のとき端点優先のdense戦略を使用し密度を70〜75%に引き上げる */
   dense?: boolean;
+  /**
+   * ブロック配置後に保証する最小アクティブクリックポイント数。
+   * blockReleaseRule.count と同値にするとちょうど良い。省略時は blockCount と同値。
+   */
+  minFreePairs?: number;
 }
 
 /** チュートリアルステップ */
