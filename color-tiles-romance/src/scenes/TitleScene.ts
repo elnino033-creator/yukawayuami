@@ -1,7 +1,7 @@
 /**
  * TitleScene.ts
  * タイトル画面を Canvas API で描画するシーン。
- * グラデーション背景、タイトルテキスト、メニューボタンを表示する。
+ * 背景画像（title_bg.jpg）の上にメニューボタンを配置する。
  */
 import { BgmManager } from '@/audio/BgmManager';
 
@@ -20,9 +20,22 @@ interface TitleButton {
   disabled: boolean;
 }
 
+/** 花びらパーティクル */
+interface Petal {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  rot: number;
+  rotSpeed: number;
+  size: number;
+  alpha: number;
+  swayOffset: number;
+}
+
 /**
  * タイトル画面シーン。
- * Canvasにグラデーション、タイトル、メニューボタンを描画する。
+ * ゴシックファンタジー調の背景画像上にメニューボタンを描画する。
  */
 export class TitleScene {
   private canvas: HTMLCanvasElement;
@@ -33,6 +46,10 @@ export class TitleScene {
   private rafId: number | null = null;
   private startTime: number = Date.now();
   private bgmAudio: HTMLAudioElement | null = null;
+  private bgImage: HTMLImageElement | null = null;
+
+  /** 花びらパーティクル */
+  private petals: Petal[] = [];
 
   /** マウス位置 */
   private mouseX = 0;
@@ -80,6 +97,8 @@ export class TitleScene {
     BgmManager.stop();
     this.handleResize();
     this.buildButtons();
+    this.initPetals();
+    this.loadBgImage();
     this.startRenderLoop();
     this.bgmAudio = new Audio(`${import.meta.env.BASE_URL}assets/bgm/${encodeURIComponent('op_色彩の塔へ.mp3')}`);
     this.bgmAudio.loop = true;
@@ -110,6 +129,39 @@ export class TitleScene {
 
   // ---------- プライベートメソッド ----------
 
+  private loadBgImage(): void {
+    const img = new Image();
+    img.onload = () => {
+      this.bgImage = img;
+    };
+    img.onerror = () => { // フォールバックとして渐変背景を使用
+    };
+    img.src = `${import.meta.env.BASE_URL}assets/bg/title_bg.jpg`;
+  }
+
+  private initPetals(): void {
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+    this.petals = [];
+    for (let i = 0; i < 35; i++) {
+      this.petals.push(this.createPetal(w, h, true));
+    }
+  }
+
+  private createPetal(w: number, h: number, randomY = false): Petal {
+    return {
+      x: Math.random() * w,
+      y: randomY ? Math.random() * h : -10,
+      vx: (Math.random() - 0.5) * 0.8,
+      vy: 0.4 + Math.random() * 0.8,
+      rot: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.04,
+      size: 3 + Math.random() * 5,
+      alpha: 0.4 + Math.random() * 0.5,
+      swayOffset: Math.random() * Math.PI * 2,
+    };
+  }
+
   private handleResize(): void {
     const parent = this.canvas.parentElement;
     if (parent) {
@@ -117,16 +169,18 @@ export class TitleScene {
       this.canvas.height = parent.clientHeight || window.innerHeight;
     }
     this.buildButtons();
+    this.initPetals();
   }
 
   private buildButtons(): void {
     const w = this.canvas.width;
     const h = this.canvas.height;
-    const bw = Math.min(280, w * 0.5);
-    const bh = 52;
-    const gap = 16;
+    const bw = Math.min(260, w * 0.45);
+    const bh = 48;
+    const gap = 14;
     const startX = (w - bw) / 2;
-    const startY = h * 0.58;
+    // 階段の上部（中央下方）に配置
+    const startY = h * 0.62;
 
     this.buttons = [
       {
@@ -177,80 +231,83 @@ export class TitleScene {
     const now = Date.now();
     const elapsed = (now - this.startTime) / 1000;
 
-    // 背景グラデーション（暗い夜空風）
-    const bgGrad = this.ctx.createLinearGradient(0, 0, 0, h);
-    bgGrad.addColorStop(0, '#0d0d1a');
-    bgGrad.addColorStop(0.6, '#1a1030');
-    bgGrad.addColorStop(1, '#0d0d1a');
-    this.ctx.fillStyle = bgGrad;
-    this.ctx.fillRect(0, 0, w, h);
+    // 背景
+    if (this.bgImage) {
+      // 画像をcanvasに合わせて描画（object-fit: cover 相当）
+      const iw = this.bgImage.naturalWidth;
+      const ih = this.bgImage.naturalHeight;
+      const scale = Math.max(w / iw, h / ih);
+      const dw = iw * scale;
+      const dh = ih * scale;
+      const dx = (w - dw) / 2;
+      const dy = (h - dh) / 2;
+      this.ctx.drawImage(this.bgImage, dx, dy, dw, dh);
+      // 下部を少し暗くしてボタンを見やすく
+      const overlay = this.ctx.createLinearGradient(0, h * 0.45, 0, h);
+      overlay.addColorStop(0, 'rgba(0,0,0,0)');
+      overlay.addColorStop(1, 'rgba(0,0,10,0.55)');
+      this.ctx.fillStyle = overlay;
+      this.ctx.fillRect(0, 0, w, h);
+    } else {
+      // フォールバック：ダーク背景
+      const bgGrad = this.ctx.createLinearGradient(0, 0, 0, h);
+      bgGrad.addColorStop(0, '#0a0810');
+      bgGrad.addColorStop(0.5, '#150f20');
+      bgGrad.addColorStop(1, '#0a0810');
+      this.ctx.fillStyle = bgGrad;
+      this.ctx.fillRect(0, 0, w, h);
+    }
 
-    // 星のエフェクト（シンプルな点）
-    this.drawStars(w, h, elapsed);
-
-    // タイトルのグロー効果（アニメーション）
-    const glowIntensity = 0.5 + 0.5 * Math.sin(elapsed * 1.2);
-    this.ctx.save();
-    this.ctx.shadowColor = `rgba(180, 100, 255, ${glowIntensity * 0.6})`;
-    this.ctx.shadowBlur = 30;
-
-    // メインタイトル
-    const titleFontSize = Math.min(52, w * 0.08);
-    this.ctx.fillStyle = '#f0d8ff';
-    this.ctx.font = `bold ${titleFontSize}px 'Yu Gothic', 'Meiryo', sans-serif`;
-    this.ctx.textAlign = 'center';
-    this.ctx.textBaseline = 'middle';
-    this.ctx.fillText('カラータイル・ロマンス', w / 2, h * 0.28);
-    this.ctx.restore();
-
-    // サブタイトル
-    const subFontSize = Math.min(22, w * 0.035);
-    this.ctx.fillStyle = '#c8a8e8';
-    this.ctx.font = `${subFontSize}px 'Arial', sans-serif`;
-    this.ctx.textAlign = 'center';
-    this.ctx.textBaseline = 'middle';
-    this.ctx.fillText('Color Tiles Romance', w / 2, h * 0.28 + titleFontSize * 0.9);
-
-    // 装飾ライン
-    const lineY = h * 0.42;
-    const lineW = Math.min(400, w * 0.6);
-    const lineGrad = this.ctx.createLinearGradient(w / 2 - lineW / 2, 0, w / 2 + lineW / 2, 0);
-    lineGrad.addColorStop(0, 'transparent');
-    lineGrad.addColorStop(0.5, 'rgba(180, 100, 255, 0.7)');
-    lineGrad.addColorStop(1, 'transparent');
-    this.ctx.strokeStyle = lineGrad;
-    this.ctx.lineWidth = 1;
-    this.ctx.beginPath();
-    this.ctx.moveTo(w / 2 - lineW / 2, lineY);
-    this.ctx.lineTo(w / 2 + lineW / 2, lineY);
-    this.ctx.stroke();
+    // 桜の花びらパーティクル
+    this.updateAndDrawPetals(elapsed);
 
     // ボタン描画
     this.updateButtonHover();
     for (const btn of this.buttons) {
-      this.drawButton(btn);
+      this.drawButton(btn, elapsed);
     }
 
     // バージョン表示
-    this.ctx.fillStyle = 'rgba(150, 130, 180, 0.5)';
-    this.ctx.font = '12px monospace';
+    this.ctx.globalAlpha = 0.45;
+    this.ctx.fillStyle = '#d4b896';
+    this.ctx.font = '11px monospace';
     this.ctx.textAlign = 'right';
     this.ctx.textBaseline = 'bottom';
     this.ctx.fillText('ver 1.0', w - 12, h - 10);
+    this.ctx.globalAlpha = 1;
   }
 
-  private drawStars(w: number, h: number, elapsed: number): void {
-    // シード付き疑似乱数で星の位置を固定
-    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-    for (let i = 0; i < 60; i++) {
-      const sx = ((i * 137.5 * (i + 1)) % w);
-      const sy = ((i * 97.3 * (i + 2)) % h);
-      const alpha = 0.3 + 0.4 * Math.sin(elapsed * 0.5 + i * 0.8);
-      const radius = 0.5 + (i % 3) * 0.5;
-      this.ctx.globalAlpha = alpha;
+  private updateAndDrawPetals(elapsed: number): void {
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+
+    for (let i = 0; i < this.petals.length; i++) {
+      const p = this.petals[i];
+      // 横揺れ（サインカーブ）
+      p.x += p.vx + Math.sin(elapsed * 0.8 + p.swayOffset) * 0.4;
+      p.y += p.vy;
+      p.rot += p.rotSpeed;
+
+      if (p.y > h + 20) {
+        this.petals[i] = this.createPetal(w, h, false);
+        continue;
+      }
+
+      this.ctx.save();
+      this.ctx.translate(p.x, p.y);
+      this.ctx.rotate(p.rot);
+      this.ctx.globalAlpha = p.alpha;
+
+      // 花びらの形（楕円を回転）
       this.ctx.beginPath();
-      this.ctx.arc(sx, sy, radius, 0, Math.PI * 2);
+      this.ctx.ellipse(0, 0, p.size, p.size * 0.55, 0, 0, Math.PI * 2);
+      const petalGrad = this.ctx.createRadialGradient(0, 0, 0, 0, 0, p.size);
+      petalGrad.addColorStop(0, '#f8d8e8');
+      petalGrad.addColorStop(1, '#e8a0bc');
+      this.ctx.fillStyle = petalGrad;
       this.ctx.fill();
+
+      this.ctx.restore();
     }
     this.ctx.globalAlpha = 1;
   }
@@ -265,41 +322,106 @@ export class TitleScene {
     }
   }
 
-  private drawButton(btn: TitleButton): void {
+  private drawButton(btn: TitleButton, elapsed: number): void {
     const { x, y, w, h, label, hovered, disabled } = btn;
+
+    this.ctx.save();
 
     // ボタン背景
     if (disabled) {
-      this.ctx.fillStyle = 'rgba(50, 40, 70, 0.4)';
+      this.ctx.fillStyle = 'rgba(15, 12, 20, 0.45)';
     } else if (hovered) {
-      this.ctx.fillStyle = 'rgba(140, 80, 220, 0.85)';
-      this.ctx.save();
-      this.ctx.shadowColor = 'rgba(180, 100, 255, 0.8)';
-      this.ctx.shadowBlur = 15;
+      this.ctx.shadowColor = 'rgba(200, 160, 80, 0.7)';
+      this.ctx.shadowBlur = 20;
+      this.ctx.fillStyle = 'rgba(60, 45, 20, 0.88)';
     } else {
-      this.ctx.fillStyle = 'rgba(80, 50, 130, 0.7)';
-    }
-    this.ctx.fillRect(x, y, w, h);
-
-    if (hovered && !disabled) {
-      this.ctx.restore();
+      this.ctx.fillStyle = 'rgba(15, 12, 20, 0.72)';
     }
 
-    // ボタン枠
-    this.ctx.strokeStyle = disabled
-      ? 'rgba(100, 80, 130, 0.3)'
-      : hovered
-        ? 'rgba(220, 160, 255, 0.9)'
-        : 'rgba(160, 110, 220, 0.6)';
-    this.ctx.lineWidth = hovered ? 2 : 1;
-    this.ctx.strokeRect(x, y, w, h);
+    // 角丸矩形
+    const radius = 3;
+    this.ctx.beginPath();
+    this.ctx.moveTo(x + radius, y);
+    this.ctx.lineTo(x + w - radius, y);
+    this.ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+    this.ctx.lineTo(x + w, y + h - radius);
+    this.ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+    this.ctx.lineTo(x + radius, y + h);
+    this.ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+    this.ctx.lineTo(x, y + radius);
+    this.ctx.quadraticCurveTo(x, y, x + radius, y);
+    this.ctx.closePath();
+    this.ctx.fill();
+
+    // ボタン枠（金縁）
+    const borderAlpha = disabled ? 0.2 : hovered ? 1.0 : 0.65;
+    const pulse = hovered ? 1 : 0.85 + 0.15 * Math.sin(elapsed * 1.5);
+    const borderGrad = this.ctx.createLinearGradient(x, y, x + w, y + h);
+    if (disabled) {
+      borderGrad.addColorStop(0, `rgba(100, 90, 70, ${borderAlpha})`);
+      borderGrad.addColorStop(1, `rgba(80, 72, 55, ${borderAlpha})`);
+    } else {
+      borderGrad.addColorStop(0, `rgba(220, 180, 90, ${borderAlpha * pulse})`);
+      borderGrad.addColorStop(0.5, `rgba(255, 215, 120, ${borderAlpha})`);
+      borderGrad.addColorStop(1, `rgba(200, 155, 70, ${borderAlpha * pulse})`);
+    }
+    this.ctx.strokeStyle = borderGrad;
+    this.ctx.lineWidth = hovered ? 1.5 : 1;
+    this.ctx.stroke();
+
+    // コーナー装飾（金の隅飾り）
+    if (!disabled) {
+      this.drawCornerDecoration(x, y, w, h, hovered ? 'rgba(255, 215, 120, 0.9)' : 'rgba(200, 160, 80, 0.6)');
+    }
 
     // ボタンテキスト
-    this.ctx.fillStyle = disabled ? 'rgba(150, 130, 180, 0.4)' : '#fff';
-    this.ctx.font = `bold ${Math.min(18, w * 0.07)}px 'Arial', sans-serif`;
+    const fontSize = Math.min(15, w * 0.065);
+    this.ctx.font = `bold ${fontSize}px 'Cinzel', 'Times New Roman', serif`;
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
+    if (disabled) {
+      this.ctx.fillStyle = 'rgba(120, 105, 80, 0.45)';
+    } else if (hovered) {
+      this.ctx.shadowColor = 'rgba(255, 220, 120, 0.9)';
+      this.ctx.shadowBlur = 8;
+      this.ctx.fillStyle = '#ffe8a0';
+    } else {
+      this.ctx.fillStyle = '#d4b87a';
+    }
     this.ctx.fillText(label, x + w / 2, y + h / 2);
+
+    this.ctx.restore();
+  }
+
+  /** ボタン四隅に小さな金の装飾を描画 */
+  private drawCornerDecoration(x: number, y: number, w: number, h: number, color: string): void {
+    const size = 6;
+    this.ctx.strokeStyle = color;
+    this.ctx.lineWidth = 1;
+    // 左上
+    this.ctx.beginPath();
+    this.ctx.moveTo(x + size, y);
+    this.ctx.lineTo(x, y);
+    this.ctx.lineTo(x, y + size);
+    this.ctx.stroke();
+    // 右上
+    this.ctx.beginPath();
+    this.ctx.moveTo(x + w - size, y);
+    this.ctx.lineTo(x + w, y);
+    this.ctx.lineTo(x + w, y + size);
+    this.ctx.stroke();
+    // 左下
+    this.ctx.beginPath();
+    this.ctx.moveTo(x + size, y + h);
+    this.ctx.lineTo(x, y + h);
+    this.ctx.lineTo(x, y + h - size);
+    this.ctx.stroke();
+    // 右下
+    this.ctx.beginPath();
+    this.ctx.moveTo(x + w - size, y + h);
+    this.ctx.lineTo(x + w, y + h);
+    this.ctx.lineTo(x + w, y + h - size);
+    this.ctx.stroke();
   }
 
   private handleMouseMove(e: MouseEvent): void {
