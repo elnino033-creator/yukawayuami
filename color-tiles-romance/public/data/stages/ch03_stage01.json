@@ -23,7 +23,7 @@
   },
   "blockReleaseRule": {
     "type": "afterPairs",
-    "count": 4
+    "count": 12
   },
   "preScenario": "ch03_s01_pre.json",
   "tutorialSteps": [

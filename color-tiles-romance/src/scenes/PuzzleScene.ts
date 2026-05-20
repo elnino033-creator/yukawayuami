@@ -511,11 +511,21 @@ export class PuzzleScene {
       this.ctx.strokeStyle = '#1c1f2a';
       this.ctx.lineWidth = 2;
       this.ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
-      this.ctx.fillStyle = '#1c1f2a';
-      this.ctx.font = 'bold 24px sans-serif';
-      this.ctx.textAlign = 'center';
-      this.ctx.textBaseline = 'middle';
-      this.ctx.fillText('▣', x + TILE_SIZE / 2, y + TILE_SIZE / 2);
+      // 解除までの残りペア数を表示（afterPairsルール時）
+      const remaining = this.engine.blockRemainingCount;
+      if (remaining !== null) {
+        this.ctx.fillStyle = '#8a90a8';
+        this.ctx.font = `bold ${TILE_SIZE >= 48 ? 18 : 13}px sans-serif`;
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText(String(remaining), x + TILE_SIZE / 2, y + TILE_SIZE / 2);
+      } else {
+        this.ctx.fillStyle = '#1c1f2a';
+        this.ctx.font = 'bold 24px sans-serif';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText('▣', x + TILE_SIZE / 2, y + TILE_SIZE / 2);
+      }
       return;
     }
 

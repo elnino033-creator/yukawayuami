@@ -360,7 +360,7 @@ export class SceneManager {
         if (data.stageId === 'ch05_stage07' && data.cleared) {
           void this.mountNovelSceneWithCallback('ch05_final_flashback', () => {
             void this.mountNovelSceneWithCallback('epilogue_true', () => {
-              void this.transition({ to: 'title' });
+              this.mountEndRoll();
             });
           });
         } else if (data.stageId === 'ch01_stage03' && data.cleared) {
@@ -412,6 +412,20 @@ export class SceneManager {
     scene.start();
   }
 
+  /** エンドロールを表示してタイトルへ */
+  private mountEndRoll(): void {
+    this.appContainer.innerHTML = '';
+    const canvas = this.createFullCanvas();
+    this.appContainer.appendChild(canvas);
+    import('@/scenes/EndRollScene').then(({ EndRollScene }) => {
+      const scene = new EndRollScene(canvas, () => {
+        void this.transition({ to: 'title' });
+      });
+      this.currentScene = scene as unknown as import('@/scenes/NovelScene').NovelScene;
+      scene.start();
+    });
+  }
+
   // ---------- ヘルパー ----------
 
   /** ウィンドウサイズに合わせたCanvasを作成する */
@@ -431,8 +445,18 @@ export class SceneManager {
     hint: HTMLElement;
     status: HTMLElement;
   } {
+    // タイマーは大きく目立つ形でパズルの直上に表示
+    const timerBar = document.createElement('div');
+    timerBar.style.cssText = 'display:flex;justify-content:center;align-items:center;padding:4px 16px;background:#1a1d2e;width:100%;box-sizing:border-box;';
+    const timer = document.createElement('span');
+    timer.id = 'hud-timer-sm';
+    timer.style.cssText = 'font-family:monospace;font-size:44px;font-weight:900;color:#ffe080;letter-spacing:4px;text-shadow:0 0 12px #ffb70088;';
+    timer.textContent = '--:--';
+    timerBar.appendChild(timer);
+    parent.appendChild(timerBar);
+
     const hudBar = document.createElement('div');
-    hudBar.style.cssText = 'display:flex;gap:16px;padding:8px 16px;background:#252938;width:100%;box-sizing:border-box;align-items:center;color:#fff;font-family:monospace;';
+    hudBar.style.cssText = 'display:flex;gap:16px;padding:4px 16px;background:#252938;width:100%;box-sizing:border-box;align-items:center;color:#fff;font-family:monospace;font-size:13px;';
 
     const makeEl = (label: string, id: string) => {
       const span = document.createElement('span');
@@ -442,7 +466,6 @@ export class SceneManager {
       return span.querySelector('strong') as HTMLElement;
     };
 
-    const timer = makeEl('TIME', 'hud-timer-sm');
     const score = makeEl('SCORE', 'hud-score-sm');
     const combo = makeEl('COMBO', 'hud-combo-sm');
     const hint = makeEl('HINT', 'hud-hint-sm');
