@@ -466,9 +466,16 @@ export class ScenarioPlayer {
       cancelAnimationFrame(this.rafId);
       this.rafId = null;
     }
+    // Remove keydown listener immediately to prevent re-triggering endScenario via keypresses
+    window.removeEventListener('keydown', this.boundKey);
     this.stopBgm();
-    if (this.endCallback) this.endCallback();
-    if (this.resolveStart) this.resolveStart();
+    // Null out callbacks before calling to prevent double-fire if endScenario is somehow called again
+    const cb = this.endCallback;
+    const res = this.resolveStart;
+    this.endCallback = null;
+    this.resolveStart = null;
+    if (cb) cb();
+    if (res) res();
   }
 
   // ---------- 描画 ----------

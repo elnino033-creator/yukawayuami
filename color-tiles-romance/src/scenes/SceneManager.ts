@@ -245,8 +245,8 @@ export class SceneManager {
           scenarioId,
           () => {
             this.progressStore.markLineRead(`pre:${stageId}`);
-            // BAD ルートが選ばれた場合はパズルを起動せずタイトルへ戻る
-            if (this.progressStore.getFlag('route_bad') > 0) {
+            // BAD ルートが選ばれた場合はパズルを起動せずタイトルへ戻る（ch05_stage07のみ）
+            if (stageId === 'ch05_stage07' && this.progressStore.getFlag('route_bad') > 0) {
               void this.transition({ to: 'title' });
             } else {
               void this.launchPuzzleWithDef(stageDef);
@@ -262,6 +262,13 @@ export class SceneManager {
 
   /** ステージ定義を受け取ってパズル画面を直接マウントする */
   private async launchPuzzleWithDef(stageDef: import('@/types').StageDefinition): Promise<void> {
+    try {
+    // 前のシーン（NovelScene など）のリソースをここで解放する
+    if (this.currentScene) {
+      this.currentScene.destroy();
+      this.currentScene = null;
+    }
+
     const { PuzzleScene } = await import('@/scenes/PuzzleScene');
     const { StageValidator } = await import('@/core/StageValidator');
 
@@ -311,6 +318,10 @@ export class SceneManager {
 
     // クリア/ゲームオーバーイベントを監視してリザルト画面へ遷移する
     this.watchPuzzleEnd(scene, stageDef);
+    } catch (e) {
+      console.error('[SceneManager] launchPuzzleWithDef failed:', e);
+      await this.transition({ to: 'stageSelect' });
+    }
   }
 
   /** シナリオ終了後にコールバックを呼ぶ一時的なノベル画面マウント */
