@@ -3,7 +3,7 @@
     "bgm": "bgm_piano_gentle_morning"
   },
   {
-    "bg": "home_am"
+    "bg": "home"
   },
   {
     "text": {
@@ -102,7 +102,7 @@
     }
   },
   {
-    "bg": "office_desk"
+    "bg": "office"
   },
   {
     "text": {
@@ -135,7 +135,7 @@
     }
   },
   {
-    "bg": "rooftop"
+    "bg": "office"
   },
   {
     "text": {
@@ -240,7 +240,7 @@
     }
   },
   {
-    "bg": "home_night"
+    "bg": "home"
   },
   {
     "text": {
@@ -285,7 +285,7 @@
     }
   },
   {
-    "bg": "tower_entrance"
+    "bg": "bg_tower_entrance"
   },
   {
     "bgm": "bgm_prologue"
@@ -312,6 +312,14 @@
     "text": {
       "name": "",
       "body": "その時——どこからともなく、声が降ってきた。"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
     }
   },
   {
@@ -414,6 +422,12 @@
     "text": {
       "name": "主人公",
       "body": "（……やるしかないか）"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "hide": true
     }
   }
 ]

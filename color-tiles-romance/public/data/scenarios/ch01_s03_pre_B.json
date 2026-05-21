@@ -12,6 +12,14 @@
     }
   },
   {
+    "chara": {
+      "id": "akari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "あかり",
       "body": "……そう"
@@ -66,9 +74,22 @@
     }
   },
   {
+    "chara": {
+      "id": "akari",
+      "expr": "smile",
+      "pos": "center"
+    }
+  },
+  {
     "text": {
       "name": "あかり",
       "body": "よろしい！ じゃあ行くわよ！"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "hide": true
     }
   }
 ]

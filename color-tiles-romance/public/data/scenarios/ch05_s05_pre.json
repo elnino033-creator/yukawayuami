@@ -3,7 +3,7 @@
     "bgm": "bgm_ch05"
   },
   {
-    "bg": "tower_ch05_dark"
+    "bg": "bg_tower_floor5_purple_dark"
   },
   {
     "text": {
@@ -15,6 +15,14 @@
     "text": {
       "name": "",
       "body": "天井の黒が薄くなり——かすかに、星のようなものが見える。"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
     }
   },
   {
@@ -69,6 +77,12 @@
     "text": {
       "name": "ゆかり",
       "body": "（少し驚いて）……いいえ。謝らなくていい。あなたが戻ってきてくれた。それで十分です"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "hide": true
     }
   }
 ]

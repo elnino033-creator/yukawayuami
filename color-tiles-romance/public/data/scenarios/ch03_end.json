@@ -3,12 +3,20 @@
     "bgm": "bgm_forest_ambient"
   },
   {
-    "bg": "tower_ch03_spring"
+    "bg": "bg_tower_floor3_green_bright"
   },
   {
     "text": {
       "name": "",
       "body": "最後のタイルが消えた。泉の水面が輝き、森全体が柔らかな光に包まれた。"
+    }
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
     }
   },
   {
@@ -33,6 +41,13 @@
     "text": {
       "name": "",
       "body": "すずがゆっくりと立ち上がり、主人公の前に立った。その表情は、穏やかで——少しだけ、寂しそうだった。"
+    }
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "surprise",
+      "pos": "center"
     }
   },
   {
@@ -81,6 +96,12 @@
     "text": {
       "name": "主人公",
       "body": "（少しだけ休んでいい。でも——起き上がる力は、俺が持ってなきゃいけない）"
+    }
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "hide": true
     }
   }
 ]

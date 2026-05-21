@@ -3,7 +3,7 @@
     "bgm": "bgm_forest_ambient"
   },
   {
-    "bg": "tower_ch03_forest"
+    "bg": "bg_tower_floor3_green_forest"
   },
   {
     "text": {
@@ -21,6 +21,14 @@
     "text": {
       "name": "",
       "body": "森の中の小さな空き地に、ふわりとした雰囲気の少女が膝をついて、土を掘っていた。"
+    }
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
     }
   },
   {
@@ -51,6 +59,13 @@
     "text": {
       "name": "主人公",
       "body": "……そうか"
+    }
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "sad",
+      "pos": "center"
     }
   },
   {
@@ -93,6 +108,12 @@
     "text": {
       "name": "主人公",
       "body": "（でも、それが——少し、怖い）"
+    }
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "hide": true
     }
   }
 ]

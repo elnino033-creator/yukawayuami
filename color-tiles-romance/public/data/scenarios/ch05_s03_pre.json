@@ -3,7 +3,7 @@
     "bgm": "bgm_ch05"
   },
   {
-    "bg": "tower_ch05_yukari"
+    "bg": "bg_tower_floor5_purple_final"
   },
   {
     "text": {
@@ -36,6 +36,14 @@
     }
   },
   {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "ゆかり",
       "body": "……驚かせてしまいましたね"
@@ -45,6 +53,13 @@
     "text": {
       "name": "主人公",
       "body": "お前は……ゆかりか？"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "surprise",
+      "pos": "center"
     }
   },
   {
@@ -81,6 +96,12 @@
     "text": {
       "name": "ゆかり",
       "body": "……良い問いですね。続けましょう"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "hide": true
     }
   }
 ]

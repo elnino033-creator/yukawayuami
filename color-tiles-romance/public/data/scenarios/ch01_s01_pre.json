@@ -3,7 +3,7 @@
     "bgm": "緋色のあかり"
   },
   {
-    "bg": "tower_ch01_hall"
+    "bg": "bg_tower_floor1_gray"
   },
   {
     "text": {
@@ -24,6 +24,14 @@
     }
   },
   {
+    "chara": {
+      "id": "akari",
+      "expr": "blush",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "あかり",
       "body": "ちょっと！ いつまでぼんやりしてるのよ、遅い遅い遅ーい！"
@@ -39,6 +47,13 @@
     "text": {
       "name": "主人公",
       "body": "……君は、誰だ"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "smile",
+      "pos": "center"
     }
   },
   {
@@ -63,6 +78,13 @@
     "text": {
       "name": "",
       "body": "あかりはずかずかと近づいてきて、主人公の胸のあたりを人差し指でつついた。"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "surprise",
+      "pos": "center"
     }
   },
   {
@@ -108,6 +130,13 @@
     }
   },
   {
+    "chara": {
+      "id": "akari",
+      "expr": "smile",
+      "pos": "center"
+    }
+  },
+  {
     "text": {
       "name": "あかり",
       "body": "何してるのよ！ ほら、行くわよ！"
@@ -117,6 +146,12 @@
     "text": {
       "name": "主人公",
       "body": "……ああ。行く"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "hide": true
     }
   }
 ]

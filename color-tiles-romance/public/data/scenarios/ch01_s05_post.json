@@ -1,17 +1,90 @@
 [
-  { "bg": "stage1_after" },
-  { "bgm": "bgm_ch01_clear" },
-  { "chara": { "id": "akari", "expr": "surprise", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "クリア……クリアした！　本当に！！" } },
-  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "ありがとう！　本当に、ありがとう！　あなたがいなかったら絶対無理だった！" } },
-  { "text": { "name": "???", "body": "あかり、扉が開いてるぞ。" } },
-  { "chara": { "id": "akari", "expr": "normal", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "……うん。行こう。一緒に。" } },
-  { "text": { "name": "???", "body": "（紅羽 あかりの瞳に、かつてない輝きが宿っていた）" } },
-  { "text": { "name": "あかり", "body": "──ねえ、外ってどんな空の色してるの？" } },
-  { "text": { "name": "???", "body": "一番綺麗な青だよ。行けばわかる。" } },
-  { "chara": { "id": "akari", "expr": "smile", "pos": "center" } },
-  { "text": { "name": "あかり", "body": "うん！　じゃあ次の階層も一緒に攻略してよね。約束だよ！" } },
-  { "text": { "name": "???", "body": "（第一章、クリア。あかりは今、初めて階段を登っていく）" } }
+  {
+    "bg": "stage1_after"
+  },
+  {
+    "bgm": "bgm_chapter_clear"
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "surprise",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "クリア……クリアした！　本当に！！"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "smile",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "ありがとう！　本当に、ありがとう！　あなたがいなかったら絶対無理だった！"
+    }
+  },
+  {
+    "text": {
+      "name": "???",
+      "body": "あかり、扉が開いてるぞ。"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "normal",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "……うん。行こう。一緒に。"
+    }
+  },
+  {
+    "text": {
+      "name": "???",
+      "body": "（紅羽 あかりの瞳に、かつてない輝きが宿っていた）"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "──ねえ、外ってどんな空の色してるの？"
+    }
+  },
+  {
+    "text": {
+      "name": "???",
+      "body": "一番綺麗な青だよ。行けばわかる。"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "smile",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "あかり",
+      "body": "うん！　じゃあ次の階層も一緒に攻略してよね。約束だよ！"
+    }
+  },
+  {
+    "text": {
+      "name": "???",
+      "body": "（第一章、クリア。あかりは今、初めて階段を登っていく）"
+    }
+  }
 ]

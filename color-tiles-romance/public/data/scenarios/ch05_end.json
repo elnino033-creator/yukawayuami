@@ -3,7 +3,7 @@
     "bgm": "bgm_epic_climax"
   },
   {
-    "bg": "tower_ch05_white"
+    "bg": "bg_tower_floor5_purple_final"
   },
   {
     "text": {
@@ -27,6 +27,14 @@
     "text": {
       "name": "主人公",
       "body": "ゆかり"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
     }
   },
   {
@@ -99,6 +107,12 @@
     "text": {
       "name": "主人公",
       "body": "（……さあ、描こう。今度こそ、完成まで）"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "hide": true
     }
   }
 ]

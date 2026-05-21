@@ -3,12 +3,20 @@
     "bgm": "緋色のあかり"
   },
   {
-    "bg": "tower_ch01_hall"
+    "bg": "bg_tower_floor1_gray"
   },
   {
     "text": {
       "name": "",
       "body": "最後の広間に入った時、あかりが立ち止まった。"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
     }
   },
   {
@@ -59,5 +67,11 @@
       }
     ],
     "prompt": "あかりの問いに、どう答えるか"
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "hide": true
+    }
   }
 ]

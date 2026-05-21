@@ -6,6 +6,14 @@
     }
   },
   {
+    "chara": {
+      "id": "himari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "ひまり",
       "body": "ねえ、一個だけ教えてよ"
@@ -27,6 +35,13 @@
     "text": {
       "name": "主人公",
       "body": "……黒だ"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "surprise",
+      "pos": "center"
     }
   },
   {
@@ -66,6 +81,13 @@
     }
   },
   {
+    "chara": {
+      "id": "himari",
+      "expr": "angry",
+      "pos": "center"
+    }
+  },
+  {
     "text": {
       "name": "ひまり",
       "body": "泣きながら描いても、怒りで描いても——描いた、ってことは、まだ手が動いてたってことじゃん。私はそれを——ずっと覚えてたよ"
@@ -81,6 +103,12 @@
     "text": {
       "name": "主人公",
       "body": "（……あの黒を、こいつは知ってた）"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "hide": true
     }
   }
 ]

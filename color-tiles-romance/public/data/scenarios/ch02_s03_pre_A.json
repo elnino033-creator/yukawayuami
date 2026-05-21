@@ -6,6 +6,14 @@
     }
   },
   {
+    "chara": {
+      "id": "mio",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "みお",
       "body": "——なぜ"
@@ -45,6 +53,12 @@
     "text": {
       "name": "みお",
       "body": "（ふいと目を逸らして）……そうね"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "hide": true
     }
   }
 ]

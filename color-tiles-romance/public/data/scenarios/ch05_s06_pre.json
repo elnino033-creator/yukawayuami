@@ -3,7 +3,7 @@
     "bgm": "bgm_ch05"
   },
   {
-    "bg": "tower_ch05_mirror"
+    "bg": "bg_tower_floor5_purple_dim"
   },
   {
     "text": {
@@ -27,6 +27,14 @@
     "text": {
       "name": "主人公",
       "body": "（……あの夜だ）"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
     }
   },
   {
@@ -75,6 +83,12 @@
     "text": {
       "name": "主人公",
       "body": "（……行こう。最後の広間へ）"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "hide": true
     }
   }
 ]

@@ -12,6 +12,14 @@
     }
   },
   {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "ゆかり",
       "body": "……揺らいでいますね"
@@ -39,6 +47,12 @@
     "text": {
       "name": "ゆかり",
       "body": "（ほんの少し、笑って）……3年間、あなたの中でずっと見ていましたから"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "hide": true
     }
   }
 ]

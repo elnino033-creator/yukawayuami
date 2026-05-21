@@ -18,6 +18,14 @@
     }
   },
   {
+    "chara": {
+      "id": "yukari",
+      "expr": "surprise",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "ゆかり",
       "body": "……上手くなってきましたね"
@@ -87,6 +95,12 @@
     "text": {
       "name": "",
       "body": "その色を見た瞬間、胸の奥で何かが痛んだ。懐かしい痛みだった。"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "hide": true
     }
   }
 ]

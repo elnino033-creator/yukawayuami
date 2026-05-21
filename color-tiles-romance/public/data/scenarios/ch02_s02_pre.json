@@ -3,12 +3,20 @@
     "bgm": "bgm_cold_wind"
   },
   {
-    "bg": "tower_ch02_mirror"
+    "bg": "bg_tower_floor2_blue_ice"
   },
   {
     "text": {
       "name": "",
       "body": "次の広間への通路は、一面が鏡のような氷に覆われていた。主人公の顔が、無数に反射している。どれも——ひどく、疲れた顔をしていた。"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
     }
   },
   {
@@ -21,6 +29,13 @@
     "text": {
       "name": "主人公",
       "body": "……なんだ"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "sad",
+      "pos": "center"
     }
   },
   {
@@ -45,6 +60,13 @@
     "text": {
       "name": "主人公",
       "body": "……泣く意味がわからなかった。泣いても、何も変わらないから"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "angry",
+      "pos": "center"
     }
   },
   {
@@ -99,6 +121,12 @@
     "text": {
       "name": "主人公",
       "body": "（……冷たさの理由が、わかった気がした）"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "hide": true
     }
   }
 ]

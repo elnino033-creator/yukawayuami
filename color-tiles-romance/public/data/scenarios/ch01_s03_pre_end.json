@@ -6,6 +6,14 @@
     }
   },
   {
+    "chara": {
+      "id": "akari",
+      "expr": "surprise",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "あかり",
       "body": "……どうして"
@@ -21,6 +29,13 @@
     "text": {
       "name": "",
       "body": "あかりが小さく笑った。"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "angry",
+      "pos": "center"
     }
   },
   {
@@ -87,6 +102,12 @@
     "text": {
       "name": "主人公",
       "body": "（……行こう）"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "hide": true
     }
   }
 ]

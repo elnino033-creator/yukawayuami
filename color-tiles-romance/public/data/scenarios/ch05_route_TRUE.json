@@ -18,6 +18,14 @@
     }
   },
   {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "ゆかり",
       "body": "……なぜですか"
@@ -57,6 +65,12 @@
     "text": {
       "name": "",
       "body": "白い空間に、無数の黒いタイルが降り注いだ。"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "hide": true
     }
   }
 ]

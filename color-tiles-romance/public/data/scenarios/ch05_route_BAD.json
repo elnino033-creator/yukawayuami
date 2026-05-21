@@ -6,6 +6,14 @@
     }
   },
   {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "ゆかり",
       "body": "……そうですか"
@@ -42,7 +50,13 @@
     }
   },
   {
-    "bg": "office_desk"
+    "chara": {
+      "id": "yukari",
+      "hide": true
+    }
+  },
+  {
+    "bg": "office"
   },
   {
     "text": {

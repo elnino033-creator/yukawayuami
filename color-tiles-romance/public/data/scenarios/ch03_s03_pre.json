@@ -3,7 +3,7 @@
     "bgm": "bgm_forest_ambient"
   },
   {
-    "bg": "tower_ch03_spring"
+    "bg": "bg_tower_floor3_green_bright"
   },
   {
     "text": {
@@ -15,6 +15,14 @@
     "text": {
       "name": "",
       "body": "大きな木の根元に泉があり、その周りを野花が囲んでいる。木漏れ日が泉に反射して、辺り一面が光の粒に満ちていた。"
+    }
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
     }
   },
   {
@@ -71,5 +79,11 @@
       }
     ],
     "prompt": "すずの言葉に、どう答えるか"
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "hide": true
+    }
   }
 ]

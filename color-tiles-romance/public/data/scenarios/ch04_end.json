@@ -3,12 +3,20 @@
     "bgm": "bgm_clockwork"
   },
   {
-    "bg": "tower_ch04_gears"
+    "bg": "bg_tower_floor4_yellow_clock"
   },
   {
     "text": {
       "name": "",
       "body": "最後のタイルが消えた瞬間、歯車たちが全て正しい向きに噛み合い——止まっていた時間が、動き出した。"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
     }
   },
   {
@@ -24,6 +32,13 @@
     }
   },
   {
+    "chara": {
+      "id": "himari",
+      "expr": "surprise",
+      "pos": "center"
+    }
+  },
+  {
     "text": {
       "name": "ひまり",
       "body": "出力先がなくなって、ずっとここで歯車みたいに空回りしてたの。でも——あなたがまた形にしようとしてくれるなら、私はいくらでも働けるよ"
@@ -33,6 +48,13 @@
     "text": {
       "name": "主人公",
       "body": "……また、閃きをくれるか"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "smile",
+      "pos": "center"
     }
   },
   {
@@ -57,6 +79,12 @@
     "text": {
       "name": "主人公",
       "body": "（あと一層だ。ゆかり、待ってろ）"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "hide": true
     }
   }
 ]

@@ -12,6 +12,14 @@
     }
   },
   {
+    "chara": {
+      "id": "yukari",
+      "expr": "surprise",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "ゆかり",
       "body": "……なんですか"
@@ -57,6 +65,12 @@
     "text": {
       "name": "主人公",
       "body": "（……長い間、待たせた）"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "hide": true
     }
   }
 ]
