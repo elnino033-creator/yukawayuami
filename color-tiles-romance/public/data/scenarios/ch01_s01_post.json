@@ -1,5 +1,8 @@
 [
   {
+    "bg": "bg_tower_floor1_gray"
+  },
+  {
     "text": {
       "name": "",
       "body": "タイルが全て消え、広間に静寂が戻った。"
