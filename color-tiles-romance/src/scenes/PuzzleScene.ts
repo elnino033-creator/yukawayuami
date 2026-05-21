@@ -132,6 +132,10 @@ export class PuzzleScene {
     this.hudStatus.textContent = `${stage.title}`;
     this.startRenderLoop();
     BgmManager.play(stage.puzzleBgm ?? 'Steel_and_Shadows.mp3');
+    // 説明/称賛ステップ中（"次へ"が表示される間）はタイマーを停止する
+    if (this.tutorial && this.tutorial.steps[0]?.type !== 'force_match') {
+      this.engine.timer.pause();
+    }
   }
 
   /** ヒントボタン用 */
@@ -683,6 +687,14 @@ export class PuzzleScene {
     this.tutorial.nextButtonRect = null;
     if (this.tutorial.currentIndex >= this.tutorial.steps.length) {
       this.tutorial = null;
+      this.engine.timer.resume(); // チュートリアル終了 → タイマー再開
+    } else {
+      const step = this.tutorial.steps[this.tutorial.currentIndex];
+      if (step.type === 'force_match') {
+        this.engine.timer.resume(); // プレイヤー操作が必要なステップ → タイマー再開
+      } else {
+        this.engine.timer.pause(); // explain/praise → タイマー停止
+      }
     }
   }
 

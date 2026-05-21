@@ -1,5 +1,8 @@
 [
   {
+    "bg": "bg_tower_floor5_purple_dim"
+  },
+  {
     "text": {
       "name": "",
       "body": "タイルが消えるごとに、ゆかりの輪郭が少しずつ変わっていく。"

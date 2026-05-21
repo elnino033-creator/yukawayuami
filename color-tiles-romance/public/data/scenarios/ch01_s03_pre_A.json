@@ -1,5 +1,8 @@
 [
   {
+    "bg": "bg_tower_floor1_red_bright"
+  },
+  {
     "text": {
       "name": "主人公",
       "body": "……大切なものを、失ったんだ"

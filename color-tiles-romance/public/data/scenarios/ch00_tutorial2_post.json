@@ -1,5 +1,11 @@
 [
   {
+    "bgm": "bgm_tower_entrance"
+  },
+  {
+    "bg": "bg_tower_floor1_gray"
+  },
+  {
     "text": {
       "name": "",
       "body": "縦に並んだタイルが一列消え、連鎖して隣のタイルが崩れた。"

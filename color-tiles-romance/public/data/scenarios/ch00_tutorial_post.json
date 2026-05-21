@@ -1,5 +1,11 @@
 [
   {
+    "bgm": "bgm_tower_entrance"
+  },
+  {
+    "bg": "bg_tower_floor1_gray"
+  },
+  {
     "text": {
       "name": "",
       "body": "タイルが全て消えた瞬間、重い音を立てて石の扉が開く。"
