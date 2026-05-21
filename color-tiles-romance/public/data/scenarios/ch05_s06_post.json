@@ -18,6 +18,14 @@
     }
   },
   {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "ゆかり",
       "body": "……最後の扉が、開きます"
@@ -45,6 +53,12 @@
     "text": {
       "name": "ゆかり",
       "body": "行きましょう。……最後の問いが、待っています"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "hide": true
     }
   }
 ]

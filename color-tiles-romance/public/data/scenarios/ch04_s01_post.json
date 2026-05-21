@@ -6,6 +6,14 @@
     }
   },
   {
+    "chara": {
+      "id": "himari",
+      "expr": "angry",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "ひまり",
       "body": "あーーーーっ、もうっ！ つまんないつまんないつまんない！！"
@@ -48,6 +56,13 @@
     }
   },
   {
+    "chara": {
+      "id": "himari",
+      "expr": "surprise",
+      "pos": "center"
+    }
+  },
+  {
     "text": {
       "name": "ひまり",
       "body": "ふふん！ これぞ私の最高傑作『スーパー・ダイナミック・黄昏タワー』！ どう？ このアンバランスさが芸術的でしょ——あっ"
@@ -75,6 +90,13 @@
     "text": {
       "name": "",
       "body": "土煙の中から、頭にブロックを乗せたひまりが飛び出してきた。無傷だ。"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "angry",
+      "pos": "center"
     }
   },
   {
@@ -117,6 +139,12 @@
     "text": {
       "name": "主人公",
       "body": "パズルはどうしたんだよ……全く"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "hide": true
     }
   }
 ]

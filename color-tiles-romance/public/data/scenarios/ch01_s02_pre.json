@@ -3,12 +3,20 @@
     "bgm": "緋色のあかり"
   },
   {
-    "bg": "tower_ch01_corridor"
+    "bg": "bg_tower_floor1_red_dim"
   },
   {
     "text": {
       "name": "",
       "body": "次の広間への通路を歩きながら、あかりが隣を早足で歩いていた。"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "surprise",
+      "pos": "center",
+      "show": true
     }
   },
   {
@@ -114,6 +122,13 @@
     }
   },
   {
+    "chara": {
+      "id": "akari",
+      "expr": "smile",
+      "pos": "center"
+    }
+  },
+  {
     "text": {
       "name": "あかり",
       "body": "さあ！ 考えながら手を動かす！ それが情熱ってもんよ！"
@@ -123,6 +138,12 @@
     "text": {
       "name": "主人公",
       "body": "……わかった"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "hide": true
     }
   }
 ]

@@ -3,7 +3,7 @@
     "bgm": "bgm_clockwork"
   },
   {
-    "bg": "tower_ch04_gears"
+    "bg": "bg_tower_floor4_yellow_clock"
   },
   {
     "text": {
@@ -30,6 +30,14 @@
     }
   },
   {
+    "chara": {
+      "id": "himari",
+      "expr": "surprise",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "ひまり",
       "body": "あーーっ！ 来た来た来た！ やっと来たー！"
@@ -39,6 +47,13 @@
     "text": {
       "name": "",
       "body": "着地した少女は、ふわりとスカートを翻してニコニコしている。全く怪我をしていないらしい。"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "smile",
+      "pos": "center"
     }
   },
   {
@@ -93,6 +108,12 @@
     "text": {
       "name": "主人公",
       "body": "（……この子は——俺の中にある何かを、全部知っている気がする）"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "hide": true
     }
   }
 ]

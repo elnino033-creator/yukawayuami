@@ -3,12 +3,20 @@
     "bgm": "bgm_cold_wind"
   },
   {
-    "bg": "tower_ch02_frozen"
+    "bg": "bg_tower_floor2_blue_dim"
   },
   {
     "text": {
       "name": "",
       "body": "最後の広間。氷の壁が、四方を完全に囲んでいた。"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
     }
   },
   {
@@ -71,5 +79,11 @@
       }
     ],
     "prompt": "みおの言葉に、どう答えるか"
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "hide": true
+    }
   }
 ]

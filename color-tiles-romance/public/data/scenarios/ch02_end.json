@@ -3,7 +3,7 @@
     "bgm": "bgm_cold_wind"
   },
   {
-    "bg": "tower_ch02_frozen"
+    "bg": "bg_tower_floor2_blue_dim"
   },
   {
     "text": {
@@ -15,6 +15,14 @@
     "text": {
       "name": "",
       "body": "床から、壁から、天井から。全ての氷が水になって流れ、広間に穏やかな『青』の光が満ちていく。"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "surprise",
+      "pos": "center",
+      "show": true
     }
   },
   {
@@ -90,6 +98,13 @@
     }
   },
   {
+    "chara": {
+      "id": "mio",
+      "expr": "smile",
+      "pos": "center"
+    }
+  },
+  {
     "text": {
       "name": "みお",
       "body": "ありがとう。……少しだけ、溶けた気がするわ"
@@ -111,6 +126,12 @@
     "text": {
       "name": "主人公",
       "body": "（俺が作った氷の壁が、少しだけ薄くなった気がする）"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "hide": true
     }
   }
 ]

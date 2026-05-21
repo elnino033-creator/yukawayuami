@@ -3,7 +3,7 @@
     "bgm": "bgm_vocal_ending"
   },
   {
-    "bg": "home_atelier_morning"
+    "bg": "bg_atelier_morning"
   },
   {
     "text": {
@@ -51,7 +51,7 @@
     "bgm": "bgm_piano_gentle_morning"
   },
   {
-    "bg": "hospital_room"
+    "bg": "home"
   },
   {
     "text": {

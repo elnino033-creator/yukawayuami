@@ -24,6 +24,14 @@
     }
   },
   {
+    "chara": {
+      "id": "akari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "あかり",
       "body": "……そっか"
@@ -60,6 +68,13 @@
     }
   },
   {
+    "chara": {
+      "id": "akari",
+      "expr": "smile",
+      "pos": "center"
+    }
+  },
+  {
     "text": {
       "name": "あかり",
       "body": "私には、そうは思えないけど。あんたの絵を好きだった人が、あんたの色が消えることを望むわけないじゃない"
@@ -81,6 +96,12 @@
     "text": {
       "name": "",
       "body": "でも——その声は、少しだけ震えていた。"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "hide": true
     }
   }
 ]

@@ -18,6 +18,14 @@
     }
   },
   {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "ゆかり",
       "body": "……よかった。思い出してきましたね"
@@ -69,6 +77,12 @@
     "text": {
       "name": "",
       "body": "その声は、どこか遠くの場所から届いているようだった。それでも——確かに、聞こえていた。"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "hide": true
     }
   }
 ]

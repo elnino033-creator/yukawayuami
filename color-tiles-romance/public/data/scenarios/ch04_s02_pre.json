@@ -3,12 +3,20 @@
     "bgm": "bgm_clockwork"
   },
   {
-    "bg": "tower_ch04_corridor"
+    "bg": "bg_tower_floor4_yellow_dim"
   },
   {
     "text": {
       "name": "",
       "body": "歯車の合間を縫いながら、次の広間へ向かう通路を歩く。"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
     }
   },
   {
@@ -99,6 +107,12 @@
     "text": {
       "name": "主人公",
       "body": "（……そうか。消えてなかったのか）"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "hide": true
     }
   }
 ]

@@ -3,7 +3,7 @@
     "bgm": "bgm_cold_wind"
   },
   {
-    "bg": "tower_ch02_frozen"
+    "bg": "bg_tower_floor2_blue_dim"
   },
   {
     "text": {
@@ -24,6 +24,14 @@
     }
   },
   {
+    "chara": {
+      "id": "mio",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "みお",
       "body": "……裏切り者が、どのツラ下げて戻ってきたわけ？"
@@ -33,6 +41,13 @@
     "text": {
       "name": "主人公",
       "body": "……みお、か"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "angry",
+      "pos": "center"
     }
   },
   {
@@ -51,6 +66,13 @@
     "text": {
       "name": "主人公",
       "body": "……俺のことを、知ってるのか"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "surprise",
+      "pos": "center"
     }
   },
   {
@@ -84,9 +106,22 @@
     }
   },
   {
+    "chara": {
+      "id": "mio",
+      "expr": "sad",
+      "pos": "center"
+    }
+  },
+  {
     "text": {
       "name": "みお",
       "body": "ならタイルを消してみせなさい。全部消さない限り、この氷は溶けないから"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "hide": true
     }
   }
 ]

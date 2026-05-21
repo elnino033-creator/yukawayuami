@@ -3,12 +3,20 @@
     "bgm": "bgm_forest_ambient"
   },
   {
-    "bg": "tower_ch03_path"
+    "bg": "bg_tower_floor3_green_dim"
   },
   {
     "text": {
       "name": "",
       "body": "森の奥へ進む道を、すずが隣を歩きながら案内してくれていた。"
+    }
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
     }
   },
   {
@@ -111,6 +119,12 @@
     "text": {
       "name": "主人公",
       "body": "（……この森にいると、急ぐ必要がない気がしてくる。それが——甘い罠だとわかっていても）"
+    }
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "hide": true
     }
   }
 ]

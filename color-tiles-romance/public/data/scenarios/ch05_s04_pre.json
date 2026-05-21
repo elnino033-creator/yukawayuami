@@ -3,12 +3,20 @@
     "bgm": "bgm_ch05"
   },
   {
-    "bg": "tower_ch05_yukari"
+    "bg": "bg_tower_floor5_purple_final"
   },
   {
     "text": {
       "name": "",
       "body": "次の広間に入ると、ゆかりは主人公の前に立っていた。その顔は、もう完全に——真白の顔ではなかった。"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
     }
   },
   {
@@ -63,6 +71,12 @@
     "text": {
       "name": "主人公",
       "body": "（……本当に、そうか？）"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "hide": true
     }
   }
 ]

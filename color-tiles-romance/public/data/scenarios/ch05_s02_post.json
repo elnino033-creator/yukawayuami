@@ -18,6 +18,14 @@
     }
   },
   {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "ゆかり",
       "body": "（どこかから）……よく、気づきましたね"
@@ -63,6 +71,12 @@
     "text": {
       "name": "ゆかり",
       "body": "……続けてください"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "hide": true
     }
   }
 ]

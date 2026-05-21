@@ -3,7 +3,7 @@
     "bgm": "色彩の再起"
   },
   {
-    "bg": "tower_ch05_white"
+    "bg": "bg_tower_floor5_purple_final"
   },
   {
     "text": {
@@ -21,6 +21,14 @@
     "text": {
       "name": "",
       "body": "その中心に、ゆかりが立っていた。"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
     }
   },
   {
@@ -95,5 +103,11 @@
       }
     ],
     "prompt": "最後の答えを、選べ"
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "hide": true
+    }
   }
 ]

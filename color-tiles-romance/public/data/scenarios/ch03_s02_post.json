@@ -24,6 +24,14 @@
     }
   },
   {
+    "chara": {
+      "id": "suzu",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "すず",
       "body": "どうですか。少し、楽になりましたか？"
@@ -72,6 +80,13 @@
     }
   },
   {
+    "chara": {
+      "id": "suzu",
+      "expr": "surprise",
+      "pos": "center"
+    }
+  },
+  {
     "text": {
       "name": "すず",
       "body": "私のことが好きになってきましたか？"
@@ -84,9 +99,22 @@
     }
   },
   {
+    "chara": {
+      "id": "suzu",
+      "expr": "smile",
+      "pos": "center"
+    }
+  },
+  {
     "text": {
       "name": "すず",
       "body": "（ふわりと微笑んで）……ありがとうございます。だから——気をつけてください"
+    }
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "hide": true
     }
   }
 ]

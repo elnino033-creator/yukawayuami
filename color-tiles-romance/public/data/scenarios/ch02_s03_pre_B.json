@@ -6,6 +6,14 @@
     }
   },
   {
+    "chara": {
+      "id": "mio",
+      "expr": "normal",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
     "text": {
       "name": "みお",
       "body": "……ええ。それでいいのよ。私がずっと、あなたを守ってあげる"
@@ -18,7 +26,13 @@
     }
   },
   {
-    "bg": "office_desk"
+    "chara": {
+      "id": "mio",
+      "hide": true
+    }
+  },
+  {
+    "bg": "office"
   },
   {
     "text": {
