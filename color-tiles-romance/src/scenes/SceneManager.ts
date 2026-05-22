@@ -247,8 +247,8 @@ export class SceneManager {
           scenarioId,
           () => {
             this.progressStore.markLineRead(`pre:${stageId}`);
-            // BAD ルートが選ばれた場合はパズルを起動せずタイトルへ戻る（ch05_stage07のみ）
-            if (stageId === 'ch05_stage07' && this.progressStore.getFlag('route_bad') > 0) {
+            // BAD ルートが選ばれた場合はパズルを起動せずタイトルへ戻る
+            if (this.progressStore.getFlag('route_bad') > 0) {
               void this.transition({ to: 'title' });
             } else {
               void this.launchPuzzleWithDef(stageDef);
