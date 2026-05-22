@@ -150,6 +150,8 @@ export class ScenarioPlayer {
     this.resizeCanvas();
 
     window.addEventListener('resize', () => this.resizeCanvas());
+    // iOS Safari のアドレスバー表示切替など visualViewport 変化にも対応
+    window.visualViewport?.addEventListener('resize', () => this.resizeCanvas());
 
     this.boundClick = (e: MouseEvent) => this.handleClick(e);
     this.boundKey = (e: KeyboardEvent) => this.handleKey(e);
@@ -226,11 +228,14 @@ export class ScenarioPlayer {
   // ---------- プライベートメソッド ----------
 
   private resizeCanvas(): void {
+    // getBoundingClientRect が 0 を返す場合（モバイルの初回レイアウト等）に備え
+    // container → visualViewport → innerWidth/Height の順でフォールバック
     const rect = this.container.getBoundingClientRect();
-    const w = Math.max(rect.width, 320);
-    const h = Math.max(rect.height, 240);
-    this.canvas.width = w;
-    this.canvas.height = h;
+    const vp = window.visualViewport;
+    const w = rect.width  || vp?.width  || window.innerWidth;
+    const h = rect.height || vp?.height || window.innerHeight;
+    this.canvas.width  = Math.max(w, 320);
+    this.canvas.height = Math.max(h, 240);
   }
 
   private startRenderLoop(): void {
@@ -484,9 +489,18 @@ export class ScenarioPlayer {
     const w = this.canvas.width;
     const h = this.canvas.height;
 
-    // 背景
+    // 背景（object-fit:cover 相当でアスペクト比を保ったままキャンバスを埋める）
     if (this.bgImage) {
-      this.ctx.drawImage(this.bgImage, 0, 0, w, h);
+      const iw = this.bgImage.naturalWidth;
+      const ih = this.bgImage.naturalHeight;
+      if (iw > 0 && ih > 0) {
+        const scale = Math.max(w / iw, h / ih);
+        const dw = iw * scale;
+        const dh = ih * scale;
+        const dx = (w - dw) / 2;
+        const dy = (h - dh) / 2;
+        this.ctx.drawImage(this.bgImage, dx, dy, dw, dh);
+      }
     } else {
       const grad = this.ctx.createLinearGradient(0, 0, 0, h);
       grad.addColorStop(0, this.bgColor);
