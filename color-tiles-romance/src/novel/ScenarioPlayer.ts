@@ -36,6 +36,8 @@ export interface CharaStep {
     pos: 'left' | 'center' | 'right';
     show?: boolean;
     hide?: boolean;
+    /** 表示スケール倍率（省略時 1.0）*/
+    scale?: number;
   };
 }
 
@@ -69,6 +71,7 @@ interface CharaState {
   expr: string;
   pos: 'left' | 'center' | 'right';
   color: string;
+  scale: number;
 }
 
 /** キャラクターIDに対応するプレースホルダ色 */
@@ -379,11 +382,13 @@ export class ScenarioPlayer {
   private updateChara(charaData: CharaStep['chara']): void {
     const existing = this.characters.find(c => c.id === charaData.id);
     const color = CHARA_COLORS[charaData.id] ?? CHARA_COLORS['default']!;
+    const scale = charaData.scale ?? 1.0;
     if (existing) {
       existing.expr = charaData.expr;
       existing.pos = charaData.pos ?? existing.pos;
+      existing.scale = scale;
     } else {
-      this.characters.push({ id: charaData.id, expr: charaData.expr, pos: charaData.pos ?? 'center', color });
+      this.characters.push({ id: charaData.id, expr: charaData.expr, pos: charaData.pos ?? 'center', color, scale });
     }
   }
 
@@ -552,7 +557,7 @@ export class ScenarioPlayer {
         // キャラ: 高さ85%・幅85%のうち小さいスケールを採用して縦画面でもはみ出さない
         const scaleByH = (h * 0.85) / img.naturalHeight;
         const scaleByW = (w * 0.85) / img.naturalWidth;
-        const charaScale = Math.min(scaleByH, scaleByW);
+        const charaScale = Math.min(scaleByH, scaleByW) * (chara.scale ?? 1.0);
         const displayH = img.naturalHeight * charaScale;
         const displayW = img.naturalWidth * charaScale;
         const spriteY = h - displayH;

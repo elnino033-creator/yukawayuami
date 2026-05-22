@@ -63,6 +63,7 @@ export class PuzzleEngine {
   private specialEventFired = false;
   private originalBlocks: Tile[] = [];
   private specialEventHalfwayThreshold = 0;
+  private iceClearedCount = 0;
 
   private listeners: EventListener[] = [];
 
@@ -94,6 +95,7 @@ export class PuzzleEngine {
     this.startedAtMs = Date.now();
     this.specialEventDef = stage.specialEvent ?? null;
     this.specialEventFired = false;
+    this.iceClearedCount = 0;
 
     // ブロック初期位置を記録（restoreBlocks用）
     this.originalBlocks = [];
@@ -340,6 +342,7 @@ export class PuzzleEngine {
     this.score += 100 * pairsThisClick;
     if (this.combo >= 2) this.score += this.combo * 50;
     this.pairsCleared += pairsThisClick;
+    this.iceClearedCount += allRemoved.filter(t => t.type === 'ice').length;
     this.checkSpecialEvent();
 
     if (allRemoved.length > 0) {
@@ -390,6 +393,7 @@ export class PuzzleEngine {
     if (this.combo >= 2) this.score += this.combo * 50;
 
     this.pairsCleared++;
+    this.iceClearedCount += [a, b].filter(t => t.type === 'ice').length;
     this.checkSpecialEvent();
 
     this.emit({ type: 'tilesRemoved', tiles: [a, b], bonusSec });
@@ -425,6 +429,9 @@ export class PuzzleEngine {
     switch (def.trigger.type) {
       case 'afterPairs':
         shouldFire = this.pairsCleared >= def.trigger.count;
+        break;
+      case 'afterIceCleared':
+        shouldFire = this.iceClearedCount >= def.trigger.count;
         break;
       case 'whenIceRemaining': {
         let iceCount = 0;
@@ -471,45 +478,51 @@ export class PuzzleEngine {
 
   /** ランダムなノーマルタイルをひびあり氷タイルに変換する */
   addIceTiles(count: number): void {
-    // 色ごとのタイル数を集計し、パートナーが存在する色のみ候補にする
-    const colorCounts = new Map<string, number>();
-    for (let y = 0; y < this.height; y++) {
-      for (let x = 0; x < this.width; x++) {
-        const t = this.board[y][x];
-        if (t && t.color && t.type !== 'block') {
-          colorCounts.set(t.color, (colorCounts.get(t.color) ?? 0) + 1);
+    // 1枚ずつ判定・変換する（複数同時変換による負荷を防ぐ）
+    for (let i = 0; i < count; i++) {
+      // 変換のたびに色カウントを再集計（前の変換で状態が変わっている可能性）
+      const colorCounts = new Map<string, number>();
+      for (let y = 0; y < this.height; y++) {
+        for (let x = 0; x < this.width; x++) {
+          const t = this.board[y][x];
+          if (t && t.color && t.type !== 'block') {
+            colorCounts.set(t.color, (colorCounts.get(t.color) ?? 0) + 1);
+          }
         }
       }
-    }
 
-    const candidates: Tile[] = [];
-    for (let y = 0; y < this.height; y++) {
-      for (let x = 0; x < this.width; x++) {
-        const t = this.board[y][x];
-        if (!t || t.type !== 'normal' || !t.color) continue;
-        // 同色タイルが自分以外に1枚以上必要（クリア可能の最低条件）
-        if ((colorCounts.get(t.color) ?? 0) < 2) continue;
-        // 4方向に空マスが1つ以上ある（完全に囲まれていない）
-        const hasEmptyNeighbor =
-          (x > 0               && this.board[y][x - 1] === null) ||
-          (x < this.width - 1  && this.board[y][x + 1] === null) ||
-          (y > 0               && this.board[y - 1][x] === null) ||
-          (y < this.height - 1 && this.board[y + 1][x] === null);
-        if (!hasEmptyNeighbor) continue;
-        candidates.push(t);
+      const candidates: Tile[] = [];
+      for (let y = 0; y < this.height; y++) {
+        for (let x = 0; x < this.width; x++) {
+          const t = this.board[y][x];
+          if (!t || t.type !== 'normal' || !t.color) continue;
+          // 同色タイルが自分以外に1枚以上必要（ヒビ後にマッチできる）
+          if ((colorCounts.get(t.color) ?? 0) < 2) continue;
+          // 4方向に「消去可能な隣接タイル」が1枚以上必要（氷をヒビ入れできる）
+          // 条件: 非null・非block・normal状態の氷でない（=消去可能なタイル）
+          const hasMatchableNeighbor = (
+            [
+              [x - 1, y], [x + 1, y],
+              [x, y - 1], [x, y + 1]
+            ] as [number, number][]
+          ).some(([nx, ny]) => {
+            if (nx < 0 || ny < 0 || nx >= this.width || ny >= this.height) return false;
+            const n = this.board[ny][nx];
+            return n !== null && n.type !== 'block' &&
+              !(n.type === 'ice' && n.state === 'normal');
+          });
+          if (!hasMatchableNeighbor) continue;
+          candidates.push(t);
+        }
       }
-    }
 
-    if (candidates.length === 0) return; // 不発
+      if (candidates.length === 0) return; // 残り枚数に関わらず不発
 
-    // シャッフルして上限まで変換（ヒビなし）
-    for (let i = candidates.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
-    }
-    for (const t of candidates.slice(0, count)) {
-      t.type = 'ice';
-      t.state = 'normal';
+      // ランダムに1枚選んで変換
+      const idx = Math.floor(Math.random() * candidates.length);
+      const chosen = candidates[idx];
+      chosen.type = 'ice';
+      chosen.state = 'normal';
     }
   }
 

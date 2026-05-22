@@ -10,7 +10,8 @@
       "id": "phone",
       "expr": "ringing",
       "pos": "center",
-      "show": true
+      "show": true,
+      "scale": 0.25
     }
   },
   {
@@ -302,7 +303,7 @@
     "bg": null
   },
   {
-    "bgm": "bgm_tower_entrance"
+    "bgm": "Hollow Underfloor.mp3"
   },
   {
     "text": {

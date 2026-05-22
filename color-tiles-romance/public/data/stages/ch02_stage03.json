@@ -23,7 +23,7 @@
   "postScenario": "ch02_end.json",
   "puzzleBgm": "氷鈴の世界_last.mp3",
   "specialEvent": {
-    "trigger": { "type": "whenIceRemaining", "count": 2 },
+    "trigger": { "type": "afterIceCleared", "count": 1 },
     "effect": { "type": "addIceTiles", "count": 3 },
     "cutIn": {
       "character": "mio",
