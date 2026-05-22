@@ -100,7 +100,7 @@ export class TitleScene {
     this.initPetals();
     this.loadBgImage();
     this.startRenderLoop();
-    this.bgmAudio = new Audio(`${import.meta.env.BASE_URL}assets/bgm/${encodeURIComponent('op_色彩の塔へ.mp3')}`);
+    this.bgmAudio = new Audio(`${import.meta.env.BASE_URL}assets/bgm/${encodeURIComponent('妖精の小径.mp3')}`);
     this.bgmAudio.loop = true;
     this.bgmAudio.volume = 0.4;
     this.bgmAudio.play().catch(() => {

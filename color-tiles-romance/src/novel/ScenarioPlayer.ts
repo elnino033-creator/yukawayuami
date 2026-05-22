@@ -503,17 +503,16 @@ export class ScenarioPlayer {
     const w = this.canvas.width;
     const h = this.canvas.height;
 
-    // 背景（object-fit:cover 相当でアスペクト比を保ったままキャンバスを埋める）
+    // 背景: 縦を画面高さに合わせてスケール、横は中央揃え（縦画面で横にはみ出す場合はクリップ）
     if (this.bgImage) {
       const iw = this.bgImage.naturalWidth;
       const ih = this.bgImage.naturalHeight;
       if (iw > 0 && ih > 0) {
-        const scale = Math.max(w / iw, h / ih);
+        const scale = h / ih;
         const dw = iw * scale;
-        const dh = ih * scale;
+        const dh = h;
         const dx = (w - dw) / 2;
-        const dy = (h - dh) / 2;
-        this.ctx.drawImage(this.bgImage, dx, dy, dw, dh);
+        this.ctx.drawImage(this.bgImage, dx, 0, dw, dh);
       }
     } else {
       const grad = this.ctx.createLinearGradient(0, 0, 0, h);
@@ -550,10 +549,13 @@ export class ScenarioPlayer {
 
       const img = this.charaImageCache.get(`${chara.id}_${chara.expr}`);
       if (img) {
-        // 一般的なVNレイアウト: 画面高さの 85% のサイズで画面下端に揃える
-        const displayH = h * 0.85;
-        const displayW = displayH * (img.naturalWidth / img.naturalHeight);
-        const spriteY = h - displayH; // 足元が画面下端
+        // キャラ: 高さ85%・幅85%のうち小さいスケールを採用して縦画面でもはみ出さない
+        const scaleByH = (h * 0.85) / img.naturalHeight;
+        const scaleByW = (w * 0.85) / img.naturalWidth;
+        const charaScale = Math.min(scaleByH, scaleByW);
+        const displayH = img.naturalHeight * charaScale;
+        const displayW = img.naturalWidth * charaScale;
+        const spriteY = h - displayH;
         this.ctx.drawImage(img, cx - displayW / 2, spriteY, displayW, displayH);
       } else {
         // 画像未ロード時のプレースホルダ（縦長の色付き矩形）
