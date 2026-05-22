@@ -1,4 +1,4 @@
-import type { StageDefinition, Tile, MatchResult, TutorialStep } from '@/types';
+import type { StageDefinition, Tile, MatchResult, TutorialStep, SpecialEventDef } from '@/types';
 import { PuzzleEngine } from '@/core/PuzzleEngine';
 import { soundEngine } from '@/core/SoundEngine';
 import { BgmManager } from '@/audio/BgmManager';
@@ -51,6 +51,14 @@ interface FloatText {
   color: string;
 }
 
+interface CutInState {
+  startedAt: number;
+  character: string;
+  text: string;
+  charaImg: HTMLImageElement | null;
+  effect: SpecialEventDef['effect'];
+}
+
 interface TutorialState {
   steps: TutorialStep[];
   currentIndex: number;
@@ -77,6 +85,7 @@ export class PuzzleScene {
   private timeUpFlashUntil = 0;
   private bombFlashUntil = 0;
   private tutorial: TutorialState | null = null;
+  private cutIn: CutInState | null = null;
   /** シャドウタイルの一時的な色表示期限マップ。key: "x,y"、value: 公開期限(ms timestamp) */
   private shadowReveals: Map<string, number> = new Map();
 
@@ -129,6 +138,7 @@ export class PuzzleScene {
     this.tutorial = stage.tutorialSteps && stage.tutorialSteps.length > 0
       ? { steps: stage.tutorialSteps, currentIndex: 0, stepStartTime: Date.now(), nextButtonRect: null }
       : null;
+    this.cutIn = null;
     this.hudStatus.textContent = `${stage.title}`;
     this.startRenderLoop();
     BgmManager.play(stage.puzzleBgm ?? 'Steel_and_Shadows.mp3');
@@ -325,6 +335,24 @@ export class PuzzleScene {
           this.bombFlashUntil = Date.now() + 600;
           this.spawnFloatText(`💥 -${e.penaltySec}s`, '#ff4444');
           break;
+        case 'specialTrigger': {
+          // タイマーを一時停止してカットイン演出を開始
+          this.engine.timer.pause();
+          const state: CutInState = {
+            startedAt: Date.now(),
+            character: e.cutIn?.character ?? '',
+            text: e.cutIn?.text ?? '',
+            charaImg: null,
+            effect: e.effect,
+          };
+          if (e.cutIn?.character) {
+            const img = new Image();
+            img.onload = () => { state.charaImg = img; };
+            img.src = `${import.meta.env.BASE_URL}assets/chara/${e.cutIn.character}/normal.png`;
+          }
+          this.cutIn = state;
+          break;
+        }
         case 'cleared':
           soundEngine.playClear();
           this.flashStatus('CLEAR！');
@@ -383,6 +411,9 @@ export class PuzzleScene {
 
     // チュートリアルオーバーレイ
     this.drawTutorialOverlay(now);
+
+    // カットイン演出（特殊イベント）
+    this.drawCutIn(now);
 
     // 爆弾爆発フラッシュ
     if (now < this.bombFlashUntil) {
@@ -878,6 +909,83 @@ export class PuzzleScene {
     }
     if (current) result.push(current);
     return result.length > 0 ? result : [''];
+  }
+
+  private drawCutIn(now: number): void {
+    if (!this.cutIn) return;
+    const DURATION = 2800;
+    const SLIDE_MS = 450;
+    const FADE_START = 2300;
+    const elapsed = now - this.cutIn.startedAt;
+
+    if (elapsed >= DURATION) {
+      // カットイン終了：爆弾変換＆タイマー再開
+      if (this.cutIn.effect.type === 'transformToBomb') {
+        this.engine.transformTilesToBombs(this.cutIn.effect.count);
+      }
+      this.engine.timer.resume();
+      this.cutIn = null;
+      this.spawnFloatText('💣×10 爆弾変換！', '#ffaa33');
+      return;
+    }
+
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+
+    const alpha = elapsed > FADE_START
+      ? 1 - (elapsed - FADE_START) / (DURATION - FADE_START)
+      : 1;
+    const slideT = Math.min(1, elapsed / SLIDE_MS);
+    const ease = 1 - Math.pow(1 - slideT, 3);
+
+    // 暗幕
+    this.ctx.globalAlpha = alpha * 0.88;
+    this.ctx.fillStyle = '#14102a';
+    this.ctx.fillRect(0, 0, w, h);
+
+    // 上部グラデーション閃光
+    const flashGrad = this.ctx.createLinearGradient(0, 0, 0, h * 0.65);
+    flashGrad.addColorStop(0, `rgba(255,170,0,${0.55 * alpha})`);
+    flashGrad.addColorStop(1, 'rgba(255,170,0,0)');
+    this.ctx.fillStyle = flashGrad;
+    this.ctx.fillRect(0, 0, w, h);
+
+    // キャラクター画像（右からスライドイン）
+    if (this.cutIn.charaImg) {
+      const img = this.cutIn.charaImg;
+      const charaH = Math.min(h * 0.82, 480);
+      const charaW = (img.naturalWidth / img.naturalHeight) * charaH;
+      const targetX = w - charaW * 0.75;
+      const startX = w + charaW;
+      const charaX = startX + (targetX - startX) * ease;
+      this.ctx.globalAlpha = alpha;
+      this.ctx.drawImage(img, charaX, h - charaH, charaW, charaH);
+    }
+
+    // テキスト（200ms後にフェードイン）
+    const textAlpha = Math.min(1, Math.max(0, (elapsed - 200) / 280));
+    this.ctx.globalAlpha = alpha * textAlpha;
+
+    // キャラ名プレート
+    this.ctx.fillStyle = '#ffaa33';
+    this.ctx.font = 'bold 16px sans-serif';
+    this.ctx.textAlign = 'left';
+    this.ctx.textBaseline = 'middle';
+    this.ctx.fillText('ひまり', 28, h * 0.32);
+
+    // メインテキスト
+    const fontSize = Math.max(22, Math.min(40, Math.floor(w * 0.07)));
+    this.ctx.font = `bold ${fontSize}px sans-serif`;
+    this.ctx.fillStyle = '#ffffff';
+    this.ctx.fillText(this.cutIn.text, 28, h * 0.42);
+
+    // サブテキスト
+    this.ctx.font = '15px sans-serif';
+    this.ctx.fillStyle = '#ffd080';
+    this.ctx.fillText('💣 10個のタイルが爆弾に変わる！', 28, h * 0.52);
+
+    this.ctx.globalAlpha = 1;
+    this.ctx.textAlign = 'center';
   }
 
   private drawRoundRect(x: number, y: number, w: number, h: number, r: number): void {

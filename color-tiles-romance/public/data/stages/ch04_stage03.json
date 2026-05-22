@@ -1,10 +1,10 @@
 {
   "id": "ch04_stage03",
-  "title": "第4章 ステージ3：連鎖と時間",
+  "title": "第4章 ステージ3：ひまりの爆発",
   "chapter": 4,
   "boardWidth": 10,
   "boardHeight": 10,
-  "timeLimitSec": 95,
+  "timeLimitSec": 480,
   "missPenaltySec": 30,
   "hintCount": 1,
   "generationParams": {
@@ -17,12 +17,19 @@
       "yellow",
       "purple",
       "orange"
-    ],
-    "bombChance": 0.18
+    ]
   },
   "preScenario": "ch04_s03_pre.json",
   "postScenario": "ch04_end.json",
   "puzzleBgm": "オレンジ宮殿.mp3",
   "bombCountdown": 15,
-  "bombPenaltySec": 20
+  "bombPenaltySec": 20,
+  "specialEvent": {
+    "trigger": { "type": "afterPairs", "count": 6 },
+    "effect": { "type": "transformToBomb", "count": 10 },
+    "cutIn": {
+      "character": "himari",
+      "text": "芸術は爆発だ！💣"
+    }
+  }
 }

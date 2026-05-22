@@ -26,6 +26,7 @@ type EngineEvent =
   | { type: 'shuffle' }
   | { type: 'blocksReleased'; tiles: Tile[] }
   | { type: 'bombExploded'; tile: Tile; penaltySec: number }
+  | { type: 'specialTrigger'; effect: import('@/types').SpecialEventDef['effect']; cutIn?: import('@/types').SpecialEventDef['cutIn'] }
   | { type: 'cleared' }
   | { type: 'gameOver' };
 
@@ -58,6 +59,8 @@ export class PuzzleEngine {
   private blocksReleased = false;
   private startedAtMs = 0;
   private bombTickSkip = false;
+  private specialEventDef: import('@/types').SpecialEventDef | null = null;
+  private specialEventFired = false;
 
   private listeners: EventListener[] = [];
 
@@ -87,6 +90,8 @@ export class PuzzleEngine {
     this.blockRule = stage.blockReleaseRule ?? { type: 'never' };
     this.blocksReleased = false;
     this.startedAtMs = Date.now();
+    this.specialEventDef = stage.specialEvent ?? null;
+    this.specialEventFired = false;
 
     // 爆弾タイルの初期カウントダウンをセット
     for (let y = 0; y < this.height; y++) {
@@ -236,6 +241,7 @@ export class PuzzleEngine {
     if (this.combo >= 2) this.score += this.combo * 50;
 
     this.pairsCleared++;
+    this.checkSpecialEvent();
 
     this.emit({ type: 'tilesRemoved', tiles: removed, bonusSec });
 
@@ -314,6 +320,7 @@ export class PuzzleEngine {
     this.score += 100 * pairsThisClick;
     if (this.combo >= 2) this.score += this.combo * 50;
     this.pairsCleared += pairsThisClick;
+    this.checkSpecialEvent();
 
     if (allRemoved.length > 0) {
       this.emit({ type: 'tilesRemoved', tiles: allRemoved, bonusSec });
@@ -363,6 +370,7 @@ export class PuzzleEngine {
     if (this.combo >= 2) this.score += this.combo * 50;
 
     this.pairsCleared++;
+    this.checkSpecialEvent();
 
     this.emit({ type: 'tilesRemoved', tiles: [a, b], bonusSec });
 
@@ -386,6 +394,35 @@ export class PuzzleEngine {
     }
 
     return { type: 'success', removed: [a, b], bonusSec };
+  }
+
+  /** 特殊イベントトリガーを確認し、条件を満たしたら発火する */
+  private checkSpecialEvent(): void {
+    if (this.specialEventFired || !this.specialEventDef) return;
+    const def = this.specialEventDef;
+    if (def.trigger.type === 'afterPairs' && this.pairsCleared >= def.trigger.count) {
+      this.specialEventFired = true;
+      this.emit({ type: 'specialTrigger', effect: def.effect, cutIn: def.cutIn });
+    }
+  }
+
+  /** ランダムなノーマルタイルをbombタイルに変換する（カットイン演出後に呼ぶ） */
+  transformTilesToBombs(count: number): void {
+    const candidates: Tile[] = [];
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const t = this.board[y][x];
+        if (t && t.type === 'normal') candidates.push(t);
+      }
+    }
+    for (let i = candidates.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+    }
+    for (const t of candidates.slice(0, count)) {
+      t.type = 'bomb';
+      t.countdown = this.bombInitialCountdown;
+    }
   }
 
   /** 障害ブロックの解除条件を確認 */
