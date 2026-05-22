@@ -81,6 +81,7 @@ export interface SpecialEventDef {
   /** トリガー条件 */
   trigger:
     | { type: 'afterPairs'; count: number }
+    | { type: 'afterIceCleared'; count: number }
     | { type: 'whenIceRemaining'; count: number }
     | { type: 'whenBlocksHalfway' };
   /** 発動エフェクト */

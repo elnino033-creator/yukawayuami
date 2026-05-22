@@ -63,6 +63,7 @@ export class PuzzleEngine {
   private specialEventFired = false;
   private originalBlocks: Tile[] = [];
   private specialEventHalfwayThreshold = 0;
+  private iceClearedCount = 0;
 
   private listeners: EventListener[] = [];
 
@@ -94,6 +95,7 @@ export class PuzzleEngine {
     this.startedAtMs = Date.now();
     this.specialEventDef = stage.specialEvent ?? null;
     this.specialEventFired = false;
+    this.iceClearedCount = 0;
 
     // ブロック初期位置を記録（restoreBlocks用）
     this.originalBlocks = [];
@@ -340,6 +342,7 @@ export class PuzzleEngine {
     this.score += 100 * pairsThisClick;
     if (this.combo >= 2) this.score += this.combo * 50;
     this.pairsCleared += pairsThisClick;
+    this.iceClearedCount += allRemoved.filter(t => t.type === 'ice').length;
     this.checkSpecialEvent();
 
     if (allRemoved.length > 0) {
@@ -390,6 +393,7 @@ export class PuzzleEngine {
     if (this.combo >= 2) this.score += this.combo * 50;
 
     this.pairsCleared++;
+    this.iceClearedCount += [a, b].filter(t => t.type === 'ice').length;
     this.checkSpecialEvent();
 
     this.emit({ type: 'tilesRemoved', tiles: [a, b], bonusSec });
@@ -425,6 +429,9 @@ export class PuzzleEngine {
     switch (def.trigger.type) {
       case 'afterPairs':
         shouldFire = this.pairsCleared >= def.trigger.count;
+        break;
+      case 'afterIceCleared':
+        shouldFire = this.iceClearedCount >= def.trigger.count;
         break;
       case 'whenIceRemaining': {
         let iceCount = 0;
