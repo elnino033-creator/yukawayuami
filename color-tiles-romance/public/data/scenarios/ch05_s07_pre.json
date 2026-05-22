@@ -95,6 +95,8 @@
     "choice": [
       {
         "label": "……グレーの世界に戻る。もう、傷つきたくない",
+        "flag": "route_bad",
+        "value": 1,
         "next": "ch05_route_BAD"
       },
       {

@@ -29,8 +29,8 @@
       },
       {
         "label": "……パズルを、終わらせよう",
-        "flag": "love_suzu",
-        "value": 0,
+        "flag": "route_bad",
+        "value": 1,
         "next": "ch03_s05_pre_B"
       }
     ],

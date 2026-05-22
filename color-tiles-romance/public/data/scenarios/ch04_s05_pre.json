@@ -35,8 +35,8 @@
       },
       {
         "label": "一人でも行くよ。これは僕が解決しなきゃいけない",
-        "flag": "love_himari",
-        "value": 5,
+        "flag": "route_bad",
+        "value": 1,
         "next": "ch04_s05_pre_B"
       }
     ],
