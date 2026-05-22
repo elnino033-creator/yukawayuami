@@ -178,7 +178,7 @@ export class SceneManager {
     const { NovelScene } = await import('@/scenes/NovelScene');
 
     const div = document.createElement('div');
-    div.style.cssText = 'width:100%;height:100%;position:relative;';
+    div.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;';
     this.appContainer.appendChild(div);
 
     const scene = new NovelScene(
@@ -333,7 +333,7 @@ export class SceneManager {
     this.currentScene = null;
     this.appContainer.innerHTML = '';
     const div = document.createElement('div');
-    div.style.cssText = 'width:100%;height:100%;position:relative;';
+    div.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;';
     this.appContainer.appendChild(div);
 
     const scene = new NovelScene(

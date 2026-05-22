@@ -123,6 +123,8 @@ export class ScenarioPlayer {
 
   /** 現在の背景画像（読み込み済みの場合のみ） */
   private bgImage: HTMLImageElement | null = null;
+  /** 現在ロード中 or 表示中の背景キー（リサイズ後の再ロード用） */
+  private currentBgKey: string | null = null;
 
   /** クリック/スペースキーのイベントリスナー（後でremoveするため保持） */
   private boundClick: (e: MouseEvent) => void;
@@ -147,7 +149,8 @@ export class ScenarioPlayer {
     this.ctx = ctx;
 
     this.container.appendChild(this.canvas);
-    this.resizeCanvas();
+    // 初回はブラウザのレイアウト確定後に実行する（getBoundingClientRect が 0 を返すのを防ぐ）
+    requestAnimationFrame(() => this.resizeCanvas());
 
     window.addEventListener('resize', () => this.resizeCanvas());
     // iOS Safari のアドレスバー表示切替など visualViewport 変化にも対応
@@ -236,6 +239,24 @@ export class ScenarioPlayer {
     const h = rect.height || vp?.height || window.innerHeight;
     this.canvas.width  = Math.max(w, 320);
     this.canvas.height = Math.max(h, 240);
+    // キャンバスサイズが変わると描画がリセットされるため背景を再ロードする
+    if (this.currentBgKey) {
+      this.loadBgImage(this.currentBgKey);
+    }
+  }
+
+  /** 背景画像をロードして bgImage にセットする */
+  private loadBgImage(key: string): void {
+    this.currentBgKey = key;
+    this.bgImage = null;
+    const img = new Image();
+    img.onload = () => { this.bgImage = img; };
+    img.onerror = () => {
+      const fallback = new Image();
+      fallback.onload = () => { this.bgImage = fallback; };
+      fallback.src = `${import.meta.env.BASE_URL}assets/bg/${key}.jpg`;
+    };
+    img.src = `${import.meta.env.BASE_URL}assets/bg/${key}.png`;
   }
 
   private startRenderLoop(): void {
@@ -261,17 +282,10 @@ export class ScenarioPlayer {
       if (step.bg === null) {
         this.bgColor = '#1a1a2e';
         this.bgImage = null;
+        this.currentBgKey = null;
       } else {
         this.bgColor = this.filenameToColor(step.bg);
-        this.bgImage = null;
-        const img = new Image();
-        img.onload = () => { this.bgImage = img; };
-        img.onerror = () => {
-          const fallback = new Image();
-          fallback.onload = () => { this.bgImage = fallback; };
-          fallback.src = `${import.meta.env.BASE_URL}assets/bg/${step.bg}.jpg`;
-        };
-        img.src = `${import.meta.env.BASE_URL}assets/bg/${step.bg}.png`;
+        this.loadBgImage(step.bg);
       }
       this.advanceStep();
     } else if ('bgm' in step) {

@@ -13,13 +13,10 @@ html, body {
   overscroll-behavior: none;
 }
 
+/* #app はゲームのフルスクリーンコンテナとして main.ts のインラインスタイルで管理する。
+   display:flex / padding / gap はゲームシーンのレイアウトを破壊するため定義しない。 */
 #app {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   min-height: 100%;
-  padding: 16px;
-  gap: 12px;
 }
 
 header {
