@@ -10,7 +10,8 @@
       "id": "phone",
       "expr": "ringing",
       "pos": "center",
-      "show": true
+      "show": true,
+      "scale": 0.25
     }
   },
   {
