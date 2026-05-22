@@ -470,21 +470,46 @@ export class PuzzleEngine {
   }
 
   /** ランダムなノーマルタイルをひびあり氷タイルに変換する */
-  addCrackedIceTiles(count: number): void {
+  addIceTiles(count: number): void {
+    // 色ごとのタイル数を集計し、パートナーが存在する色のみ候補にする
+    const colorCounts = new Map<string, number>();
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const t = this.board[y][x];
+        if (t && t.color && t.type !== 'block') {
+          colorCounts.set(t.color, (colorCounts.get(t.color) ?? 0) + 1);
+        }
+      }
+    }
+
     const candidates: Tile[] = [];
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
         const t = this.board[y][x];
-        if (t && t.type === 'normal') candidates.push(t);
+        if (!t || t.type !== 'normal' || !t.color) continue;
+        // 同色タイルが自分以外に1枚以上必要（クリア可能の最低条件）
+        if ((colorCounts.get(t.color) ?? 0) < 2) continue;
+        // 4方向に空マスが1つ以上ある（完全に囲まれていない）
+        const hasEmptyNeighbor =
+          (x > 0               && this.board[y][x - 1] === null) ||
+          (x < this.width - 1  && this.board[y][x + 1] === null) ||
+          (y > 0               && this.board[y - 1][x] === null) ||
+          (y < this.height - 1 && this.board[y + 1][x] === null);
+        if (!hasEmptyNeighbor) continue;
+        candidates.push(t);
       }
     }
+
+    if (candidates.length === 0) return; // 不発
+
+    // シャッフルして上限まで変換（ヒビなし）
     for (let i = candidates.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
     }
     for (const t of candidates.slice(0, count)) {
       t.type = 'ice';
-      t.state = 'cracked';
+      t.state = 'normal';
     }
   }
 

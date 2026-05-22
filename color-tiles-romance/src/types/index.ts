@@ -86,7 +86,7 @@ export interface SpecialEventDef {
   /** 発動エフェクト */
   effect:
     | { type: 'transformToBomb'; count: number }
-    | { type: 'addCrackedIceTiles'; count: number }
+    | { type: 'addIceTiles'; count: number }
     | { type: 'restoreBlocks'; newReleaseCount?: number };
   /** カットイン演出 */
   cutIn?: {

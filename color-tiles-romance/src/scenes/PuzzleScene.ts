@@ -923,8 +923,8 @@ export class PuzzleScene {
       if (eff.type === 'transformToBomb') {
         this.engine.transformTilesToBombs(eff.count);
         this.spawnFloatText(`💣×${eff.count} 爆弾変換！`, '#ffaa33');
-      } else if (eff.type === 'addCrackedIceTiles') {
-        this.engine.addCrackedIceTiles(eff.count);
+      } else if (eff.type === 'addIceTiles') {
+        this.engine.addIceTiles(eff.count);
         this.spawnFloatText(`❄×${eff.count} 氷パネル追加！`, '#9ed3ff');
       } else if (eff.type === 'restoreBlocks') {
         this.engine.restoreBlocksSpecial(eff.newReleaseCount);
@@ -955,7 +955,7 @@ export class PuzzleScene {
     const eff = this.cutIn.effect;
     const subText = eff.type === 'transformToBomb'
       ? `💣 ${eff.count}個のタイルが爆弾に変わる！`
-      : eff.type === 'addCrackedIceTiles'
+      : eff.type === 'addIceTiles'
         ? `❄ ${eff.count}個の氷パネルが追加される！`
         : '🪨 ブロックパネルが全回復する！';
 
