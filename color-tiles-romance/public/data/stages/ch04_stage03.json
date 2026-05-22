@@ -21,7 +21,7 @@
   },
   "preScenario": "ch04_s03_pre.json",
   "postScenario": "ch04_end.json",
-  "puzzleBgm": "オレンジ宮殿.mp3",
+  "puzzleBgm": "Crown of Ashes.mp3",
   "bombCountdown": 15,
   "bombPenaltySec": 20,
   "specialEvent": {
