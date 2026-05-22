@@ -1,5 +1,11 @@
 [
   {
+    "bgm": "緋色のあかり"
+  },
+  {
+    "bg": "bg_tower_floor1_red_bright"
+  },
+  {
     "chara": {
       "id": "akari",
       "expr": "smile",

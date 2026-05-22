@@ -1,5 +1,11 @@
 [
   {
+    "bgm": "bgm_clockwork"
+  },
+  {
+    "bg": "bg_tower_floor4_yellow_bright"
+  },
+  {
     "chara": {
       "id": "himari",
       "expr": "surprise",
