@@ -148,27 +148,29 @@ export class SceneManager {
 
     const hasSave = this.saveStore.getData().currentChapter > 0 ||
       Object.keys(this.saveStore.getData().stageRecords).length > 0;
+    // ステージセレクトは1つ以上クリア済みの場合のみ解放
+    const anyCleared = Object.values(this.saveStore.getData().stageRecords).some(r => r.cleared);
 
     const scene = new TitleScene(canvas, (choice) => {
       switch (choice) {
         case 'new':
           this.saveStore.reset();
           this.progressStore.resetScenarioContext();
-          this.transition({ to: 'puzzle', stageId: LINEAR_STAGES[0] });
+          void this.transition({ to: 'puzzle', stageId: LINEAR_STAGES[0] });
           break;
         case 'continue': {
           const next = this.getFirstUncompletedStage();
-          this.transition(next
+          void this.transition(next
             ? { to: 'puzzle', stageId: next }
-            : { to: 'stageSelect' }
+            : { to: 'title' }
           );
           break;
         }
         case 'stage':
-          this.transition({ to: 'stageSelect' });
+          void this.transition({ to: 'stageSelect' });
           break;
       }
-    }, hasSave, hasSave);
+    }, hasSave, anyCleared);
 
     this.currentScene = scene;
     scene.start();
@@ -218,7 +220,7 @@ export class SceneManager {
 
   private async mountPuzzleScene(stageId: string): Promise<void> {
     if (!stageId) {
-      await this.transition({ to: 'stageSelect' });
+      await this.transition({ to: 'title' });
       return;
     }
 
@@ -231,7 +233,7 @@ export class SceneManager {
       stageDef = await res.json() as import('@/types').StageDefinition;
     } catch (e) {
       console.error('[SceneManager] stage load error:', e);
-      await this.transition({ to: 'stageSelect' });
+      await this.transition({ to: 'title' });
       return;
     }
 
@@ -320,7 +322,7 @@ export class SceneManager {
     this.watchPuzzleEnd(scene, stageDef);
     } catch (e) {
       console.error('[SceneManager] launchPuzzleWithDef failed:', e);
-      await this.transition({ to: 'stageSelect' });
+      await this.transition({ to: 'title' });
     }
   }
 
@@ -379,7 +381,7 @@ export class SceneManager {
             const next = this.getNextStage(data.stageId);
             void this.transition(next
               ? { to: 'puzzle', stageId: next }
-              : { to: 'stageSelect' }
+              : { to: 'title' }
             );
           });
         } else if (data.stageId === 'ch02_stage03' && data.cleared) {
@@ -387,7 +389,7 @@ export class SceneManager {
             const next = this.getNextStage(data.stageId);
             void this.transition(next
               ? { to: 'puzzle', stageId: next }
-              : { to: 'stageSelect' }
+              : { to: 'title' }
             );
           });
         } else if (data.stageId === 'ch03_stage03' && data.cleared) {
@@ -395,7 +397,7 @@ export class SceneManager {
             const next = this.getNextStage(data.stageId);
             void this.transition(next
               ? { to: 'puzzle', stageId: next }
-              : { to: 'stageSelect' }
+              : { to: 'title' }
             );
           });
         } else if (data.stageId === 'ch04_stage03' && data.cleared) {
@@ -403,14 +405,14 @@ export class SceneManager {
             const next = this.getNextStage(data.stageId);
             void this.transition(next
               ? { to: 'puzzle', stageId: next }
-              : { to: 'stageSelect' }
+              : { to: 'title' }
             );
           });
         } else {
           const next = this.getNextStage(data.stageId);
           void this.transition(next
             ? { to: 'puzzle', stageId: next }
-            : { to: 'stageSelect' }
+            : { to: 'title' }
           );
         }
       },

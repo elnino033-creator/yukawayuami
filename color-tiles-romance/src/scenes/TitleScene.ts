@@ -61,16 +61,20 @@ export class TitleScene {
   private boundTouchEnd: (e: TouchEvent) => void;
   private boundResize: () => void;
 
+  /** 1つ以上のステージをクリア済みかどうか（STAGE SELECT解放条件） */
+  private stageSelectUnlocked: boolean;
+
   /**
    * @param canvas 描画対象のCanvas要素
    * @param onSelect ボタン選択時のコールバック
    * @param hasSave セーブデータが存在するかどうか
+   * @param stageSelectUnlocked ステージセレクト解放済みかどうか
    */
   constructor(
     canvas: HTMLCanvasElement,
     onSelect: (choice: TitleChoice) => void,
     hasSave: boolean,
-    _allStagesComplete: boolean = false
+    stageSelectUnlocked: boolean = false
   ) {
     this.canvas = canvas;
     const ctx = canvas.getContext('2d');
@@ -78,6 +82,7 @@ export class TitleScene {
     this.ctx = ctx;
     this.onSelect = onSelect;
     this.hasSave = hasSave;
+    this.stageSelectUnlocked = stageSelectUnlocked;
 
     this.boundMouseMove = (e: MouseEvent) => this.handleMouseMove(e);
     this.boundClick = (e: MouseEvent) => this.handleClick(e);
@@ -211,7 +216,7 @@ export class TitleScene {
         w: bw,
         h: bh,
         hovered: false,
-        disabled: !this.hasSave
+        disabled: !this.stageSelectUnlocked
       }
     ];
   }
