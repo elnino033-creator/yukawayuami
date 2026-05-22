@@ -7,7 +7,7 @@
   "timeLimitSec": 300,
   "missPenaltySec": 0,
   "hintCount": 3,
-  "puzzleBgm": "bgm_tutorial",
+  "puzzleBgm": "妖精の小径.mp3",
   "tilesLayout": [
     [
       "purple",
