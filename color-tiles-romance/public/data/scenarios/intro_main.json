@@ -3,7 +3,7 @@
     "bgm": "bgm_piano_gentle_morning"
   },
   {
-    "bg": "home"
+    "bg": "bg_atelier_morning"
   },
   {
     "text": {
@@ -285,7 +285,7 @@
     }
   },
   {
-    "bg": "bg_tower_entrance"
+    "bg": "stage0_close"
   },
   {
     "bgm": "bgm_tower_entrance"
