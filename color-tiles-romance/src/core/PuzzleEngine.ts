@@ -26,6 +26,7 @@ type EngineEvent =
   | { type: 'shuffle' }
   | { type: 'blocksReleased'; tiles: Tile[] }
   | { type: 'bombExploded'; tile: Tile; penaltySec: number }
+  | { type: 'specialTrigger'; effect: import('@/types').SpecialEventDef['effect']; cutIn?: import('@/types').SpecialEventDef['cutIn'] }
   | { type: 'cleared' }
   | { type: 'gameOver' };
 
@@ -58,6 +59,10 @@ export class PuzzleEngine {
   private blocksReleased = false;
   private startedAtMs = 0;
   private bombTickSkip = false;
+  private specialEventDef: import('@/types').SpecialEventDef | null = null;
+  private specialEventFired = false;
+  private originalBlocks: Tile[] = [];
+  private specialEventHalfwayThreshold = 0;
 
   private listeners: EventListener[] = [];
 
@@ -87,6 +92,26 @@ export class PuzzleEngine {
     this.blockRule = stage.blockReleaseRule ?? { type: 'never' };
     this.blocksReleased = false;
     this.startedAtMs = Date.now();
+    this.specialEventDef = stage.specialEvent ?? null;
+    this.specialEventFired = false;
+
+    // ブロック初期位置を記録（restoreBlocks用）
+    this.originalBlocks = [];
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const t = this.board[y][x];
+        if (t && t.type === 'block') this.originalBlocks.push({ ...t });
+      }
+    }
+
+    // whenBlocksHalfway 用: 初期 blockReleaseRule.count の半分を記録
+    this.specialEventHalfwayThreshold = 0;
+    if (
+      stage.specialEvent?.trigger.type === 'whenBlocksHalfway' &&
+      stage.blockReleaseRule?.type === 'afterPairs'
+    ) {
+      this.specialEventHalfwayThreshold = Math.floor(stage.blockReleaseRule.count / 2);
+    }
 
     // 爆弾タイルの初期カウントダウンをセット
     for (let y = 0; y < this.height; y++) {
@@ -236,6 +261,7 @@ export class PuzzleEngine {
     if (this.combo >= 2) this.score += this.combo * 50;
 
     this.pairsCleared++;
+    this.checkSpecialEvent();
 
     this.emit({ type: 'tilesRemoved', tiles: removed, bonusSec });
 
@@ -314,6 +340,7 @@ export class PuzzleEngine {
     this.score += 100 * pairsThisClick;
     if (this.combo >= 2) this.score += this.combo * 50;
     this.pairsCleared += pairsThisClick;
+    this.checkSpecialEvent();
 
     if (allRemoved.length > 0) {
       this.emit({ type: 'tilesRemoved', tiles: allRemoved, bonusSec });
@@ -363,6 +390,7 @@ export class PuzzleEngine {
     if (this.combo >= 2) this.score += this.combo * 50;
 
     this.pairsCleared++;
+    this.checkSpecialEvent();
 
     this.emit({ type: 'tilesRemoved', tiles: [a, b], bonusSec });
 
@@ -386,6 +414,116 @@ export class PuzzleEngine {
     }
 
     return { type: 'success', removed: [a, b], bonusSec };
+  }
+
+  /** 特殊イベントトリガーを確認し、条件を満たしたら発火する */
+  private checkSpecialEvent(): void {
+    if (this.specialEventFired || !this.specialEventDef) return;
+    const def = this.specialEventDef;
+
+    let shouldFire = false;
+    switch (def.trigger.type) {
+      case 'afterPairs':
+        shouldFire = this.pairsCleared >= def.trigger.count;
+        break;
+      case 'whenIceRemaining': {
+        let iceCount = 0;
+        for (let y = 0; y < this.height; y++) {
+          for (let x = 0; x < this.width; x++) {
+            const t = this.board[y][x];
+            if (t && t.type === 'ice') iceCount++;
+          }
+        }
+        shouldFire = iceCount <= def.trigger.count;
+        break;
+      }
+      case 'whenBlocksHalfway':
+        shouldFire = !this.blocksReleased &&
+          this.specialEventHalfwayThreshold > 0 &&
+          this.pairsCleared >= this.specialEventHalfwayThreshold;
+        break;
+    }
+
+    if (shouldFire) {
+      this.specialEventFired = true;
+      this.emit({ type: 'specialTrigger', effect: def.effect, cutIn: def.cutIn });
+    }
+  }
+
+  /** ランダムなノーマルタイルをbombタイルに変換する */
+  transformTilesToBombs(count: number): void {
+    const candidates: Tile[] = [];
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const t = this.board[y][x];
+        if (t && t.type === 'normal') candidates.push(t);
+      }
+    }
+    for (let i = candidates.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+    }
+    for (const t of candidates.slice(0, count)) {
+      t.type = 'bomb';
+      t.countdown = this.bombInitialCountdown;
+    }
+  }
+
+  /** ランダムなノーマルタイルをひびあり氷タイルに変換する */
+  addIceTiles(count: number): void {
+    // 色ごとのタイル数を集計し、パートナーが存在する色のみ候補にする
+    const colorCounts = new Map<string, number>();
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const t = this.board[y][x];
+        if (t && t.color && t.type !== 'block') {
+          colorCounts.set(t.color, (colorCounts.get(t.color) ?? 0) + 1);
+        }
+      }
+    }
+
+    const candidates: Tile[] = [];
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const t = this.board[y][x];
+        if (!t || t.type !== 'normal' || !t.color) continue;
+        // 同色タイルが自分以外に1枚以上必要（クリア可能の最低条件）
+        if ((colorCounts.get(t.color) ?? 0) < 2) continue;
+        // 4方向に空マスが1つ以上ある（完全に囲まれていない）
+        const hasEmptyNeighbor =
+          (x > 0               && this.board[y][x - 1] === null) ||
+          (x < this.width - 1  && this.board[y][x + 1] === null) ||
+          (y > 0               && this.board[y - 1][x] === null) ||
+          (y < this.height - 1 && this.board[y + 1][x] === null);
+        if (!hasEmptyNeighbor) continue;
+        candidates.push(t);
+      }
+    }
+
+    if (candidates.length === 0) return; // 不発
+
+    // シャッフルして上限まで変換（ヒビなし）
+    for (let i = candidates.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+    }
+    for (const t of candidates.slice(0, count)) {
+      t.type = 'ice';
+      t.state = 'normal';
+    }
+  }
+
+  /** ブロックタイルを初期位置に復活させ、解除条件を更新する */
+  restoreBlocksSpecial(newReleaseCount?: number): void {
+    for (const block of this.originalBlocks) {
+      if (this.board[block.y][block.x] === null) {
+        this.board[block.y][block.x] = { ...block, state: 'normal' };
+      }
+    }
+    this.blocksReleased = false;
+    if (newReleaseCount !== undefined) {
+      this.blockRule = { type: 'afterPairs', count: newReleaseCount };
+    }
   }
 
   /** 障害ブロックの解除条件を確認 */

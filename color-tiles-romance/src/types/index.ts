@@ -76,6 +76,27 @@ export interface StageGenerationParams {
   minFreePairs?: number;
 }
 
+/** ステージ内特殊イベント定義 */
+export interface SpecialEventDef {
+  /** トリガー条件 */
+  trigger:
+    | { type: 'afterPairs'; count: number }
+    | { type: 'whenIceRemaining'; count: number }
+    | { type: 'whenBlocksHalfway' };
+  /** 発動エフェクト */
+  effect:
+    | { type: 'transformToBomb'; count: number }
+    | { type: 'addIceTiles'; count: number }
+    | { type: 'restoreBlocks'; newReleaseCount?: number };
+  /** カットイン演出 */
+  cutIn?: {
+    /** キャラクターID（assetsのフォルダ名） */
+    character: string;
+    /** 大きく表示するテキスト */
+    text: string;
+  };
+}
+
 /** チュートリアルステップ */
 export interface TutorialStep {
   /** ステップ種別: 説明表示 / 強制操作 / 称賛 */
@@ -126,6 +147,8 @@ export interface StageDefinition {
   bombPenaltySec?: number;
   /** パズル中に再生するBGMファイル名（省略時はデフォルトのpuzzle BGM） */
   puzzleBgm?: string;
+  /** ステージ内特殊イベント（カットイン＋タイル変換など） */
+  specialEvent?: SpecialEventDef;
 }
 
 /** クリック結果 */
