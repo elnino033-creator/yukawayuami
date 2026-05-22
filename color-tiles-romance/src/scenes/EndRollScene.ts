@@ -5,8 +5,8 @@
  */
 
 const CREDITS = [
-  { role: '', text: 'カラータイル・ロマンス', big: true },
-  { role: '', text: '～色彩の塔と失われた記憶～', big: false },
+  { role: '', text: '灰色の塔', big: true },
+  { role: '', text: '-君の花びらまだここに-', big: false },
   { role: '', text: '', big: false },
   { role: '', text: '', big: false },
   { role: 'Story & Scenario', text: '' },

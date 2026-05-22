@@ -82,6 +82,8 @@ export interface TutorialStep {
   type: 'explain' | 'force_match' | 'praise';
   /** 表示テキスト（\n で改行） */
   text: string;
+  /** 話者名（ADV風ネームプレートで表示） */
+  speaker?: string;
   /** ハイライトするタイルのセル座標 */
   highlightCells?: Array<{ x: number; y: number }>;
   /** force_match のみ：クリックを許可する空マス座標（それ以外はブロック） */

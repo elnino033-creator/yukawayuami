@@ -763,12 +763,23 @@ export class PuzzleScene {
       }
     }
 
+    // 話者カラーマップ
+    const SPEAKER_COLORS: Record<string, string> = {
+      '主人公': '#b0b8cc',
+      'みお':   '#4a90e2',
+      'すず':   '#5ec76a',
+      'ひまり': '#ffaa33',
+      'ゆかり': '#9c6bd8',
+      'あかり': '#ff8fb1',
+    };
+
     // レイアウト定数
     const FONT_SIZE = 15;
     const LINE_H = 26;
     const BOX_PAD = 18;
     const BTN_H = 36;
     const BTN_GAP = 10;
+    const NAME_H = 28;
     const boxX = 10;
     const boxW = w - 20;
 
@@ -784,15 +795,38 @@ export class PuzzleScene {
     const hasButton = step.type !== 'force_match';
     const textH = wrappedLines.length * LINE_H;
     const boxH = BOX_PAD + textH + (hasButton ? BTN_GAP + BTN_H + BOX_PAD : BOX_PAD);
-    const boxY = h - boxH - 10;
+    const hasSpeaker = !!step.speaker;
+    const boxY = h - boxH - 10 - (hasSpeaker ? NAME_H + 2 : 0);
+
+    // ネームプレート（話者名）
+    if (hasSpeaker && step.speaker) {
+      const speakerColor = SPEAKER_COLORS[step.speaker] ?? '#ffffff';
+      const nameW = Math.max(90, this.ctx.measureText(step.speaker).width + 32);
+      const nameX = boxX + 14;
+      const nameY = boxY;
+      this.ctx.fillStyle = 'rgba(20, 24, 44, 0.96)';
+      this.drawRoundRect(nameX, nameY, nameW, NAME_H, 6);
+      this.ctx.fill();
+      this.ctx.strokeStyle = speakerColor;
+      this.ctx.lineWidth = 2;
+      this.drawRoundRect(nameX, nameY, nameW, NAME_H, 6);
+      this.ctx.stroke();
+      this.ctx.fillStyle = speakerColor;
+      this.ctx.font = 'bold 14px sans-serif';
+      this.ctx.textAlign = 'center';
+      this.ctx.textBaseline = 'middle';
+      this.ctx.fillText(step.speaker, nameX + nameW / 2, nameY + NAME_H / 2);
+    }
+
+    const textBoxY = hasSpeaker ? boxY + NAME_H + 2 : boxY;
 
     // ボックス背景と枠線
     this.ctx.fillStyle = 'rgba(20, 24, 44, 0.96)';
-    this.drawRoundRect(boxX, boxY, boxW, boxH, 12);
+    this.drawRoundRect(boxX, textBoxY, boxW, boxH, 12);
     this.ctx.fill();
     this.ctx.strokeStyle = step.type === 'praise' ? '#ffd234' : step.type === 'force_match' ? '#5ec76a' : '#4a90e2';
     this.ctx.lineWidth = 2;
-    this.drawRoundRect(boxX, boxY, boxW, boxH, 12);
+    this.drawRoundRect(boxX, textBoxY, boxW, boxH, 12);
     this.ctx.stroke();
 
     // テキスト描画
@@ -801,14 +835,14 @@ export class PuzzleScene {
     this.ctx.textAlign = 'left';
     this.ctx.textBaseline = 'top';
     wrappedLines.forEach((line, i) => {
-      this.ctx.fillText(line, boxX + BOX_PAD, boxY + BOX_PAD + i * LINE_H);
+      this.ctx.fillText(line, boxX + BOX_PAD, textBoxY + BOX_PAD + i * LINE_H);
     });
 
     // "次へ" ボタン（explain / praise のみ）
     if (hasButton) {
       const btnW = 90;
       const btnX = boxX + boxW - btnW - BOX_PAD;
-      const btnY = boxY + boxH - BTN_H - BOX_PAD;
+      const btnY = textBoxY + boxH - BTN_H - BOX_PAD;
 
       this.ctx.fillStyle = step.type === 'praise' ? '#ffd234' : '#4a90e2';
       this.drawRoundRect(btnX, btnY, btnW, BTN_H, 8);
