@@ -348,7 +348,7 @@ export class PuzzleScene {
           if (e.cutIn?.character) {
             const img = new Image();
             img.onload = () => { state.charaImg = img; };
-            img.src = `${import.meta.env.BASE_URL}assets/chara/${e.cutIn.character}/normal.png`;
+            img.src = `${import.meta.env.BASE_URL}assets/chara/${e.cutIn.character}_angry.png`;
           }
           this.cutIn = state;
           break;
@@ -913,9 +913,10 @@ export class PuzzleScene {
 
   private drawCutIn(now: number): void {
     if (!this.cutIn) return;
-    const DURATION = 2800;
-    const SLIDE_MS = 450;
-    const FADE_START = 2300;
+    // 500ms スライドイン → 900ms ホールド → 300ms クイックフェード
+    const DURATION   = 1700;
+    const SLIDE_MS   = 500;
+    const FADE_START = 1400;
     const elapsed = now - this.cutIn.startedAt;
 
     if (elapsed >= DURATION) {
@@ -962,41 +963,48 @@ export class PuzzleScene {
     const w = this.canvas.width;
     const h = this.canvas.height;
 
+    // フェードアルファ（FADE_START 以降のみ減衰）
     const alpha = elapsed > FADE_START
       ? 1 - (elapsed - FADE_START) / (DURATION - FADE_START)
       : 1;
+    // スライドイーズ（上からスライドイン、SLIDE_MS で完了）
     const slideT = Math.min(1, elapsed / SLIDE_MS);
     const ease = 1 - Math.pow(1 - slideT, 3);
 
     // 暗幕
-    this.ctx.globalAlpha = alpha * 0.88;
+    this.ctx.globalAlpha = alpha * 0.82;
     this.ctx.fillStyle = '#14102a';
     this.ctx.fillRect(0, 0, w, h);
 
-    // 上部グラデーション閃光（キャラカラー）
+    // キャラカラーの右側グラデーション閃光
     const r = parseInt(charaColor.slice(1, 3), 16);
     const g = parseInt(charaColor.slice(3, 5), 16);
     const b = parseInt(charaColor.slice(5, 7), 16);
-    const flashGrad = this.ctx.createLinearGradient(0, 0, 0, h * 0.65);
-    flashGrad.addColorStop(0, `rgba(${r},${g},${b},${0.55 * alpha})`);
+    const flashGrad = this.ctx.createLinearGradient(w, 0, w * 0.2, 0);
+    flashGrad.addColorStop(0, `rgba(${r},${g},${b},${0.5 * alpha})`);
     flashGrad.addColorStop(1, `rgba(${r},${g},${b},0)`);
     this.ctx.fillStyle = flashGrad;
     this.ctx.fillRect(0, 0, w, h);
 
-    // キャラクター画像（右からスライドイン）
+    // キャラクター画像（右側・画面上から拡大スライドイン）
     if (this.cutIn.charaImg) {
       const img = this.cutIn.charaImg;
-      const charaH = Math.min(h * 0.82, 480);
-      const charaW = (img.naturalWidth / img.naturalHeight) * charaH;
-      const targetX = w - charaW * 0.75;
-      const startX = w + charaW;
-      const charaX = startX + (targetX - startX) * ease;
+      // 画面高さいっぱいに拡大、横幅が画面の70%を超えないよう制限
+      const scaleByH = h / img.naturalHeight;
+      const scaleByW = (w * 0.70) / img.naturalWidth;
+      const charaScale = Math.min(scaleByH, scaleByW);
+      const charaH = img.naturalHeight * charaScale;
+      const charaW = img.naturalWidth * charaScale;
+      // 右端に配置（少しはみ出してよい）
+      const charaX = w - charaW * 0.88;
+      const startY = -charaH;
+      const charaY = startY + (0 - startY) * ease;
       this.ctx.globalAlpha = alpha;
-      this.ctx.drawImage(img, charaX, h - charaH, charaW, charaH);
+      this.ctx.drawImage(img, charaX, charaY, charaW, charaH);
     }
 
-    // テキスト（200ms後にフェードイン）
-    const textAlpha = Math.min(1, Math.max(0, (elapsed - 200) / 280));
+    // テキスト（150ms後にフェードイン、左側に配置）
+    const textAlpha = Math.min(1, Math.max(0, (elapsed - 150) / 250));
     this.ctx.globalAlpha = alpha * textAlpha;
 
     // キャラ名プレート
@@ -1004,18 +1012,18 @@ export class PuzzleScene {
     this.ctx.font = 'bold 16px sans-serif';
     this.ctx.textAlign = 'left';
     this.ctx.textBaseline = 'middle';
-    this.ctx.fillText(charaName, 28, h * 0.32);
+    this.ctx.fillText(charaName, 24, h * 0.38);
 
     // メインテキスト
     const fontSize = Math.max(22, Math.min(40, Math.floor(w * 0.07)));
     this.ctx.font = `bold ${fontSize}px sans-serif`;
     this.ctx.fillStyle = '#ffffff';
-    this.ctx.fillText(this.cutIn.text, 28, h * 0.42);
+    this.ctx.fillText(this.cutIn.text, 24, h * 0.48);
 
     // サブテキスト
     this.ctx.font = '15px sans-serif';
     this.ctx.fillStyle = '#ffd080';
-    this.ctx.fillText(subText, 28, h * 0.52);
+    this.ctx.fillText(subText, 24, h * 0.56);
 
     this.ctx.globalAlpha = 1;
     this.ctx.textAlign = 'center';
