@@ -14,7 +14,15 @@ async function main() {
   }
 
   // コンテナをフルスクリーンに設定
-  appContainer.style.cssText = 'width:100vw;height:100vh;overflow:hidden;position:fixed;top:0;left:0;';
+  // style.css の #app に display:flex / padding / gap が残っているため全てリセットする
+  appContainer.style.cssText = [
+    'width:100vw;height:100vh;',
+    'overflow:hidden;',
+    'position:fixed;top:0;left:0;',
+    'display:block;',   // flex を無効化
+    'padding:0;',       // padding をリセット
+    'gap:0;',           // gap をリセット
+  ].join('');
 
   const manager = new SceneManager(appContainer);
   await manager.start();
