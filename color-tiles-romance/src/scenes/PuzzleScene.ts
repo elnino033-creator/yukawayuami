@@ -2,6 +2,7 @@ import type { StageDefinition, Tile, MatchResult, TutorialStep, SpecialEventDef 
 import { PuzzleEngine } from '@/core/PuzzleEngine';
 import { soundEngine } from '@/core/SoundEngine';
 import { BgmManager } from '@/audio/BgmManager';
+import { playSeFile } from '@/audio/SeManager';
 
 /**
  * 色名 → 表示色のマッピング（仮素材）
@@ -338,6 +339,7 @@ export class PuzzleScene {
         case 'specialTrigger': {
           // タイマーを一時停止してカットイン演出を開始
           this.engine.timer.pause();
+          playSeFile('se_cutin.mp3');
           const state: CutInState = {
             startedAt: Date.now(),
             character: e.cutIn?.character ?? '',
