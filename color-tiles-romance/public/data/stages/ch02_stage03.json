@@ -21,5 +21,13 @@
   },
   "preScenario": "ch02_s03_pre.json",
   "postScenario": "ch02_end.json",
-  "puzzleBgm": "氷鈴の世界.mp3"
+  "puzzleBgm": "氷鈴の世界.mp3",
+  "specialEvent": {
+    "trigger": { "type": "whenIceRemaining", "count": 2 },
+    "effect": { "type": "addCrackedIceTiles", "count": 3 },
+    "cutIn": {
+      "character": "mio",
+      "text": "ここにいて・・・"
+    }
+  }
 }

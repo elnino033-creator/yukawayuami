@@ -919,15 +919,45 @@ export class PuzzleScene {
     const elapsed = now - this.cutIn.startedAt;
 
     if (elapsed >= DURATION) {
-      // カットイン終了：爆弾変換＆タイマー再開
-      if (this.cutIn.effect.type === 'transformToBomb') {
-        this.engine.transformTilesToBombs(this.cutIn.effect.count);
+      const eff = this.cutIn.effect;
+      if (eff.type === 'transformToBomb') {
+        this.engine.transformTilesToBombs(eff.count);
+        this.spawnFloatText(`💣×${eff.count} 爆弾変換！`, '#ffaa33');
+      } else if (eff.type === 'addCrackedIceTiles') {
+        this.engine.addCrackedIceTiles(eff.count);
+        this.spawnFloatText(`❄×${eff.count} 氷パネル追加！`, '#9ed3ff');
+      } else if (eff.type === 'restoreBlocks') {
+        this.engine.restoreBlocksSpecial(eff.newReleaseCount);
+        this.spawnFloatText('🪨 ブロック全回復！', '#a0b0cc');
       }
       this.engine.timer.resume();
       this.cutIn = null;
-      this.spawnFloatText('💣×10 爆弾変換！', '#ffaa33');
       return;
     }
+
+    const CHARA_COLORS: Record<string, string> = {
+      himari: '#ffaa33',
+      mio:    '#4a90e2',
+      suzu:   '#5ec76a',
+      yukari: '#9c6bd8',
+      akari:  '#ff8fb1',
+    };
+    const CHARA_NAMES: Record<string, string> = {
+      himari: 'ひまり',
+      mio:    'みお',
+      suzu:   'すず',
+      yukari: 'ゆかり',
+      akari:  'あかり',
+    };
+    const charaColor = CHARA_COLORS[this.cutIn.character] ?? '#ffffff';
+    const charaName  = CHARA_NAMES[this.cutIn.character]  ?? this.cutIn.character;
+
+    const eff = this.cutIn.effect;
+    const subText = eff.type === 'transformToBomb'
+      ? `💣 ${eff.count}個のタイルが爆弾に変わる！`
+      : eff.type === 'addCrackedIceTiles'
+        ? `❄ ${eff.count}個の氷パネルが追加される！`
+        : '🪨 ブロックパネルが全回復する！';
 
     const w = this.canvas.width;
     const h = this.canvas.height;
@@ -943,10 +973,13 @@ export class PuzzleScene {
     this.ctx.fillStyle = '#14102a';
     this.ctx.fillRect(0, 0, w, h);
 
-    // 上部グラデーション閃光
+    // 上部グラデーション閃光（キャラカラー）
+    const r = parseInt(charaColor.slice(1, 3), 16);
+    const g = parseInt(charaColor.slice(3, 5), 16);
+    const b = parseInt(charaColor.slice(5, 7), 16);
     const flashGrad = this.ctx.createLinearGradient(0, 0, 0, h * 0.65);
-    flashGrad.addColorStop(0, `rgba(255,170,0,${0.55 * alpha})`);
-    flashGrad.addColorStop(1, 'rgba(255,170,0,0)');
+    flashGrad.addColorStop(0, `rgba(${r},${g},${b},${0.55 * alpha})`);
+    flashGrad.addColorStop(1, `rgba(${r},${g},${b},0)`);
     this.ctx.fillStyle = flashGrad;
     this.ctx.fillRect(0, 0, w, h);
 
@@ -967,11 +1000,11 @@ export class PuzzleScene {
     this.ctx.globalAlpha = alpha * textAlpha;
 
     // キャラ名プレート
-    this.ctx.fillStyle = '#ffaa33';
+    this.ctx.fillStyle = charaColor;
     this.ctx.font = 'bold 16px sans-serif';
     this.ctx.textAlign = 'left';
     this.ctx.textBaseline = 'middle';
-    this.ctx.fillText('ひまり', 28, h * 0.32);
+    this.ctx.fillText(charaName, 28, h * 0.32);
 
     // メインテキスト
     const fontSize = Math.max(22, Math.min(40, Math.floor(w * 0.07)));
@@ -982,7 +1015,7 @@ export class PuzzleScene {
     // サブテキスト
     this.ctx.font = '15px sans-serif';
     this.ctx.fillStyle = '#ffd080';
-    this.ctx.fillText('💣 10個のタイルが爆弾に変わる！', 28, h * 0.52);
+    this.ctx.fillText(subText, 28, h * 0.52);
 
     this.ctx.globalAlpha = 1;
     this.ctx.textAlign = 'center';

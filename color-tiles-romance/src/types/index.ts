@@ -79,9 +79,15 @@ export interface StageGenerationParams {
 /** ステージ内特殊イベント定義 */
 export interface SpecialEventDef {
   /** トリガー条件 */
-  trigger: { type: 'afterPairs'; count: number };
+  trigger:
+    | { type: 'afterPairs'; count: number }
+    | { type: 'whenIceRemaining'; count: number }
+    | { type: 'whenBlocksHalfway' };
   /** 発動エフェクト */
-  effect: { type: 'transformToBomb'; count: number };
+  effect:
+    | { type: 'transformToBomb'; count: number }
+    | { type: 'addCrackedIceTiles'; count: number }
+    | { type: 'restoreBlocks'; newReleaseCount?: number };
   /** カットイン演出 */
   cutIn?: {
     /** キャラクターID（assetsのフォルダ名） */

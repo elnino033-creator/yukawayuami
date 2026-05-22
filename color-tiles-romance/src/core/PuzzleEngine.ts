@@ -61,6 +61,8 @@ export class PuzzleEngine {
   private bombTickSkip = false;
   private specialEventDef: import('@/types').SpecialEventDef | null = null;
   private specialEventFired = false;
+  private originalBlocks: Tile[] = [];
+  private specialEventHalfwayThreshold = 0;
 
   private listeners: EventListener[] = [];
 
@@ -92,6 +94,24 @@ export class PuzzleEngine {
     this.startedAtMs = Date.now();
     this.specialEventDef = stage.specialEvent ?? null;
     this.specialEventFired = false;
+
+    // ブロック初期位置を記録（restoreBlocks用）
+    this.originalBlocks = [];
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const t = this.board[y][x];
+        if (t && t.type === 'block') this.originalBlocks.push({ ...t });
+      }
+    }
+
+    // whenBlocksHalfway 用: 初期 blockReleaseRule.count の半分を記録
+    this.specialEventHalfwayThreshold = 0;
+    if (
+      stage.specialEvent?.trigger.type === 'whenBlocksHalfway' &&
+      stage.blockReleaseRule?.type === 'afterPairs'
+    ) {
+      this.specialEventHalfwayThreshold = Math.floor(stage.blockReleaseRule.count / 2);
+    }
 
     // 爆弾タイルの初期カウントダウンをセット
     for (let y = 0; y < this.height; y++) {
@@ -400,13 +420,37 @@ export class PuzzleEngine {
   private checkSpecialEvent(): void {
     if (this.specialEventFired || !this.specialEventDef) return;
     const def = this.specialEventDef;
-    if (def.trigger.type === 'afterPairs' && this.pairsCleared >= def.trigger.count) {
+
+    let shouldFire = false;
+    switch (def.trigger.type) {
+      case 'afterPairs':
+        shouldFire = this.pairsCleared >= def.trigger.count;
+        break;
+      case 'whenIceRemaining': {
+        let iceCount = 0;
+        for (let y = 0; y < this.height; y++) {
+          for (let x = 0; x < this.width; x++) {
+            const t = this.board[y][x];
+            if (t && t.type === 'ice') iceCount++;
+          }
+        }
+        shouldFire = iceCount <= def.trigger.count;
+        break;
+      }
+      case 'whenBlocksHalfway':
+        shouldFire = !this.blocksReleased &&
+          this.specialEventHalfwayThreshold > 0 &&
+          this.pairsCleared >= this.specialEventHalfwayThreshold;
+        break;
+    }
+
+    if (shouldFire) {
       this.specialEventFired = true;
       this.emit({ type: 'specialTrigger', effect: def.effect, cutIn: def.cutIn });
     }
   }
 
-  /** ランダムなノーマルタイルをbombタイルに変換する（カットイン演出後に呼ぶ） */
+  /** ランダムなノーマルタイルをbombタイルに変換する */
   transformTilesToBombs(count: number): void {
     const candidates: Tile[] = [];
     for (let y = 0; y < this.height; y++) {
@@ -422,6 +466,38 @@ export class PuzzleEngine {
     for (const t of candidates.slice(0, count)) {
       t.type = 'bomb';
       t.countdown = this.bombInitialCountdown;
+    }
+  }
+
+  /** ランダムなノーマルタイルをひびあり氷タイルに変換する */
+  addCrackedIceTiles(count: number): void {
+    const candidates: Tile[] = [];
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const t = this.board[y][x];
+        if (t && t.type === 'normal') candidates.push(t);
+      }
+    }
+    for (let i = candidates.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+    }
+    for (const t of candidates.slice(0, count)) {
+      t.type = 'ice';
+      t.state = 'cracked';
+    }
+  }
+
+  /** ブロックタイルを初期位置に復活させ、解除条件を更新する */
+  restoreBlocksSpecial(newReleaseCount?: number): void {
+    for (const block of this.originalBlocks) {
+      if (this.board[block.y][block.x] === null) {
+        this.board[block.y][block.x] = { ...block, state: 'normal' };
+      }
+    }
+    this.blocksReleased = false;
+    if (newReleaseCount !== undefined) {
+      this.blockRule = { type: 'afterPairs', count: newReleaseCount };
     }
   }
 
