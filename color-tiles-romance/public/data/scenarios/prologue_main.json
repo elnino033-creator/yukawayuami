@@ -19,7 +19,7 @@
 
   {"text": {"name": "", "body": "言われるがままに足元を見ると、波紋ひとつない水面に、燃えるような夕焼け空と、ちぎれ雲が鏡のように映り込んでいた。"}},
 
-  {"chara": {"id": "mashiro", "expr": "normal", "pos": "center", "show": true}},
+  {"chara": {"id": "mashiro", "expr": "smile", "pos": "center", "show": true}},
   {"text": {"name": "真白", "body": "ねえ、もしさ……雲が地面だったら、どうなると思う？"}},
   {"text": {"name": "主人公", "body": "雲が地面？　そうだな……歩くたびに足元から綿菓子みたいな煙が立って、歩きづらそうだな"}},
   {"chara": {"id": "mashiro", "expr": "smile", "pos": "center", "show": true}},
