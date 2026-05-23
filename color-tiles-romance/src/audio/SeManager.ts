@@ -79,12 +79,32 @@ const SE_GENERATORS: Record<string, (ac: AudioContext) => void> = {
 
 /**
  * アセットフォルダ内の SE ファイルを HTML Audio で再生する。
- * @param filename public/assets/se/ 以下のファイル名（例: "se_cutin.mp3"）
+ * @param filename       public/assets/se/ 以下のファイル名（例: "se_cutin.mp3"）
+ * @param volume         再生音量（0.0〜1.0、デフォルト 0.8）
+ * @param durationRatio  再生時間の割合（0.0〜1.0）。指定した場合、ファイル全長 × この値 の秒数で停止する。
+ *                       例: 0.5 で前半半分のみ再生。省略時はファイル末尾まで再生。
  */
-export function playSeFile(filename: string, volume = 0.8): void {
+export function playSeFile(filename: string, volume = 0.8, durationRatio?: number): void {
   const base = import.meta.env.BASE_URL ?? '/';
   const audio = new Audio(`${base}assets/se/${encodeURIComponent(filename)}`);
-  audio.volume = volume;
+  audio.volume = Math.min(1, Math.max(0, volume));
+
+  if (durationRatio !== undefined && durationRatio > 0 && durationRatio < 1) {
+    // メタデータ読み込み後に実際の長さを取得し、指定割合で停止
+    const onMeta = () => {
+      audio.removeEventListener('loadedmetadata', onMeta);
+      const stopAt = audio.duration * durationRatio;
+      const remaining = (stopAt - audio.currentTime) * 1000;
+      if (remaining > 0) {
+        setTimeout(() => {
+          audio.pause();
+          audio.currentTime = 0;
+        }, remaining);
+      }
+    };
+    audio.addEventListener('loadedmetadata', onMeta);
+  }
+
   audio.play().catch(() => {});
 }
 

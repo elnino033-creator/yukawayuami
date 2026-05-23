@@ -47,7 +47,7 @@
   {"text": {"name": "", "body": "けれど、世界は僕が思っているよりもずっと残酷で、ひどく脆いキャンバスで出来ていた。"}},
   {"bgm": "Hollow Underfloor.mp3"},
   {"text": {"name": "", "body": "理不尽は、ひどく静かに訪れた。"}},
-  {"se": {"src": "se_ambulance.mp3"}},
+  {"se": {"src": "se_ambulance.mp3", "volume": 0.35, "durationRatio": 0.5}},
   {"text": {"name": "", "body": "そう、何の前触れもなく、彼女の時間は止まり、二度と目を覚まさなくなった。"}},
 
   {"text": {"name": "", "body": "あの事故の生々しい記憶すら、今の僕にはひどく曖昧だ。"}},

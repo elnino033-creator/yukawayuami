@@ -21,7 +21,14 @@ export interface BgmStep {
 
 /** SE 再生ステップ */
 export interface SeStep {
-  se: { src: string; loop?: boolean };
+  se: {
+    src: string;
+    loop?: boolean;
+    /** 再生音量（0.0〜1.0）。省略時は SeManager のデフォルト値 */
+    volume?: number;
+    /** 再生時間の割合（0.0〜1.0）。0.5 なら前半半分で停止。省略時は末尾まで再生 */
+    durationRatio?: number;
+  };
 }
 
 /** エフェクトステップ */
@@ -520,7 +527,7 @@ export class ScenarioPlayer {
       this.advanceStep();
     } else if ('se' in step) {
       // playSeFile でファイル再生を試み、内部生成器にも登録があれば playSe を併用する
-      playSeFile(step.se.src);
+      playSeFile(step.se.src, step.se.volume, step.se.durationRatio);
       playSe(step.se.src);
       this.advanceStep();
     } else if ('effect' in step) {
