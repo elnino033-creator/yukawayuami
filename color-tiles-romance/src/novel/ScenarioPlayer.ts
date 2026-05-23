@@ -67,8 +67,13 @@ export interface ChoiceStep {
   prompt?: string;
 }
 
+/** シナリオ間ジャンプステップ（選択肢なしで別シナリオへ移動） */
+export interface JumpStep {
+  jump: string;
+}
+
 /** シナリオのひとつのステップ */
-export type ScenarioStep = BgStep | BgmStep | SeStep | EffectStep | CharaStep | TextStep | ChoiceStep;
+export type ScenarioStep = BgStep | BgmStep | SeStep | EffectStep | CharaStep | TextStep | ChoiceStep | JumpStep;
 
 /** キャラクター表示状態 */
 interface CharaState {
@@ -88,6 +93,7 @@ const CHARA_COLORS: Record<string, string> = {
   suzu: '#5ec76a',
   himari: '#ffaa33',
   yukari: '#9c6bd8',
+  mashiro: '#dce8ff',
   default: '#ffd234'
 };
 
@@ -361,6 +367,8 @@ export class ScenarioPlayer {
     } else if ('choice' in step) {
       this.awaitingChoice = true;
       this.buildChoiceButtons(step.choice);
+    } else if ('jump' in step) {
+      this.jumpToScenario(step.jump);
     }
   }
 
