@@ -11,7 +11,8 @@
       "expr": "ringing",
       "pos": "center",
       "show": true,
-      "scale": 0.25
+      "scale": 0.25,
+      "y": 0.35
     }
   },
   {
