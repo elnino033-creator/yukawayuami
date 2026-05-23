@@ -155,6 +155,10 @@ export class ScenarioPlayer {
   /** ログ: 表示済みテキスト行の履歴 */
   private logEntries: Array<{ name: string; body: string }> = [];
 
+  /** 暗転フラグ（blackout エフェクト中は true）*/
+  private blackoutActive = false;
+  private blackoutTimer: ReturnType<typeof setTimeout> | null = null;
+
   /** スキップモード: 既読行を自動スキップ */
   private isSkipping = false;
 
@@ -363,6 +367,8 @@ export class ScenarioPlayer {
     this.isFastForward = false;
     this.isAutoMode = false;
     if (this.autoAdvanceTimer !== null) { clearTimeout(this.autoAdvanceTimer); this.autoAdvanceTimer = null; }
+    if (this.blackoutTimer !== null) { clearTimeout(this.blackoutTimer); this.blackoutTimer = null; }
+    this.blackoutActive = false;
   }
 
   /**
@@ -419,6 +425,7 @@ export class ScenarioPlayer {
     if (this.rafId !== null) cancelAnimationFrame(this.rafId);
     if (this.typewriterTimer !== null) clearTimeout(this.typewriterTimer);
     if (this.autoAdvanceTimer !== null) clearTimeout(this.autoAdvanceTimer);
+    if (this.blackoutTimer !== null) clearTimeout(this.blackoutTimer);
     this.stopBgm();
     this.canvas.removeEventListener('click', this.boundClick);
     window.removeEventListener('keydown', this.boundKey);
@@ -520,6 +527,14 @@ export class ScenarioPlayer {
       if (this.isSkipping) {
         // スキップ中はエフェクト待機をスキップ
         this.advanceStep();
+      } else if (step.effect.type === 'blackout') {
+        // 画面を一瞬暗転させて duration 後に進む
+        this.blackoutActive = true;
+        this.blackoutTimer = setTimeout(() => {
+          this.blackoutActive = false;
+          this.blackoutTimer = null;
+          this.advanceStep();
+        }, step.effect.duration);
       } else {
         setTimeout(() => this.advanceStep(), step.effect.duration);
       }
@@ -806,6 +821,12 @@ export class ScenarioPlayer {
     // クリックプロンプト（テキスト全文表示済み・非選択肢時）
     if (!this.isTyping && !this.awaitingChoice && this.targetText) {
       this.drawClickPrompt(w, h);
+    }
+
+    // 暗転オーバーレイ（blackout エフェクト中）
+    if (this.blackoutActive) {
+      this.ctx.fillStyle = '#000000';
+      this.ctx.fillRect(0, 0, w, h);
     }
   }
 
