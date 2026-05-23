@@ -289,6 +289,21 @@
     }
   },
   {
+    "text": {
+      "name": "",
+      "body": "・・・"
+    }
+  },
+  {
+    "text": {
+      "name": "",
+      "body": "・・・・・・・・"
+    }
+  },
+  {
+    "effect": { "type": "blackout", "duration": 600 }
+  },
+  {
     "bg": null
   },
   {
