@@ -45,5 +45,6 @@
       "autoAdvanceMs": 2000
     }
   ],
-  "puzzleBgm": "翠葉の迷宮.mp3"
+  "puzzleBgm": "翠葉の迷宮.mp3",
+  "postScenario": "ch03_s01_post.json"
 }

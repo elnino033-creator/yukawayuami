@@ -71,7 +71,9 @@
     "choice": [
       {
         "label": "……疲れたんだ。夢の中で、真白に会いたい",
-        "next": "ch03_s05_pre_B"
+        "next": "ch03_s05_pre_B",
+        "flag": "route_bad",
+        "value": 1
       },
       {
         "label": "君の優しさは本物だけど——目を覚まさなきゃいけない",
