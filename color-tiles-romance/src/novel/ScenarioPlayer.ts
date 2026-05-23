@@ -21,7 +21,14 @@ export interface BgmStep {
 
 /** SE 再生ステップ */
 export interface SeStep {
-  se: { src: string; loop?: boolean };
+  se: {
+    src: string;
+    loop?: boolean;
+    /** 再生音量（0.0〜1.0）。省略時は SeManager のデフォルト値 */
+    volume?: number;
+    /** 再生時間の割合（0.0〜1.0）。0.5 なら前半半分で停止。省略時は末尾まで再生 */
+    durationRatio?: number;
+  };
 }
 
 /** エフェクトステップ */
@@ -294,7 +301,12 @@ export class ScenarioPlayer {
       displayedText: this.displayedText,
       flags: { ...this.context.flags },
       readLines: [...this.context.readLines],
-      previewText: (this.displayedText || this.currentName || '').slice(0, 40)
+      previewText: (this.displayedText || this.currentName || '').slice(0, 40),
+      // 選択肢表示中のセーブに対応：選択肢内容を保持してロード時に復元できるようにする
+      awaitingChoice: this.awaitingChoice || undefined,
+      pendingChoices: this.awaitingChoice
+        ? this.choiceButtons.map(b => ({ label: b.label, flag: b.flag, value: b.value, next: b.next }))
+        : undefined,
     };
   }
 
@@ -347,6 +359,12 @@ export class ScenarioPlayer {
     // Restore context
     this.context.flags = { ...state.flags };
     this.context.readLines = new Set(state.readLines);
+
+    // 選択肢待機中のセーブを復元：選択肢ボタンを再構築して awaitingChoice を true にする
+    if (state.awaitingChoice && state.pendingChoices && state.pendingChoices.length > 0) {
+      this.awaitingChoice = true;
+      this.buildChoiceButtons(state.pendingChoices);
+    }
   }
 
   /**
@@ -520,7 +538,7 @@ export class ScenarioPlayer {
       this.advanceStep();
     } else if ('se' in step) {
       // playSeFile でファイル再生を試み、内部生成器にも登録があれば playSe を併用する
-      playSeFile(step.se.src);
+      playSeFile(step.se.src, step.se.volume, step.se.durationRatio);
       playSe(step.se.src);
       this.advanceStep();
     } else if ('effect' in step) {

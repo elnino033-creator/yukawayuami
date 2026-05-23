@@ -379,6 +379,9 @@ export class NovelScene {
       displayedText: save.displayedText,
       flags: save.flags,
       readLines: save.readLines,
+      // 選択肢待機中のセーブを正しく復元する
+      awaitingChoice: save.awaitingChoice,
+      pendingChoices: save.pendingChoices,
     });
 
     // Reset button states
