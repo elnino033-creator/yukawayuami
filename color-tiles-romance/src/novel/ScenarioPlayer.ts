@@ -7,6 +7,7 @@
 import type { ScenarioContext } from '@/store/progressStore';
 import { BgmManager } from '@/audio/BgmManager';
 import { playSe, playSeFile } from '@/audio/SeManager';
+import type { ScenarioSaveData } from '@/store/sceneSaveStore';
 
 /** 背景変更ステップ（null で背景をリセット） */
 export interface BgStep {
@@ -149,6 +150,29 @@ export class ScenarioPlayer {
   private boundResize: () => void;
   private boundViewportResize: () => void;
 
+  // ---------- Feature additions ----------
+
+  /** ログ: 表示済みテキスト行の履歴 */
+  private logEntries: Array<{ name: string; body: string }> = [];
+
+  /** スキップモード: 既読行を自動スキップ */
+  private isSkipping = false;
+
+  /** 早送りモード: テキスト即表示・自動進行 */
+  private isFastForward = false;
+
+  /** オートモード: テキスト表示後2.5秒で自動進行 */
+  private isAutoMode = false;
+
+  /** 自動進行タイマー */
+  private autoAdvanceTimer: ReturnType<typeof setTimeout> | null = null;
+
+  /** セーブ用シナリオID */
+  private currentScenarioId = '';
+
+  /** セーブ用BGMキー */
+  private currentBgmKey: string | null = null;
+
   /**
    * @param container シナリオを描画するコンテナ要素
    * @param context シナリオ実行コンテキスト（フラグ・既読管理）
@@ -183,6 +207,100 @@ export class ScenarioPlayer {
     window.addEventListener('keydown', this.boundKey);
   }
 
+  // ---------- Public API ----------
+
+  /** シナリオIDをセットする（セーブ用） */
+  setScenarioId(id: string): void { this.currentScenarioId = id; }
+
+  /** スキップモード（既読行を自動スキップ）のON/OFF */
+  setSkipMode(v: boolean): void { this.isSkipping = v; }
+
+  /** 早送りモード（テキスト即表示・自動進行）のON/OFF */
+  setFastForward(v: boolean): void {
+    this.isFastForward = v;
+    if (v) this.isAutoMode = false; // mutually exclusive in UI
+  }
+
+  /** オートモード（テキスト表示後2.5秒で自動進行）のON/OFF */
+  setAutoMode(v: boolean): void {
+    this.isAutoMode = v;
+    if (v) this.isFastForward = false;
+  }
+
+  /** 現在のログを返す */
+  getLog(): Array<{ name: string; body: string }> {
+    return [...this.logEntries];
+  }
+
+  /** セーブ用の状態スナップショットを返す */
+  getState(): Omit<ScenarioSaveData, 'slot' | 'savedAt'> {
+    return {
+      scenarioId: this.currentScenarioId,
+      stepIndex: this.stepIndex,
+      bgKey: this.currentBgKey,
+      bgmKey: this.currentBgmKey,
+      characters: this.characters.map(c => ({
+        id: c.id, expr: c.expr, pos: c.pos, scale: c.scale, y: c.y
+      })),
+      currentName: this.currentName,
+      displayedText: this.displayedText,
+      flags: { ...this.context.flags },
+      readLines: [...this.context.readLines],
+      previewText: (this.displayedText || this.currentName || '').slice(0, 40)
+    };
+  }
+
+  /** セーブデータから状態を復元する（steps は外部でロード済みのもの） */
+  restoreState(state: Omit<ScenarioSaveData, 'slot' | 'savedAt' | 'previewText' | 'scenarioId'>): void {
+    // Cancel any pending timers
+    if (this.typewriterTimer !== null) { clearTimeout(this.typewriterTimer); this.typewriterTimer = null; }
+    if (this.autoAdvanceTimer !== null) { clearTimeout(this.autoAdvanceTimer); this.autoAdvanceTimer = null; }
+
+    this.stepIndex = state.stepIndex;
+    this.currentBgmKey = state.bgmKey;
+    this.currentName = state.currentName;
+    this.targetText = state.displayedText;
+    this.displayedText = state.displayedText;
+    this.isTyping = false;
+    this.choiceButtons = [];
+    this.awaitingChoice = false;
+
+    // Restore bg
+    if (state.bgKey) {
+      this.loadBgImage(state.bgKey);
+    } else {
+      this.bgImage = null;
+      this.currentBgKey = null;
+    }
+
+    // Restore bgm
+    if (state.bgmKey) {
+      BgmManager.play(state.bgmKey, 0.5);
+    } else {
+      BgmManager.stop();
+    }
+
+    // Restore characters
+    this.characters = state.characters.map(ch => ({
+      ...ch,
+      color: (CHARA_COLORS as Record<string, string>)[ch.id] ?? CHARA_COLORS['default']!
+    }));
+
+    // Preload character images
+    for (const ch of this.characters) {
+      const key = `${ch.id}_${ch.expr}`;
+      if (!this.charaImageCache.has(key)) {
+        const img = new Image();
+        img.src = `${import.meta.env.BASE_URL}assets/chara/${key}.png`;
+        img.onload = () => this.charaImageCache.set(key, img);
+      }
+    }
+
+    // Restore context
+    this.context.flags = { ...state.flags };
+    this.context.readLines = new Set(state.readLines);
+  }
+
   /**
    * シナリオステップ配列をロードする。
    * @param steps シナリオステップの配列
@@ -196,6 +314,11 @@ export class ScenarioPlayer {
     this.currentName = '';
     this.choiceButtons = [];
     this.awaitingChoice = false;
+    this.logEntries = [];
+    this.isSkipping = false;
+    this.isFastForward = false;
+    this.isAutoMode = false;
+    if (this.autoAdvanceTimer !== null) { clearTimeout(this.autoAdvanceTimer); this.autoAdvanceTimer = null; }
   }
 
   /**
@@ -207,6 +330,17 @@ export class ScenarioPlayer {
       this.resolveStart = resolve;
       this.startRenderLoop();
       this.advanceStep();
+    });
+  }
+
+  /**
+   * restoreState() 後に呼び出す。advanceStepを呼ばずにレンダーループのみ開始する。
+   */
+  startFromRestored(): Promise<void> {
+    return new Promise<void>((resolve) => {
+      this.resolveStart = resolve;
+      this.startRenderLoop();
+      // Don't call advanceStep - wait for user click to advance
     });
   }
 
@@ -240,6 +374,7 @@ export class ScenarioPlayer {
   destroy(): void {
     if (this.rafId !== null) cancelAnimationFrame(this.rafId);
     if (this.typewriterTimer !== null) clearTimeout(this.typewriterTimer);
+    if (this.autoAdvanceTimer !== null) clearTimeout(this.autoAdvanceTimer);
     this.stopBgm();
     this.canvas.removeEventListener('click', this.boundClick);
     window.removeEventListener('keydown', this.boundKey);
@@ -290,6 +425,19 @@ export class ScenarioPlayer {
     this.rafId = requestAnimationFrame(tick);
   }
 
+  /** 自動進行タイマーをセットする */
+  private scheduleAutoAdvance(delay: number): void {
+    if (this.autoAdvanceTimer !== null) clearTimeout(this.autoAdvanceTimer);
+    this.autoAdvanceTimer = setTimeout(() => {
+      this.autoAdvanceTimer = null;
+      if (!this.awaitingChoice && this.targetText) {
+        this.targetText = '';
+        this.displayedText = '';
+        this.advanceStep();
+      }
+    }, delay);
+  }
+
   /** 次のステップへ進む */
   private advanceStep(): void {
     if (this.stepIndex >= this.steps.length) {
@@ -312,8 +460,10 @@ export class ScenarioPlayer {
       this.advanceStep();
     } else if ('bgm' in step) {
       if (step.bgm !== null) {
+        this.currentBgmKey = step.bgm;
         BgmManager.play(step.bgm, 0.5);
       } else {
+        this.currentBgmKey = null;
         BgmManager.stop();
       }
       this.advanceStep();
@@ -357,14 +507,39 @@ export class ScenarioPlayer {
       this.choiceButtons = [];
       this.awaitingChoice = false;
 
-      if (isRead) {
+      // Skip mode: auto-advance already-read lines without displaying
+      if (this.isSkipping && isRead) {
+        this.context.readLines.add(lineId);
+        this.advanceStep();
+        return;
+      }
+      // Skip mode stops at first unread line
+      if (this.isSkipping && !isRead) {
+        this.isSkipping = false;
+      }
+
+      // Add to log
+      if (step.text.body) {
+        this.logEntries.push({ name: step.text.name, body: step.text.body });
+      }
+
+      if (!isRead) this.context.readLines.add(lineId);
+
+      if (this.isFastForward) {
         this.displayedText = this.targetText;
         this.isTyping = false;
+        this.scheduleAutoAdvance(80);
+      } else if (isRead) {
+        this.displayedText = this.targetText;
+        this.isTyping = false;
+        if (this.isAutoMode) this.scheduleAutoAdvance(2500);
       } else {
-        this.context.readLines.add(lineId);
         this.startTypewriter();
       }
     } else if ('choice' in step) {
+      this.isSkipping = false;
+      this.isFastForward = false;
+      if (this.autoAdvanceTimer !== null) { clearTimeout(this.autoAdvanceTimer); this.autoAdvanceTimer = null; }
       this.awaitingChoice = true;
       this.buildChoiceButtons(step.choice);
     } else if ('jump' in step) {
@@ -386,6 +561,7 @@ export class ScenarioPlayer {
       } else {
         this.isTyping = false;
         this.typewriterTimer = null;
+        if (this.isAutoMode) this.scheduleAutoAdvance(2500);
       }
     };
     typeNext();
@@ -399,6 +575,11 @@ export class ScenarioPlayer {
     }
     this.displayedText = this.targetText;
     this.isTyping = false;
+    if (this.isFastForward) {
+      this.scheduleAutoAdvance(80);
+    } else if (this.isAutoMode) {
+      this.scheduleAutoAdvance(2500);
+    }
   }
 
   /** キャラクター状態を更新する */
@@ -468,6 +649,15 @@ export class ScenarioPlayer {
       return;
     }
 
+    // Cancel auto-advance timer on manual click
+    if (this.autoAdvanceTimer !== null) {
+      clearTimeout(this.autoAdvanceTimer);
+      this.autoAdvanceTimer = null;
+    }
+    // Stop FF/skip on manual click
+    this.isFastForward = false;
+    this.isSkipping = false;
+
     if (this.isTyping) {
       this.finishTyping();
     } else if (this.targetText) {
@@ -483,6 +673,10 @@ export class ScenarioPlayer {
     if (e.code === 'Space' || e.code === 'Enter') {
       e.preventDefault();
       if (!this.awaitingChoice) {
+        // Cancel auto-advance
+        if (this.autoAdvanceTimer !== null) { clearTimeout(this.autoAdvanceTimer); this.autoAdvanceTimer = null; }
+        this.isFastForward = false;
+        this.isSkipping = false;
         if (this.isTyping) {
           this.finishTyping();
         } else if (this.targetText) {
