@@ -131,12 +131,7 @@ export class NovelScene {
     });
 
     getBtn('btn-skip').addEventListener('click', () => {
-      if (this.player) {
-        this.player.setSkipMode(true);
-        this.isAutoActive = false;
-        this.isFFActive = false;
-        this.syncButtonStates(bar);
-      }
+      this.showSkipConfirm(bar);
     });
 
     const ffBtn = getBtn('btn-ff');
@@ -163,6 +158,58 @@ export class NovelScene {
     const auto = bar.querySelector<HTMLButtonElement>('#btn-auto');
     if (ff) ff.style.cssText = this.btnStyle(this.isFFActive);
     if (auto) auto.style.cssText = this.btnStyle(this.isAutoActive);
+  }
+
+  // ---------- Skip Confirm Dialog ----------
+
+  private showSkipConfirm(bar: HTMLDivElement): void {
+    const dialog = document.createElement('div');
+    dialog.style.cssText = [
+      'position:absolute',
+      'inset:0',
+      'display:flex',
+      'align-items:center',
+      'justify-content:center',
+      'z-index:40',
+      'background:rgba(0,0,0,0.55)',
+    ].join(';');
+
+    dialog.innerHTML = `
+      <div style="
+        background:rgba(16,12,36,0.97);
+        border:1px solid rgba(180,140,255,0.5);
+        border-radius:10px;
+        padding:28px 32px;
+        text-align:center;
+        font-family:sans-serif;
+        color:#e0dcf0;
+        min-width:260px;
+      ">
+        <div style="font-size:15px;margin-bottom:20px;line-height:1.6;">
+          次のシーン・選択肢へ飛びますか？
+        </div>
+        <div style="display:flex;gap:12px;justify-content:center;">
+          <button id="skip-yes" style="${this.btnStyle(true)}padding:7px 24px;font-size:13px;">はい</button>
+          <button id="skip-no"  style="${this.btnStyle()}padding:7px 24px;font-size:13px;">いいえ</button>
+        </div>
+      </div>
+    `;
+
+    this.container.appendChild(dialog);
+
+    dialog.querySelector('#skip-yes')!.addEventListener('click', () => {
+      dialog.remove();
+      if (this.player) {
+        this.isAutoActive = false;
+        this.isFFActive = false;
+        this.syncButtonStates(bar);
+        this.player.setSkipMode(true);
+      }
+    });
+
+    dialog.querySelector('#skip-no')!.addEventListener('click', () => {
+      dialog.remove();
+    });
   }
 
   // ---------- Log Panel ----------

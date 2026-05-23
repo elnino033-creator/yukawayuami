@@ -212,19 +212,63 @@ export class ScenarioPlayer {
   /** シナリオIDをセットする（セーブ用） */
   setScenarioId(id: string): void { this.currentScenarioId = id; }
 
-  /** スキップモード（既読行を自動スキップ）のON/OFF */
-  setSkipMode(v: boolean): void { this.isSkipping = v; }
+  /**
+   * スキップモード（次の選択肢 or シナリオ終了まで自動で飛ばす）のON/OFF。
+   * true にした瞬間、現在のテキスト待機・タイプライタ中であっても即進行する。
+   */
+  setSkipMode(v: boolean): void {
+    this.isSkipping = v;
+    if (v) {
+      this.isFastForward = false;
+      this.isAutoMode = false;
+      if (this.autoAdvanceTimer !== null) { clearTimeout(this.autoAdvanceTimer); this.autoAdvanceTimer = null; }
+      if (this.typewriterTimer !== null) { clearTimeout(this.typewriterTimer); this.typewriterTimer = null; }
+      this.isTyping = false;
+      // 現在テキスト待機中なら即スキップ開始
+      if (!this.awaitingChoice && this.targetText) {
+        this.targetText = '';
+        this.displayedText = '';
+        this.advanceStep();
+      }
+    }
+  }
 
   /** 早送りモード（テキスト即表示・自動進行）のON/OFF */
   setFastForward(v: boolean): void {
     this.isFastForward = v;
-    if (v) this.isAutoMode = false; // mutually exclusive in UI
+    if (v) {
+      this.isAutoMode = false;
+      // 現在タイプライタ中なら即完了してスケジュール
+      if (this.isTyping) {
+        this.finishTyping();
+      } else if (this.targetText && !this.awaitingChoice) {
+        // テキスト表示済みで待機中なら即自動進行
+        this.scheduleAutoAdvance(80);
+      }
+    } else {
+      // OFFにしたときはタイマーをキャンセル
+      if (this.autoAdvanceTimer !== null) {
+        clearTimeout(this.autoAdvanceTimer);
+        this.autoAdvanceTimer = null;
+      }
+    }
   }
 
   /** オートモード（テキスト表示後2.5秒で自動進行）のON/OFF */
   setAutoMode(v: boolean): void {
     this.isAutoMode = v;
-    if (v) this.isFastForward = false;
+    if (v) {
+      this.isFastForward = false;
+      // テキスト表示済みで待機中なら即タイマー開始
+      if (!this.isTyping && this.targetText && !this.awaitingChoice) {
+        this.scheduleAutoAdvance(2500);
+      }
+    } else {
+      if (this.autoAdvanceTimer !== null) {
+        clearTimeout(this.autoAdvanceTimer);
+        this.autoAdvanceTimer = null;
+      }
+    }
   }
 
   /** 現在のログを返す */
@@ -473,8 +517,12 @@ export class ScenarioPlayer {
       playSe(step.se.src);
       this.advanceStep();
     } else if ('effect' in step) {
-      // エフェクトは duration 後に自動進行
-      setTimeout(() => this.advanceStep(), step.effect.duration);
+      if (this.isSkipping) {
+        // スキップ中はエフェクト待機をスキップ
+        this.advanceStep();
+      } else {
+        setTimeout(() => this.advanceStep(), step.effect.duration);
+      }
     } else if ('chara' in step) {
       const c = step.chara;
       if (c.hide) {
@@ -507,15 +555,11 @@ export class ScenarioPlayer {
       this.choiceButtons = [];
       this.awaitingChoice = false;
 
-      // Skip mode: auto-advance already-read lines without displaying
-      if (this.isSkipping && isRead) {
-        this.context.readLines.add(lineId);
+      // スキップモード：既読・未読を問わずすべての行を飛ばす
+      if (this.isSkipping) {
+        if (!isRead) this.context.readLines.add(lineId);
         this.advanceStep();
         return;
-      }
-      // Skip mode stops at first unread line
-      if (this.isSkipping && !isRead) {
-        this.isSkipping = false;
       }
 
       // Add to log
