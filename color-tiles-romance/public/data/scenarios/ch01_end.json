@@ -97,6 +97,8 @@
     "choice": [
       {
         "label": "……ここで、君とずっといたい",
+        "flag": "route_bad",
+        "value": 1,
         "next": "ch05_route_BAD"
       },
       {

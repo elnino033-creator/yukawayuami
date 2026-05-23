@@ -3,6 +3,9 @@
     "effect": { "type": "blackout", "duration": 700 }
   },
   {
+    "chara": { "id": "akari", "hide": true }
+  },
+  {
     "bgm": "bgm_tower_entrance"
   },
   {
