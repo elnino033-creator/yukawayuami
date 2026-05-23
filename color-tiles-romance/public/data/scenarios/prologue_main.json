@@ -1,6 +1,6 @@
 [
-  {"bgm": null},
-  {"bg": null},
+  {"bgm": "氷鈴の追憶_monokuro.mp3"},
+  {"bg": "sidewalk"},
 
   {"text": {"name": "", "body": "── 1. 過去回想：水溜まりの空 ──"}},
 
@@ -41,7 +41,7 @@
 
   {"chara": {"id": "mashiro", "hide": true}},
   {"bg": null},
-  {"bgm": null},
+  {"bgm": "Hollow Underfloor.mp3"},
   {"effect": {"type": "fade", "duration": 800}},
 
   {"text": {"name": "", "body": "── 2. 喪失のモノローグ：キャンバスの余白 ──"}},
