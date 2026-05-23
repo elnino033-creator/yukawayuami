@@ -16,6 +16,9 @@
     }
   },
   {
+    "se": { "src": "se_phone_vibration.mp3" }
+  },
+  {
     "text": {
       "name": "",
       "body": "スマートフォンのバイブレーションが、枕元で鳴り続ける。"
