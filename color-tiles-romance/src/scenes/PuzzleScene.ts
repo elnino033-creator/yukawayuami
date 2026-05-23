@@ -777,13 +777,7 @@ export class PuzzleScene {
     }
     const step = this.tutorial.steps[this.tutorial.currentIndex];
 
-    // praise ステップの自動進行
-    if (step.type === 'praise' && step.autoAdvanceMs) {
-      if (now - this.tutorial.stepStartTime >= step.autoAdvanceMs) {
-        this.advanceTutorial();
-        return;
-      }
-    }
+    // praise ステップは「次へ」ボタンで明示的に進める（auto-advance は使わない）
 
     // ---------- Canvas側：セル強調のみ ----------
     const pulse = 0.5 + 0.5 * Math.sin(now / 280);
@@ -838,7 +832,8 @@ export class PuzzleScene {
       : step.type === 'force_match' ? '#5ec76a'
       : '#4a90e2';
     const speakerColor = step.speaker ? (SPEAKER_COLORS[step.speaker] ?? '#ffffff') : '';
-    const hasButton = step.type !== 'force_match' && step.type !== 'praise';
+    // force_match はセルクリックで進める。それ以外（explain / praise）はすべてボタン表示
+    const hasButton = step.type !== 'force_match';
     const isPraise = step.type === 'praise';
 
     // テキストを HTML エスケープしつつ改行を <br> に変換
