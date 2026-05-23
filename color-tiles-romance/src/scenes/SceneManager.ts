@@ -361,6 +361,25 @@ export class SceneManager {
       cleared: data.cleared
     });
 
+    // 章末ステージをクリアしたときに currentChapter を進める
+    if (data.cleared) {
+      const CHAPTER_LAST_STAGES: Record<string, number> = {
+        'ch00_tutorial2': 1,
+        'ch01_stage03': 2,
+        'ch02_stage03': 3,
+        'ch03_stage03': 4,
+        'ch04_stage03': 5,
+        'ch05_stage07': 6,
+      };
+      const nextChapter = CHAPTER_LAST_STAGES[data.stageId];
+      if (nextChapter !== undefined) {
+        const current = this.saveStore.getData().currentChapter;
+        if (nextChapter > current) {
+          this.saveStore.setCurrentChapter(nextChapter);
+        }
+      }
+    }
+
     const scene = new ResultScene(
       canvas,
       data,

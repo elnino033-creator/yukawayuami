@@ -6,7 +6,7 @@
 
 import type { ScenarioContext } from '@/store/progressStore';
 import { BgmManager } from '@/audio/BgmManager';
-import { playSe } from '@/audio/SeManager';
+import { playSe, playSeFile } from '@/audio/SeManager';
 
 /** 背景変更ステップ（null で背景をリセット） */
 export interface BgStep {
@@ -132,6 +132,9 @@ export class ScenarioPlayer {
   /** クリック/スペースキーのイベントリスナー（後でremoveするため保持） */
   private boundClick: (e: MouseEvent) => void;
   private boundKey: (e: KeyboardEvent) => void;
+  /** resizeリスナー（後でremoveするため保持） */
+  private boundResize: () => void;
+  private boundViewportResize: () => void;
 
   /**
    * @param container シナリオを描画するコンテナ要素
@@ -155,9 +158,11 @@ export class ScenarioPlayer {
     // 初回はブラウザのレイアウト確定後に実行する（getBoundingClientRect が 0 を返すのを防ぐ）
     requestAnimationFrame(() => this.resizeCanvas());
 
-    window.addEventListener('resize', () => this.resizeCanvas());
+    this.boundResize = () => this.resizeCanvas();
+    this.boundViewportResize = () => this.resizeCanvas();
+    window.addEventListener('resize', this.boundResize);
     // iOS Safari のアドレスバー表示切替など visualViewport 変化にも対応
-    window.visualViewport?.addEventListener('resize', () => this.resizeCanvas());
+    window.visualViewport?.addEventListener('resize', this.boundViewportResize);
 
     this.boundClick = (e: MouseEvent) => this.handleClick(e);
     this.boundKey = (e: KeyboardEvent) => this.handleKey(e);
@@ -225,7 +230,8 @@ export class ScenarioPlayer {
     this.stopBgm();
     this.canvas.removeEventListener('click', this.boundClick);
     window.removeEventListener('keydown', this.boundKey);
-    window.removeEventListener('resize', () => this.resizeCanvas());
+    window.removeEventListener('resize', this.boundResize);
+    window.visualViewport?.removeEventListener('resize', this.boundViewportResize);
     if (this.canvas.parentNode) {
       this.canvas.parentNode.removeChild(this.canvas);
     }
@@ -299,6 +305,8 @@ export class ScenarioPlayer {
       }
       this.advanceStep();
     } else if ('se' in step) {
+      // playSeFile でファイル再生を試み、内部生成器にも登録があれば playSe を併用する
+      playSeFile(step.se.src);
       playSe(step.se.src);
       this.advanceStep();
     } else if ('effect' in step) {
