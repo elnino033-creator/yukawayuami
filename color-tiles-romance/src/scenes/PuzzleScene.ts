@@ -313,17 +313,23 @@ export class PuzzleScene {
             }
           }
           break;
-        case 'miss':
-          soundEngine.playMiss();
-          this.missEffects.push({
-            cx: e.clickPoint.x,
-            cy: e.clickPoint.y,
-            startedAt: Date.now()
-          });
-          if (e.penaltySec > 0) {
-            this.spawnFloatText(`-${e.penaltySec}s`, '#ff5b6a');
+        case 'miss': {
+          // チュートリアルの force_match ステップ中はミス演出・ペナルティを抑制する
+          const inTutForceMatch = this.tutorial !== null &&
+            this.tutorial.steps[this.tutorial.currentIndex]?.type === 'force_match';
+          if (!inTutForceMatch) {
+            soundEngine.playMiss();
+            this.missEffects.push({
+              cx: e.clickPoint.x,
+              cy: e.clickPoint.y,
+              startedAt: Date.now()
+            });
+            if (e.penaltySec > 0) {
+              this.spawnFloatText(`-${e.penaltySec}s`, '#ff5b6a');
+            }
           }
           break;
+        }
         case 'shuffle':
           this.shuffleFlashUntil = Date.now() + 800;
           this.flashStatus('シャッフル！');
@@ -1079,8 +1085,19 @@ export class PuzzleScene {
     const m = Math.floor(sec / 60);
     const s = sec % 60;
     this.hudTimer.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-    this.hudTimer.classList.toggle('warn', sec <= 10 && sec > 0);
+    const wasWarn = this.hudTimer.classList.contains('warn');
+    const isWarn = sec <= 10 && sec > 0;
+    this.hudTimer.classList.toggle('warn', isWarn);
+    // 残り10秒になった瞬間からチクタク音を毎秒再生する
+    if (isWarn && !wasWarn) {
+      soundEngine.playTimeLow();
+    } else if (isWarn && wasWarn && s !== this._lastTimerSec) {
+      soundEngine.playTimeLow();
+    }
+    this._lastTimerSec = sec;
   }
+
+  private _lastTimerSec = -1;
 
   private flashStatus(text: string): void {
     this.hudStatus.textContent = text;

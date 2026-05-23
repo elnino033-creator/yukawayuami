@@ -82,7 +82,7 @@ const SE_GENERATORS: Record<string, (ac: AudioContext) => void> = {
  * @param filename public/assets/se/ 以下のファイル名（例: "se_cutin.mp3"）
  */
 export function playSeFile(filename: string, volume = 0.8): void {
-  const base = (typeof import.meta !== 'undefined' && (import.meta as { env?: { BASE_URL?: string } }).env?.BASE_URL) ?? '/';
+  const base = import.meta.env.BASE_URL ?? '/';
   const audio = new Audio(`${base}assets/se/${encodeURIComponent(filename)}`);
   audio.volume = volume;
   audio.play().catch(() => {});
