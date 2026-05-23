@@ -453,7 +453,7 @@ export class SceneManager {
       const scene = new EndRollScene(canvas, () => {
         void this.transition({ to: 'title' });
       });
-      this.currentScene = scene as unknown as import('@/scenes/NovelScene').NovelScene;
+      this.currentScene = scene;
       scene.start();
     });
   }
