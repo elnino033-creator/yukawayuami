@@ -38,6 +38,10 @@ export interface ScenarioSaveData {
   awaitingChoice?: boolean;
   /** 選択肢待機中のとき、選択肢の内容を保持 */
   pendingChoices?: ChoiceSnapshot[];
+  /** 選択肢と一緒に表示する直前のセリフ（話者名） */
+  choiceContextName?: string;
+  /** 選択肢と一緒に表示する直前のセリフ（本文） */
+  choiceContextBody?: string;
 }
 
 const STORAGE_KEY = 'ctr-scene-saves';
