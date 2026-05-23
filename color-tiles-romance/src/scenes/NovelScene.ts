@@ -139,7 +139,6 @@ export class NovelScene {
       this.isFFActive = !this.isFFActive;
       if (this.isFFActive) this.isAutoActive = false;
       this.player?.setFastForward(this.isFFActive);
-      if (this.isFFActive) this.player?.setAutoMode(false);
       this.syncButtonStates(bar);
     });
 
@@ -148,7 +147,6 @@ export class NovelScene {
       this.isAutoActive = !this.isAutoActive;
       if (this.isAutoActive) this.isFFActive = false;
       this.player?.setAutoMode(this.isAutoActive);
-      if (this.isAutoActive) this.player?.setFastForward(false);
       this.syncButtonStates(bar);
     });
   }
