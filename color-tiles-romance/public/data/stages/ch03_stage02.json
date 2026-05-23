@@ -25,5 +25,6 @@
     "count": 12
   },
   "preScenario": "ch03_s02_pre.json",
-  "puzzleBgm": "翠葉の迷宮.mp3"
+  "puzzleBgm": "翠葉の迷宮.mp3",
+  "postScenario": "ch03_s02_post.json"
 }

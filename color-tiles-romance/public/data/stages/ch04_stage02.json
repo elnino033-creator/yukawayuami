@@ -23,5 +23,6 @@
   "preScenario": "ch04_s02_pre.json",
   "puzzleBgm": "オレンジ宮殿.mp3",
   "bombCountdown": 15,
-  "bombPenaltySec": 20
+  "bombPenaltySec": 20,
+  "postScenario": "ch04_s02_post.json"
 }

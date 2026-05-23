@@ -20,5 +20,6 @@
     ]
   },
   "preScenario": "ch02_s02_pre.json",
-  "puzzleBgm": "氷鈴の世界.mp3"
+  "puzzleBgm": "氷鈴の世界.mp3",
+  "postScenario": "ch02_s02_post.json"
 }

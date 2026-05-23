@@ -8,12 +8,78 @@
   "missPenaltySec": 0,
   "hintCount": 3,
   "tilesLayout": [
-    [null, "red",                      null, null, null, "red",                      null, null, null],
-    [null, {"color":"red","type":"ice"},null, null, null, {"color":"red","type":"ice"},null, null, null],
-    [null, null, null, "blue",  null, null, "blue",  null, null],
-    ["green", null, null, null, "green", null, null, null, null],
-    [null, null, "yellow", null, null, null, "yellow", null, null],
-    [null, "purple", null, null, null, null, "purple", null, null]
+    [
+      null,
+      "red",
+      null,
+      null,
+      null,
+      "red",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      {
+        "color": "red",
+        "type": "ice"
+      },
+      null,
+      null,
+      null,
+      {
+        "color": "red",
+        "type": "ice"
+      },
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      "blue",
+      null,
+      null,
+      "blue",
+      null,
+      null
+    ],
+    [
+      "green",
+      null,
+      null,
+      null,
+      "green",
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      "yellow",
+      null,
+      null,
+      null,
+      "yellow",
+      null,
+      null
+    ],
+    [
+      null,
+      "purple",
+      null,
+      null,
+      null,
+      null,
+      "purple",
+      null,
+      null
+    ]
   ],
   "preScenario": "ch02_s01_pre.json",
   "tutorialSteps": [
@@ -22,8 +88,14 @@
       "speaker": "みお",
       "text": "あ、氷タイル（❄）だ！\n直接は消せないけど、隣の同じ色のタイルを消すとヒビが入るよ。\nヒビが入ったら、普通のタイルと同じように消せるから！",
       "highlightCells": [
-        { "x": 1, "y": 1 },
-        { "x": 5, "y": 1 }
+        {
+          "x": 1,
+          "y": 1
+        },
+        {
+          "x": 5,
+          "y": 1
+        }
       ]
     },
     {
@@ -31,13 +103,28 @@
       "speaker": "みお",
       "text": "まず赤いタイルのペアを消してみて！\n光ってるマスをクリックすればいいよ！",
       "highlightCells": [
-        { "x": 1, "y": 0 },
-        { "x": 5, "y": 0 }
+        {
+          "x": 1,
+          "y": 0
+        },
+        {
+          "x": 5,
+          "y": 0
+        }
       ],
       "allowedCells": [
-        { "x": 2, "y": 0 },
-        { "x": 3, "y": 0 },
-        { "x": 4, "y": 0 }
+        {
+          "x": 2,
+          "y": 0
+        },
+        {
+          "x": 3,
+          "y": 0
+        },
+        {
+          "x": 4,
+          "y": 0
+        }
       ]
     },
     {
@@ -45,8 +132,14 @@
       "speaker": "みお",
       "text": "ほら、ヒビが入ったでしょ？\nヒビ入り氷タイルは普通のタイルと同じように消せるよ。\n今度は氷タイルの間の空マスをクリックしてみて！",
       "highlightCells": [
-        { "x": 1, "y": 1 },
-        { "x": 5, "y": 1 }
+        {
+          "x": 1,
+          "y": 1
+        },
+        {
+          "x": 5,
+          "y": 1
+        }
       ]
     },
     {
@@ -54,13 +147,28 @@
       "speaker": "みお",
       "text": "ヒビ入り氷タイルを消そう！\n氷タイルの間の光ってる空マスをクリック！",
       "highlightCells": [
-        { "x": 1, "y": 1 },
-        { "x": 5, "y": 1 }
+        {
+          "x": 1,
+          "y": 1
+        },
+        {
+          "x": 5,
+          "y": 1
+        }
       ],
       "allowedCells": [
-        { "x": 2, "y": 1 },
-        { "x": 3, "y": 1 },
-        { "x": 4, "y": 1 }
+        {
+          "x": 2,
+          "y": 1
+        },
+        {
+          "x": 3,
+          "y": 1
+        },
+        {
+          "x": 4,
+          "y": 1
+        }
       ]
     },
     {
@@ -70,5 +178,6 @@
       "autoAdvanceMs": 2500
     }
   ],
-  "puzzleBgm": "氷鈴の世界.mp3"
+  "puzzleBgm": "氷鈴の世界.mp3",
+  "postScenario": "ch02_s01_post.json"
 }

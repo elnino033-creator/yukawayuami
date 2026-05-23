@@ -562,7 +562,12 @@ export class SceneManager {
             .replace(/^scenarios\//, '')
             .replace(/\.json$/, '');
           void this.mountNovelSceneWithCallback(sid, () => {
-            void this.transition({ to: 'result', resultData });
+            // BAD ルートが選ばれた場合はリザルトを出さずタイトルへ戻る
+            if (this.progressStore.getFlag('route_bad') > 0) {
+              void this.transition({ to: 'title' });
+            } else {
+              void this.transition({ to: 'result', resultData });
+            }
           });
         } else {
           void this.transition({ to: 'result', resultData });
