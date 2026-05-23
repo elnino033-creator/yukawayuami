@@ -39,12 +39,13 @@
 
   {"chara": {"id": "mashiro", "hide": true}},
   {"bg": null},
-  {"bgm": "Hollow Underfloor.mp3"},
+  {"bgm": null},
   {"effect": {"type": "fade", "duration": 800}},
 
-  {"text": {"name": "主人公", "body": "（……この温もりが、この鮮やかな色彩が、永遠に続くと信じて疑わなかった）"}},
+  {"text": {"name": "", "body": "……この温もりが、この鮮やかな色彩が、永遠に続くと信じて疑わなかった"}},
 
   {"text": {"name": "", "body": "けれど、世界は僕が思っているよりもずっと残酷で、ひどく脆いキャンバスで出来ていた。"}},
+  {"bgm": "Hollow Underfloor.mp3"},
   {"text": {"name": "", "body": "理不尽は、ひどく静かに訪れた。"}},
   {"se": {"src": "se_ambulance.mp3"}},
   {"text": {"name": "", "body": "そう、何の前触れもなく、彼女の時間は止まり、二度と目を覚まさなくなった。"}},
