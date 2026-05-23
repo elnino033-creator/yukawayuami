@@ -100,10 +100,7 @@ export class TitleScene {
    */
   start(): void {
     BgmManager.stop();
-    this.handleResize();
-    this.buildButtons();
-    this.initPetals();
-    this.loadBgImage();
+    this.handleResize(); // buildButtons / initPetals / loadBgImage を内包
     this.startRenderLoop();
     this.bgmAudio = new Audio(`${import.meta.env.BASE_URL}assets/bgm/${encodeURIComponent('妖精の小径.mp3')}`);
     this.bgmAudio.loop = true;
@@ -134,14 +131,30 @@ export class TitleScene {
 
   // ---------- プライベートメソッド ----------
 
+  /** スマートフォン（縦向き・タッチデバイス）かどうかを判定する */
+  private isSmartphone(): boolean {
+    const ua = navigator.userAgent;
+    const isMobileUA = /Android|iPhone|iPod|Windows Phone/i.test(ua);
+    const isCoarsePointer = window.matchMedia?.('(pointer: coarse)').matches ?? false;
+    const isNarrow = window.innerWidth <= 768;
+    return isMobileUA || (isCoarsePointer && isNarrow);
+  }
+
   private loadBgImage(): void {
+    const filename = this.isSmartphone() ? 'title_bg_phone.jpg' : 'title_bg.jpg';
     const img = new Image();
     img.onload = () => {
       this.bgImage = img;
     };
-    img.onerror = () => { // フォールバックとして渐変背景を使用
+    img.onerror = () => {
+      // スマートフォン用画像が存在しない場合はPC用にフォールバック
+      if (filename !== 'title_bg.jpg') {
+        const fallback = new Image();
+        fallback.onload = () => { this.bgImage = fallback; };
+        fallback.src = `${import.meta.env.BASE_URL}assets/bg/title_bg.jpg`;
+      }
     };
-    img.src = `${import.meta.env.BASE_URL}assets/bg/title_bg.jpg`;
+    img.src = `${import.meta.env.BASE_URL}assets/bg/${filename}`;
   }
 
   private initPetals(): void {
@@ -175,6 +188,8 @@ export class TitleScene {
     }
     this.buildButtons();
     this.initPetals();
+    // 画面回転などで端末種別が変わった場合に背景を再読み込み
+    this.loadBgImage();
   }
 
   private buildButtons(): void {

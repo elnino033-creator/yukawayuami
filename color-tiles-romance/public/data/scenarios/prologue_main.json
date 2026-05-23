@@ -2,39 +2,37 @@
   {"bgm": "氷鈴の追憶_monokuro.mp3"},
   {"bg": "sidewalk"},
 
-  {"text": {"name": "", "body": "── 1. 過去回想：水溜まりの空 ──"}},
-
   {"text": {"name": "", "body": "雨は、僕たちのデートが終わるのを待っていたかのように、きれいに上がった。"}},
   {"text": {"name": "", "body": "洗い流されたばかりの空気はひどく澄んでいて、西の空から差し込む斜光が、世界の輪郭を一本一本、金色の絵の具で縁取っていくようだった。"}},
   {"text": {"name": "", "body": "僕の少し前を、弾むような足取りで歩く少女──真白（ましろ）。"}},
   {"text": {"name": "", "body": "彼女の白いワンピースの裾が、夕風に揺れて柔らかな軌跡を描く。その姿を見つめているだけで、僕の脳裏には新しいデザインのアイデアが、色彩の洪水となって溢れ出してくる。彼女は僕にとって、文字通り『ミューズ（インスピレーションの源）』だった。"}},
 
-  {"chara": {"id": "mashiro", "expr": "happy", "pos": "right", "show": true}},
+  {"chara": {"id": "mashiro", "expr": "happy", "pos": "center", "show": true}},
   {"text": {"name": "真白", "body": "あ、見て見て！　すごいよ、これ！"}},
 
   {"text": {"name": "", "body": "真白が不意に足を止め、振り返って僕を呼ぶ。"}},
   {"text": {"name": "", "body": "彼女が指差したのは、歩道の窪みにできた、驚くほど大きな水溜まりだった。"}},
 
   {"text": {"name": "主人公", "body": "どうしたんだよ、急に立ち止まって"}},
-  {"chara": {"id": "mashiro", "expr": "smile", "pos": "right", "show": true}},
+  {"chara": {"id": "mashiro", "expr": "smile", "pos": "center", "show": true}},
   {"text": {"name": "真白", "body": "ほら、覗き込んでみて。世界がひっくり返ってる"}},
 
   {"text": {"name": "", "body": "言われるがままに足元を見ると、波紋ひとつない水面に、燃えるような夕焼け空と、ちぎれ雲が鏡のように映り込んでいた。"}},
 
-  {"chara": {"id": "mashiro", "expr": "normal", "pos": "right", "show": true}},
+  {"chara": {"id": "mashiro", "expr": "normal", "pos": "center", "show": true}},
   {"text": {"name": "真白", "body": "ねえ、もしさ……雲が地面だったら、どうなると思う？"}},
   {"text": {"name": "主人公", "body": "雲が地面？　そうだな……歩くたびに足元から綿菓子みたいな煙が立って、歩きづらそうだな"}},
-  {"chara": {"id": "mashiro", "expr": "smile", "pos": "right", "show": true}},
+  {"chara": {"id": "mashiro", "expr": "smile", "pos": "center", "show": true}},
   {"text": {"name": "真白", "body": "ふふ、現実的だなぁ。じゃあ、雨は上に向かって降るのかな？　傘は足元にささないと、スカートが濡れちゃうね"}},
   {"text": {"name": "主人公", "body": "それは奇妙な光景だな。でも……面白い。デザインのモチーフになりそうだ。重力が反転した都市、色彩が下から湧き上がる世界……"}},
-  {"chara": {"id": "mashiro", "expr": "happy", "pos": "right", "show": true}},
+  {"chara": {"id": "mashiro", "expr": "happy", "pos": "center", "show": true}},
   {"text": {"name": "真白", "body": "あははっ！　何それ、素敵！　ねぇ、帰ったら絶対それ描いてよ。あなたにしか描けない、世界で一番温かい色でさ"}},
 
   {"text": {"name": "", "body": "真白はそう言って、悪戯っぽく、けれど心底愛おしそうに目を細めて笑った。"}},
   {"text": {"name": "", "body": "彼女の笑顔を見るたびに、僕の心には、言葉にできない熱が灯る。この熱がある限り、僕はどんな絵だって描ける。どんな色だって作れる。そんな全能感すら抱いていた。"}},
 
   {"text": {"name": "主人公", "body": "ああ。帰ったらすぐに、パレットを引っ張り出すよ"}},
-  {"chara": {"id": "mashiro", "expr": "smile", "pos": "right", "show": true}},
+  {"chara": {"id": "mashiro", "expr": "smile", "pos": "center", "show": true}},
   {"text": {"name": "真白", "body": "約束ね。楽しみにしてる"}},
 
   {"text": {"name": "", "body": "差し出された彼女の小さな手を、僕は強く握り返した。柔らかくて、火傷しそうなほど温かい。"}},
@@ -44,12 +42,11 @@
   {"bgm": "Hollow Underfloor.mp3"},
   {"effect": {"type": "fade", "duration": 800}},
 
-  {"text": {"name": "", "body": "── 2. 喪失のモノローグ：キャンバスの余白 ──"}},
-
   {"text": {"name": "主人公", "body": "（……この温もりが、この鮮やかな色彩が、永遠に続くと信じて疑わなかった）"}},
 
   {"text": {"name": "", "body": "けれど、世界は僕が思っているよりもずっと残酷で、ひどく脆いキャンバスで出来ていた。"}},
   {"text": {"name": "", "body": "理不尽は、ひどく静かに訪れた。"}},
+  {"se": {"src": "se_ambulance.mp3"}},
   {"text": {"name": "", "body": "そう、何の前触れもなく、彼女の時間は止まり、二度と目を覚まさなくなった。"}},
 
   {"text": {"name": "", "body": "あの事故の生々しい記憶すら、今の僕にはひどく曖昧だ。"}},
@@ -62,8 +59,6 @@
   {"text": {"name": "主人公", "body": "（あの日約束した絵は、永遠に完成しないまま……僕の心の奥底で、重く、冷たい黒で塗り潰された）"}},
 
   {"effect": {"type": "fade", "duration": 600}},
-
-  {"text": {"name": "", "body": "── 3. 現実世界への目覚め：灰色の日常 ──"}},
 
   {"se": {"src": "se_phone_vibration.mp3"}},
   {"text": {"name": "", "body": "── 07:30 ──"}},
