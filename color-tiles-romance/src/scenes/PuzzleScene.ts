@@ -64,8 +64,10 @@ interface TutorialState {
   steps: TutorialStep[];
   currentIndex: number;
   stepStartTime: number;
-  /** "次へ" ボタンの canvas ピクセル矩形（描画後にセット）*/
+  /** "次へ" ボタンの canvas ピクセル矩形（canvas内クリック判定用）*/
   nextButtonRect: { x: number; y: number; w: number; h: number } | null;
+  /** DOM描画用のコンテナ要素 */
+  el: HTMLElement;
 }
 
 /**
@@ -99,6 +101,9 @@ export class PuzzleScene {
   private hudHint: HTMLElement;
   private hudStatus: HTMLElement;
 
+  /** チュートリアルダイアログを描画するDOM要素（canvas外・パズルエリア下） */
+  private tutorialDomEl: HTMLElement | null = null;
+
   constructor(
     canvas: HTMLCanvasElement,
     hud: {
@@ -107,7 +112,8 @@ export class PuzzleScene {
       combo: HTMLElement;
       hint: HTMLElement;
       status: HTMLElement;
-    }
+    },
+    tutorialEl?: HTMLElement
   ) {
     this.canvas = canvas;
     const ctx = canvas.getContext('2d');
@@ -119,6 +125,7 @@ export class PuzzleScene {
     this.hudCombo = hud.combo;
     this.hudHint = hud.hint;
     this.hudStatus = hud.status;
+    this.tutorialDomEl = tutorialEl ?? null;
 
     this.attachInputHandlers();
     this.attachEngineEvents();
@@ -136,8 +143,10 @@ export class PuzzleScene {
     this.shuffleFlashUntil = 0;
     this.timeUpFlashUntil = 0;
     this.bombFlashUntil = 0;
+    if (this.tutorialDomEl) this.tutorialDomEl.innerHTML = '';
+    const tutEl = this.tutorialDomEl ?? this.createFallbackTutorialEl();
     this.tutorial = stage.tutorialSteps && stage.tutorialSteps.length > 0
-      ? { steps: stage.tutorialSteps, currentIndex: 0, stepStartTime: Date.now(), nextButtonRect: null }
+      ? { steps: stage.tutorialSteps, currentIndex: 0, stepStartTime: Date.now(), nextButtonRect: null, el: tutEl }
       : null;
     this.cutIn = null;
     this.hudStatus.textContent = `${stage.title}`;
@@ -725,40 +734,47 @@ export class PuzzleScene {
     this.tutorial.stepStartTime = Date.now();
     this.tutorial.nextButtonRect = null;
     if (this.tutorial.currentIndex >= this.tutorial.steps.length) {
+      // チュートリアル終了 → DOM ダイアログを非表示にしてタイマー再開
+      if (this.tutorial.el) this.tutorial.el.style.display = 'none';
       this.tutorial = null;
-      this.engine.timer.resume(); // チュートリアル終了 → タイマー再開
+      this._tutDomLastIndex = -1;
+      this.engine.timer.resume();
     } else {
       const step = this.tutorial.steps[this.tutorial.currentIndex];
       if (step.type === 'force_match') {
-        this.engine.timer.resume(); // プレイヤー操作が必要なステップ → タイマー再開
+        // force_match 中はダイアログを非表示（セルをクリックさせる）
+        if (this.tutorial.el) this.tutorial.el.style.display = 'none';
+        this.engine.timer.resume();
       } else {
         this.engine.timer.pause(); // explain/praise → タイマー停止
       }
     }
   }
 
-  /** "次へ" ボタンのクリック判定。ボタンを押したら true を返す */
-  private handleTutorialClick(clientX: number, clientY: number): boolean {
-    if (!this.tutorial || !this.tutorial.nextButtonRect) return false;
+  /**
+   * チュートリアル中のキャンバスクリック判定。
+   * explain/praise ステップはゲーム入力をブロックするため true を返す。
+   * force_match ステップは false を返してセルクリック処理へ続く。
+   */
+  private handleTutorialClick(_clientX: number, _clientY: number): boolean {
+    if (!this.tutorial) return false;
     const step = this.tutorial.steps[this.tutorial.currentIndex];
-    if (step.type === 'force_match') return false;
-
-    const rect = this.canvas.getBoundingClientRect();
-    const scaleX = this.canvas.width / rect.width;
-    const scaleY = this.canvas.height / rect.height;
-    const cx = (clientX - rect.left) * scaleX;
-    const cy = (clientY - rect.top) * scaleY;
-
-    const btn = this.tutorial.nextButtonRect;
-    if (cx >= btn.x && cx <= btn.x + btn.w && cy >= btn.y && cy <= btn.y + btn.h) {
-      this.advanceTutorial();
-      return true;
-    }
-    return false;
+    // explain/praise はキャンバスクリックをブロック（"次へ"はDOMボタンで処理）
+    return step.type !== 'force_match';
   }
 
+  /** チュートリアル DOM ダイアログの最後に描画したステップ番号 */
+  private _tutDomLastIndex = -1;
+
+  /** チュートリアルオーバーレイ：Canvas側はセル強調のみ、ダイアログはDOM描画 */
   private drawTutorialOverlay(now: number): void {
-    if (!this.tutorial) return;
+    if (!this.tutorial) {
+      // チュートリアル終了時に DOM を非表示
+      if (this.tutorial === null && this.tutorialDomEl) {
+        this.tutorialDomEl.style.display = 'none';
+      }
+      return;
+    }
     const step = this.tutorial.steps[this.tutorial.currentIndex];
 
     // praise ステップの自動進行
@@ -769,15 +785,10 @@ export class PuzzleScene {
       }
     }
 
-    const w = this.canvas.width;
-    const h = this.canvas.height;
-
-    // 半透明オーバーレイ
-    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.52)';
-    this.ctx.fillRect(0, 0, w, h);
+    // ---------- Canvas側：セル強調のみ ----------
+    const pulse = 0.5 + 0.5 * Math.sin(now / 280);
 
     // ハイライトセル（指定タイルに黄色の枠と光彩）
-    const pulse = 0.5 + 0.5 * Math.sin(now / 280);
     if (step.highlightCells && step.highlightCells.length > 0) {
       for (const cell of step.highlightCells) {
         const p = this.cellToPixel(cell.x, cell.y);
@@ -802,7 +813,18 @@ export class PuzzleScene {
       }
     }
 
-    // 話者カラーマップ
+    // ---------- DOM側：ダイアログ描画（ステップが変わったときのみ更新）----------
+    if (this._tutDomLastIndex !== this.tutorial.currentIndex) {
+      this._tutDomLastIndex = this.tutorial.currentIndex;
+      this.renderTutorialDom(step);
+    }
+  }
+
+  /** チュートリアルダイアログをDOM要素として描画する */
+  private renderTutorialDom(step: TutorialStep): void {
+    const el = this.tutorial?.el;
+    if (!el) return;
+
     const SPEAKER_COLORS: Record<string, string> = {
       '主人公': '#b0b8cc',
       'みお':   '#4a90e2',
@@ -812,113 +834,79 @@ export class PuzzleScene {
       'あかり': '#ff8fb1',
     };
 
-    // レイアウト定数
-    const FONT_SIZE = 15;
-    const LINE_H = 26;
-    const BOX_PAD = 18;
-    const BTN_H = 36;
-    const BTN_GAP = 10;
-    const NAME_H = 28;
-    const boxX = 10;
-    const boxW = w - 20;
+    const borderColor = step.type === 'praise' ? '#ffd234'
+      : step.type === 'force_match' ? '#5ec76a'
+      : '#4a90e2';
+    const speakerColor = step.speaker ? (SPEAKER_COLORS[step.speaker] ?? '#ffffff') : '';
+    const hasButton = step.type !== 'force_match' && step.type !== 'praise';
+    const isPraise = step.type === 'praise';
 
-    // テキスト折り返し（\n 改行 + 幅超過で自動折り返し）
-    this.ctx.font = `${FONT_SIZE}px sans-serif`;
-    const maxTextW = boxW - BOX_PAD * 2;
-    const rawLines = step.text.split('\n');
-    const wrappedLines: string[] = [];
-    for (const raw of rawLines) {
-      wrappedLines.push(...this.wrapTextLine(raw, maxTextW));
+    // テキストを HTML エスケープしつつ改行を <br> に変換
+    const escapeHtml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const bodyHtml = escapeHtml(step.text).replace(/\n/g, '<br>');
+
+    el.style.display = 'block';
+    el.innerHTML = `
+      <div style="
+        background:rgba(20,24,44,0.97);
+        border:2px solid ${borderColor};
+        border-radius:12px;
+        padding:14px 18px 14px 18px;
+        margin:0;
+        position:relative;
+        box-shadow:0 2px 12px rgba(0,0,0,0.5);
+      ">
+        ${step.speaker ? `
+          <div style="
+            display:inline-block;
+            background:rgba(20,24,44,0.97);
+            border:2px solid ${speakerColor};
+            border-radius:6px;
+            padding:3px 14px;
+            color:${speakerColor};
+            font:bold 13px sans-serif;
+            margin-bottom:8px;
+          ">${escapeHtml(step.speaker)}</div>
+        ` : ''}
+        <div style="
+          color:#fff;
+          font:15px/1.7 sans-serif;
+          white-space:pre-wrap;
+          word-break:break-all;
+        ">${bodyHtml}</div>
+        ${hasButton ? `
+          <div style="text-align:right;margin-top:10px;">
+            <button id="_tut_next_btn" style="
+              background:${isPraise ? '#ffd234' : '#4a90e2'};
+              color:${isPraise ? '#1c1f2a' : '#fff'};
+              border:none;border-radius:8px;
+              padding:8px 20px;
+              font:bold 14px sans-serif;
+              cursor:pointer;
+              touch-action:manipulation;
+            ">次へ ▶</button>
+          </div>
+        ` : ''}
+      </div>
+    `;
+
+    // ボタンのクリックイベントを登録
+    const btn = el.querySelector<HTMLButtonElement>('#_tut_next_btn');
+    if (btn) {
+      btn.addEventListener('click', () => this.advanceTutorial());
+      btn.addEventListener('touchend', (e) => { e.preventDefault(); this.advanceTutorial(); });
     }
+  }
 
-    const hasButton = step.type !== 'force_match';
-    const textH = wrappedLines.length * LINE_H;
-    const boxH = BOX_PAD + textH + (hasButton ? BTN_GAP + BTN_H + BOX_PAD : BOX_PAD);
-    const hasSpeaker = !!step.speaker;
-    const boxY = h - boxH - 10 - (hasSpeaker ? NAME_H + 2 : 0);
-
-    // ネームプレート（話者名）
-    if (hasSpeaker && step.speaker) {
-      const speakerColor = SPEAKER_COLORS[step.speaker] ?? '#ffffff';
-      const nameW = Math.max(90, this.ctx.measureText(step.speaker).width + 32);
-      const nameX = boxX + 14;
-      const nameY = boxY;
-      this.ctx.fillStyle = 'rgba(20, 24, 44, 0.96)';
-      this.drawRoundRect(nameX, nameY, nameW, NAME_H, 6);
-      this.ctx.fill();
-      this.ctx.strokeStyle = speakerColor;
-      this.ctx.lineWidth = 2;
-      this.drawRoundRect(nameX, nameY, nameW, NAME_H, 6);
-      this.ctx.stroke();
-      this.ctx.fillStyle = speakerColor;
-      this.ctx.font = 'bold 14px sans-serif';
-      this.ctx.textAlign = 'center';
-      this.ctx.textBaseline = 'middle';
-      this.ctx.fillText(step.speaker, nameX + nameW / 2, nameY + NAME_H / 2);
-    }
-
-    const textBoxY = hasSpeaker ? boxY + NAME_H + 2 : boxY;
-
-    // ボックス背景と枠線
-    this.ctx.fillStyle = 'rgba(20, 24, 44, 0.96)';
-    this.drawRoundRect(boxX, textBoxY, boxW, boxH, 12);
-    this.ctx.fill();
-    this.ctx.strokeStyle = step.type === 'praise' ? '#ffd234' : step.type === 'force_match' ? '#5ec76a' : '#4a90e2';
-    this.ctx.lineWidth = 2;
-    this.drawRoundRect(boxX, textBoxY, boxW, boxH, 12);
-    this.ctx.stroke();
-
-    // テキスト描画
-    this.ctx.fillStyle = '#ffffff';
-    this.ctx.font = `${FONT_SIZE}px sans-serif`;
-    this.ctx.textAlign = 'left';
-    this.ctx.textBaseline = 'top';
-    wrappedLines.forEach((line, i) => {
-      this.ctx.fillText(line, boxX + BOX_PAD, textBoxY + BOX_PAD + i * LINE_H);
-    });
-
-    // "次へ" ボタン（explain / praise のみ）
-    if (hasButton) {
-      const btnW = 90;
-      const btnX = boxX + boxW - btnW - BOX_PAD;
-      const btnY = textBoxY + boxH - BTN_H - BOX_PAD;
-
-      this.ctx.fillStyle = step.type === 'praise' ? '#ffd234' : '#4a90e2';
-      this.drawRoundRect(btnX, btnY, btnW, BTN_H, 8);
-      this.ctx.fill();
-
-      this.ctx.fillStyle = step.type === 'praise' ? '#1c1f2a' : '#ffffff';
-      this.ctx.font = 'bold 14px sans-serif';
-      this.ctx.textAlign = 'center';
-      this.ctx.textBaseline = 'middle';
-      this.ctx.fillText('次へ ▶', btnX + btnW / 2, btnY + BTN_H / 2);
-
-      if (this.tutorial) {
-        this.tutorial.nextButtonRect = { x: btnX, y: btnY, w: btnW, h: BTN_H };
-      }
-    } else if (this.tutorial) {
-      this.tutorial.nextButtonRect = null;
-    }
+  /** tutorialDomEl が渡されなかった場合のフォールバック（canvas直下に挿入） */
+  private createFallbackTutorialEl(): HTMLElement {
+    const div = document.createElement('div');
+    div.style.cssText = 'width:100%;padding:0 8px;box-sizing:border-box;margin-top:6px;';
+    this.canvas.parentNode?.insertBefore(div, this.canvas.nextSibling);
+    return div;
   }
 
   /** 1行のテキストを maxWidth に収まるよう文字単位で折り返す */
-  private wrapTextLine(text: string, maxWidth: number): string[] {
-    if (!text) return [''];
-    const result: string[] = [];
-    let current = '';
-    for (const char of text) {
-      const candidate = current + char;
-      if (this.ctx.measureText(candidate).width > maxWidth && current.length > 0) {
-        result.push(current);
-        current = char;
-      } else {
-        current = candidate;
-      }
-    }
-    if (current) result.push(current);
-    return result.length > 0 ? result : [''];
-  }
-
   private drawCutIn(now: number): void {
     if (!this.cutIn) return;
     // 500ms スライドイン → 900ms ホールド → 300ms クイックフェード
@@ -1035,20 +1023,6 @@ export class PuzzleScene {
 
     this.ctx.globalAlpha = 1;
     this.ctx.textAlign = 'center';
-  }
-
-  private drawRoundRect(x: number, y: number, w: number, h: number, r: number): void {
-    this.ctx.beginPath();
-    this.ctx.moveTo(x + r, y);
-    this.ctx.lineTo(x + w - r, y);
-    this.ctx.arcTo(x + w, y, x + w, y + r, r);
-    this.ctx.lineTo(x + w, y + h - r);
-    this.ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
-    this.ctx.lineTo(x + r, y + h);
-    this.ctx.arcTo(x, y + h, x, y + h - r, r);
-    this.ctx.lineTo(x, y + r);
-    this.ctx.arcTo(x, y, x + r, y, r);
-    this.ctx.closePath();
   }
 
   private cleanupExpired(now: number): void {
