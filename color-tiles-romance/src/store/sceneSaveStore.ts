@@ -12,6 +12,14 @@ export interface CharaSnapshot {
   y: number;
 }
 
+/** 選択肢スナップショット（セーブ用） */
+export interface ChoiceSnapshot {
+  label: string;
+  flag?: string;
+  value?: number;
+  next?: string;
+}
+
 /** シナリオセーブデータ（1スロット） */
 export interface ScenarioSaveData {
   slot: number;
@@ -26,6 +34,10 @@ export interface ScenarioSaveData {
   readLines: string[];
   savedAt: string;       // ISO 8601
   previewText: string;   // up to 40 chars for slot preview
+  /** 選択肢待機中フラグ。ロード時に選択肢を復元するために使用 */
+  awaitingChoice?: boolean;
+  /** 選択肢待機中のとき、選択肢の内容を保持 */
+  pendingChoices?: ChoiceSnapshot[];
 }
 
 const STORAGE_KEY = 'ctr-scene-saves';

@@ -301,7 +301,12 @@ export class ScenarioPlayer {
       displayedText: this.displayedText,
       flags: { ...this.context.flags },
       readLines: [...this.context.readLines],
-      previewText: (this.displayedText || this.currentName || '').slice(0, 40)
+      previewText: (this.displayedText || this.currentName || '').slice(0, 40),
+      // 選択肢表示中のセーブに対応：選択肢内容を保持してロード時に復元できるようにする
+      awaitingChoice: this.awaitingChoice || undefined,
+      pendingChoices: this.awaitingChoice
+        ? this.choiceButtons.map(b => ({ label: b.label, flag: b.flag, value: b.value, next: b.next }))
+        : undefined,
     };
   }
 
@@ -354,6 +359,12 @@ export class ScenarioPlayer {
     // Restore context
     this.context.flags = { ...state.flags };
     this.context.readLines = new Set(state.readLines);
+
+    // 選択肢待機中のセーブを復元：選択肢ボタンを再構築して awaitingChoice を true にする
+    if (state.awaitingChoice && state.pendingChoices && state.pendingChoices.length > 0) {
+      this.awaitingChoice = true;
+      this.buildChoiceButtons(state.pendingChoices);
+    }
   }
 
   /**
