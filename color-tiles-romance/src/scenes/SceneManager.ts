@@ -299,9 +299,15 @@ export class SceneManager {
     // pointerToCell は getBoundingClientRect() でスケールを補正するので座標ずれなし
     canvas.style.cssText = 'margin:auto;display:block;max-width:100%;height:auto;';
     wrapper.appendChild(canvas);
+
+    // チュートリアルダイアログ用 DOM（パズルキャンバスの下に配置）
+    const tutorialDiv = document.createElement('div');
+    tutorialDiv.style.cssText = 'width:100%;max-width:600px;padding:0 8px;box-sizing:border-box;margin:6px auto 0;display:none;';
+    wrapper.appendChild(tutorialDiv);
+
     this.appContainer.appendChild(wrapper);
 
-    const scene = new PuzzleScene(canvas, hud);
+    const scene = new PuzzleScene(canvas, hud, tutorialDiv);
 
     // 解検証（24枚以下のみ）
     let count = 0;

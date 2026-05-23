@@ -38,6 +38,11 @@ export interface CharaStep {
     hide?: boolean;
     /** 表示スケール倍率（省略時 1.0）*/
     scale?: number;
+    /**
+     * 縦位置（0.0=画面上端に画像の上端を合わせる, 1.0=画面下端に画像の下端を合わせる）
+     * 省略時は 1.0（下固定・通常キャラの立ち絵向け）
+     */
+    y?: number;
   };
 }
 
@@ -72,6 +77,8 @@ interface CharaState {
   pos: 'left' | 'center' | 'right';
   color: string;
   scale: number;
+  /** 縦位置 (0〜1, 省略時 1.0) */
+  y: number;
 }
 
 /** キャラクターIDに対応するプレースホルダ色 */
@@ -391,12 +398,14 @@ export class ScenarioPlayer {
     const existing = this.characters.find(c => c.id === charaData.id);
     const color = CHARA_COLORS[charaData.id] ?? CHARA_COLORS['default']!;
     const scale = charaData.scale ?? 1.0;
+    const y = charaData.y ?? 1.0;
     if (existing) {
       existing.expr = charaData.expr;
       existing.pos = charaData.pos ?? existing.pos;
       existing.scale = scale;
+      existing.y = y;
     } else {
-      this.characters.push({ id: charaData.id, expr: charaData.expr, pos: charaData.pos ?? 'center', color, scale });
+      this.characters.push({ id: charaData.id, expr: charaData.expr, pos: charaData.pos ?? 'center', color, scale, y });
     }
   }
 
@@ -568,7 +577,8 @@ export class ScenarioPlayer {
         const charaScale = Math.min(scaleByH, scaleByW) * (chara.scale ?? 1.0);
         const displayH = img.naturalHeight * charaScale;
         const displayW = img.naturalWidth * charaScale;
-        const spriteY = h - displayH;
+        // y: 0=上端基準, 1=下端基準（デフォルト1.0 = 画面下ぴったり）
+        const spriteY = (h - displayH) * (chara.y ?? 1.0);
         this.ctx.drawImage(img, cx - displayW / 2, spriteY, displayW, displayH);
       } else {
         // 画像未ロード時のプレースホルダ（縦長の色付き矩形）
