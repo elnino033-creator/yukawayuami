@@ -218,13 +218,39 @@ export class ScenarioPlayer {
   /** 早送りモード（テキスト即表示・自動進行）のON/OFF */
   setFastForward(v: boolean): void {
     this.isFastForward = v;
-    if (v) this.isAutoMode = false; // mutually exclusive in UI
+    if (v) {
+      this.isAutoMode = false;
+      // 現在タイプライタ中なら即完了してスケジュール
+      if (this.isTyping) {
+        this.finishTyping();
+      } else if (this.targetText && !this.awaitingChoice) {
+        // テキスト表示済みで待機中なら即自動進行
+        this.scheduleAutoAdvance(80);
+      }
+    } else {
+      // OFFにしたときはタイマーをキャンセル
+      if (this.autoAdvanceTimer !== null) {
+        clearTimeout(this.autoAdvanceTimer);
+        this.autoAdvanceTimer = null;
+      }
+    }
   }
 
   /** オートモード（テキスト表示後2.5秒で自動進行）のON/OFF */
   setAutoMode(v: boolean): void {
     this.isAutoMode = v;
-    if (v) this.isFastForward = false;
+    if (v) {
+      this.isFastForward = false;
+      // テキスト表示済みで待機中なら即タイマー開始
+      if (!this.isTyping && this.targetText && !this.awaitingChoice) {
+        this.scheduleAutoAdvance(2500);
+      }
+    } else {
+      if (this.autoAdvanceTimer !== null) {
+        clearTimeout(this.autoAdvanceTimer);
+        this.autoAdvanceTimer = null;
+      }
+    }
   }
 
   /** 現在のログを返す */
