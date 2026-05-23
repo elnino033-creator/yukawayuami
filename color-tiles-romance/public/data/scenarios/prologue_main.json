@@ -61,6 +61,8 @@
 
   {"effect": {"type": "fade", "duration": 600}},
 
+  {"bg": "home_am"},
+  {"bgm": "bgm_piano_gentle_morning"},
   {"se": {"src": "se_phone_vibration.mp3"}},
   {"text": {"name": "", "body": "── 07:30 ──"}},
 

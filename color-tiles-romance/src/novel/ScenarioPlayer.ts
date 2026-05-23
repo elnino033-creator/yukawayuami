@@ -212,8 +212,26 @@ export class ScenarioPlayer {
   /** シナリオIDをセットする（セーブ用） */
   setScenarioId(id: string): void { this.currentScenarioId = id; }
 
-  /** スキップモード（既読行を自動スキップ）のON/OFF */
-  setSkipMode(v: boolean): void { this.isSkipping = v; }
+  /**
+   * スキップモード（次の選択肢 or シナリオ終了まで自動で飛ばす）のON/OFF。
+   * true にした瞬間、現在のテキスト待機・タイプライタ中であっても即進行する。
+   */
+  setSkipMode(v: boolean): void {
+    this.isSkipping = v;
+    if (v) {
+      this.isFastForward = false;
+      this.isAutoMode = false;
+      if (this.autoAdvanceTimer !== null) { clearTimeout(this.autoAdvanceTimer); this.autoAdvanceTimer = null; }
+      if (this.typewriterTimer !== null) { clearTimeout(this.typewriterTimer); this.typewriterTimer = null; }
+      this.isTyping = false;
+      // 現在テキスト待機中なら即スキップ開始
+      if (!this.awaitingChoice && this.targetText) {
+        this.targetText = '';
+        this.displayedText = '';
+        this.advanceStep();
+      }
+    }
+  }
 
   /** 早送りモード（テキスト即表示・自動進行）のON/OFF */
   setFastForward(v: boolean): void {
@@ -499,8 +517,12 @@ export class ScenarioPlayer {
       playSe(step.se.src);
       this.advanceStep();
     } else if ('effect' in step) {
-      // エフェクトは duration 後に自動進行
-      setTimeout(() => this.advanceStep(), step.effect.duration);
+      if (this.isSkipping) {
+        // スキップ中はエフェクト待機をスキップ
+        this.advanceStep();
+      } else {
+        setTimeout(() => this.advanceStep(), step.effect.duration);
+      }
     } else if ('chara' in step) {
       const c = step.chara;
       if (c.hide) {
@@ -533,15 +555,11 @@ export class ScenarioPlayer {
       this.choiceButtons = [];
       this.awaitingChoice = false;
 
-      // Skip mode: auto-advance already-read lines without displaying
-      if (this.isSkipping && isRead) {
-        this.context.readLines.add(lineId);
+      // スキップモード：既読・未読を問わずすべての行を飛ばす
+      if (this.isSkipping) {
+        if (!isRead) this.context.readLines.add(lineId);
         this.advanceStep();
         return;
-      }
-      // Skip mode stops at first unread line
-      if (this.isSkipping && !isRead) {
-        this.isSkipping = false;
       }
 
       // Add to log
