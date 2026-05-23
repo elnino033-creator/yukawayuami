@@ -382,6 +382,8 @@ export class NovelScene {
       // 選択肢待機中のセーブを正しく復元する
       awaitingChoice: save.awaitingChoice,
       pendingChoices: save.pendingChoices,
+      choiceContextName: save.choiceContextName,
+      choiceContextBody: save.choiceContextBody,
     });
 
     // Reset button states

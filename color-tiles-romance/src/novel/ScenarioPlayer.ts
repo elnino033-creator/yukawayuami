@@ -184,6 +184,12 @@ export class ScenarioPlayer {
   /** セーブ用BGMキー */
   private currentBgmKey: string | null = null;
 
+  /** 選択肢表示時に使う直前セリフのコンテキスト（選択肢と一緒にテキスト欄に表示） */
+  private choiceContextName = '';
+  private choiceContextBody = '';
+  /** 選択肢の生データ（キャンバスリサイズ時にレイアウトを再計算するために保持） */
+  private rawChoices: Array<{ label: string; flag?: string; value?: number; next?: string }> = [];
+
   /**
    * @param container シナリオを描画するコンテナ要素
    * @param context シナリオ実行コンテキスト（フラグ・既読管理）
@@ -307,6 +313,8 @@ export class ScenarioPlayer {
       pendingChoices: this.awaitingChoice
         ? this.choiceButtons.map(b => ({ label: b.label, flag: b.flag, value: b.value, next: b.next }))
         : undefined,
+      choiceContextName: this.awaitingChoice ? this.choiceContextName : undefined,
+      choiceContextBody: this.awaitingChoice ? this.choiceContextBody : undefined,
     };
   }
 
@@ -360,10 +368,16 @@ export class ScenarioPlayer {
     this.context.flags = { ...state.flags };
     this.context.readLines = new Set(state.readLines);
 
-    // 選択肢待機中のセーブを復元：選択肢ボタンを再構築して awaitingChoice を true にする
+    // 選択肢コンテキストを復元
+    this.choiceContextName = state.choiceContextName ?? '';
+    this.choiceContextBody = state.choiceContextBody ?? '';
+
+    // 選択肢待機中のセーブを復元：rawChoices を保持 + レイアウトを構築
+    // （canvasサイズが未確定の場合は resizeCanvas() が確定後に再計算する）
     if (state.awaitingChoice && state.pendingChoices && state.pendingChoices.length > 0) {
       this.awaitingChoice = true;
-      this.buildChoiceButtons(state.pendingChoices);
+      this.rawChoices = state.pendingChoices;
+      this.buildChoiceLayout();
     }
   }
 
@@ -380,6 +394,9 @@ export class ScenarioPlayer {
     this.currentName = '';
     this.choiceButtons = [];
     this.awaitingChoice = false;
+    this.rawChoices = [];
+    this.choiceContextName = '';
+    this.choiceContextBody = '';
     this.logEntries = [];
     this.isSkipping = false;
     this.isFastForward = false;
@@ -468,6 +485,10 @@ export class ScenarioPlayer {
     // キャンバスサイズが変わると描画がリセットされるため背景を再ロードする
     if (this.currentBgKey) {
       this.loadBgImage(this.currentBgKey);
+    }
+    // 選択肢待機中の場合、新しいキャンバスサイズでレイアウトを再計算する
+    if (this.awaitingChoice && this.rawChoices.length > 0) {
+      this.buildChoiceLayout();
     }
   }
 
@@ -587,6 +608,9 @@ export class ScenarioPlayer {
       this.displayedText = '';
       this.choiceButtons = [];
       this.awaitingChoice = false;
+      // 直前のセリフを選択肢コンテキストとして保持（選択肢表示時にテキスト欄に残す）
+      this.choiceContextName = step.text.name;
+      this.choiceContextBody = step.text.body;
 
       // スキップモード：既読・未読を問わずすべての行を飛ばす
       if (this.isSkipping) {
@@ -617,6 +641,7 @@ export class ScenarioPlayer {
       this.isSkipping = false;
       this.isFastForward = false;
       if (this.autoAdvanceTimer !== null) { clearTimeout(this.autoAdvanceTimer); this.autoAdvanceTimer = null; }
+      this.rawChoices = step.choice;
       this.awaitingChoice = true;
       this.buildChoiceButtons(step.choice);
     } else if ('jump' in step) {
@@ -675,20 +700,35 @@ export class ScenarioPlayer {
     }
   }
 
-  /** 選択肢ボタンを構築する */
+  /** 選択肢ボタンを構築する（rawChoices を保存して layout を計算） */
   private buildChoiceButtons(
     choices: Array<{ label: string; flag?: string; value?: number; next?: string }>
   ): void {
+    this.rawChoices = choices;
+    this.buildChoiceLayout();
+  }
+
+  /**
+   * rawChoices から choiceButtons の座標を計算する。
+   * canvas サイズ未確定時（ロード直後など）に 0 になるのを防ぐため、
+   * resizeCanvas() からも呼び出されて再計算される。
+   */
+  private buildChoiceLayout(): void {
     const w = this.canvas.width;
     const h = this.canvas.height;
+    if (w === 0 || h === 0 || this.rawChoices.length === 0) return;
+
+    const textWinH = h * 0.26; // テキストウィンドウの高さ（render と合わせる）
+    const availableH = h - textWinH;
     const bw = Math.min(w * 0.82, 520);
     const bh = 48;
     const gap = 12;
-    const totalH = choices.length * (bh + gap) - gap;
-    const startY = (h - totalH) / 2;
+    const totalH = this.rawChoices.length * (bh + gap) - gap;
+    // テキストウィンドウより上のエリアに中央配置
+    const startY = (availableH - totalH) / 2;
     const startX = (w - bw) / 2;
 
-    this.choiceButtons = choices.map((c, i) => ({
+    this.choiceButtons = this.rawChoices.map((c, i) => ({
       label: c.label,
       flag: c.flag,
       value: c.value,
@@ -826,9 +866,11 @@ export class ScenarioPlayer {
     // キャラクタープレースホルダ
     this.drawCharacters(w, h);
 
-    // テキストウィンドウ
+    // テキストウィンドウ: 通常テキスト表示中 or 選択肢表示中（直前のセリフをコンテキストとして表示）
     if (this.displayedText || this.targetText) {
-      this.drawTextWindow(w, h);
+      this.drawTextWindow(w, h, this.currentName, this.displayedText);
+    } else if (this.awaitingChoice) {
+      this.drawTextWindow(w, h, this.choiceContextName, this.choiceContextBody);
     }
 
     // 選択肢
@@ -882,7 +924,7 @@ export class ScenarioPlayer {
     }
   }
 
-  private drawTextWindow(w: number, h: number): void {
+  private drawTextWindow(w: number, h: number, name: string, body: string): void {
     const winH = h * 0.26;
     const winY = h - winH; // 画面底辺ぴったり
     const padX = 20;
@@ -903,8 +945,9 @@ export class ScenarioPlayer {
     this.ctx.stroke();
 
     // 名前プレート（ウィンドウ上端左）
-    if (this.currentName) {
-      const nameColor = this.currentNameColor();
+    if (name) {
+      const found = this.characters.find(c => c.id !== '' && (name.includes(c.id) || c.id === name));
+      const nameColor = found ? found.color + 'e0' : 'rgba(80, 40, 130, 0.92)';
       this.ctx.fillStyle = nameColor;
       this.roundRect(padX - 4, winY - namePlateH + 2, namePlateW, namePlateH, 6);
       this.ctx.fill();
@@ -913,7 +956,7 @@ export class ScenarioPlayer {
       this.ctx.font = 'bold 17px sans-serif';
       this.ctx.textAlign = 'left';
       this.ctx.textBaseline = 'middle';
-      this.ctx.fillText(this.currentName, padX + 6, winY - namePlateH / 2 + 2);
+      this.ctx.fillText(name, padX + 6, winY - namePlateH / 2 + 2);
     }
 
     // 本文テキスト（折り返し）
@@ -921,16 +964,7 @@ export class ScenarioPlayer {
     this.ctx.font = '17px sans-serif';
     this.ctx.textAlign = 'left';
     this.ctx.textBaseline = 'top';
-    this.wrapText(this.displayedText, padX, winY + padY, w - padX * 2, 26);
-  }
-
-  /** 話者に応じた名前プレートの色を返す */
-  private currentNameColor(): string {
-    const found = this.characters.find(c => c.id !== '' &&
-      (this.currentName.includes(c.id) || c.id === this.currentName));
-    if (found) return found.color + 'e0';
-    // デフォルトは紫系
-    return 'rgba(80, 40, 130, 0.92)';
+    this.wrapText(body, padX, winY + padY, w - padX * 2, 26);
   }
 
   /** 角丸矩形パスを作成 */
