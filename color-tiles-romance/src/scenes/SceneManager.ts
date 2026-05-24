@@ -313,7 +313,9 @@ export class SceneManager {
     // force_match ステップ中は display:none なのでタイル操作を妨げない。
     const tutorialDiv = document.createElement('div');
     tutorialDiv.style.cssText = [
-      'position:absolute',
+      // position:fixed でビジュアルビューポート（Safari ツールバーの上）を基準に配置する。
+      // position:absolute だと Safari ナビゲーションバーの裏に隠れてしまうため fixed が必須。
+      'position:fixed',
       'bottom:0',
       // left:50% + translateX(-50%) で中央寄せ、max-width で幅制限（wide screen 対応）
       'left:50%',
@@ -327,7 +329,7 @@ export class SceneManager {
       // iPhone home indicator（safe-area-inset-bottom）分だけ底辺に余白を取る
       'padding:8px 8px calc(8px + env(safe-area-inset-bottom, 0px)) 8px',
       'box-sizing:border-box',
-      'z-index:10',
+      'z-index:100',
       'display:none',
     ].join(';');
     wrapper.appendChild(tutorialDiv);
