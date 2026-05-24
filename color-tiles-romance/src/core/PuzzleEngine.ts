@@ -66,6 +66,8 @@ export class PuzzleEngine {
   private iceClearedCount = 0;
 
   private listeners: EventListener[] = [];
+  /** 時間制限（秒）。0 = 無制限 */
+  private timeLimitSec = 0;
 
   /** コンボ継続の判定窓（ms）*/
   static readonly COMBO_WINDOW_MS = 3000;
@@ -93,6 +95,7 @@ export class PuzzleEngine {
     this.blockRule = stage.blockReleaseRule ?? { type: 'never' };
     this.blocksReleased = false;
     this.startedAtMs = Date.now();
+    this.timeLimitSec = stage.timeLimitSec;
     this.specialEventDef = stage.specialEvent ?? null;
     this.specialEventFired = false;
     this.iceClearedCount = 0;
@@ -126,6 +129,10 @@ export class PuzzleEngine {
     if (stage.timeLimitSec > 0) {
       this.timer.start(stage.timeLimitSec);
       this.timer.onTimeUp(() => this.emit({ type: 'gameOver' }));
+    } else {
+      // 時間無制限：ダミー値でタイマーを起動して isRunning=true を維持する。
+      // onTimeUp を登録しないのでゲームオーバーは発生しない。
+      this.timer.start(86400);
     }
 
     // 1秒ごとに爆弾カウントダウンを減算（最初のtick=開始直後はスキップ）
@@ -278,7 +285,8 @@ export class PuzzleEngine {
     // クリア判定
     if (this.isCleared()) {
       this.timer.stop();
-      this.score += this.timer.remain * 10;
+      // 時間制限ありのみタイムボーナスを加算
+      if (this.timeLimitSec > 0) this.score += this.timer.remain * 10;
       if (this.hintUsed === 0) this.score += 1000;
       if (this.missCount === 0) this.score += 500;
       this.emit({ type: 'cleared' });
@@ -355,7 +363,8 @@ export class PuzzleEngine {
 
     if (this.isCleared()) {
       this.timer.stop();
-      this.score += this.timer.remain * 10;
+      // 時間制限ありのみタイムボーナスを加算
+      if (this.timeLimitSec > 0) this.score += this.timer.remain * 10;
       if (this.hintUsed === 0) this.score += 1000;
       if (this.missCount === 0) this.score += 500;
       this.emit({ type: 'cleared' });

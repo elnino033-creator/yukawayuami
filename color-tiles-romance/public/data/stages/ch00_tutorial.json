@@ -4,7 +4,7 @@
   "chapter": 0,
   "boardWidth": 6,
   "boardHeight": 4,
-  "timeLimitSec": 300,
+  "timeLimitSec": 0,
   "missPenaltySec": 0,
   "hintCount": 3,
   "tilesLayout": [
@@ -45,7 +45,6 @@
     "type": "never"
   },
   "preScenario": "prologue_main.json",
-
   "tutorialSteps": [
     {
       "type": "explain",
