@@ -253,8 +253,28 @@ export class ResultScene {
   }
 
   private drawScoreInfo(w: number, h: number): void {
+    // 表示行を動的に構築
+    const rows: Array<{ label: string; value: string; color: string }> = [
+      { label: 'SCORE', value: this.data.score.toLocaleString(), color: '#ffd234' },
+    ];
+
+    // 時間制限ありステージのみ TIME BONUS を表示（timeBonus=0 の場合は非表示）
+    if (this.data.timeBonus > 0) {
+      rows.push({ label: 'TIME BONUS', value: `+${this.data.timeBonus}`, color: '#5ec76a' });
+    }
+
+    // 十字消し・T字消し回数（0でも表示）
+    const crossCount = this.data.crossCount ?? 0;
+    const tShapeCount = this.data.tShapeCount ?? 0;
+    rows.push({ label: '十字消し', value: `${crossCount}回`, color: '#ff9844' });
+    rows.push({ label: 'T字消し',  value: `${tShapeCount}回`, color: '#ffd080' });
+
+    rows.push({ label: 'MAX COMBO', value: `×${this.data.comboMax}`, color: '#4a90e2' });
+
+    const rowH = 30;
+    const panelPad = 10;
     const panelW = Math.min(400, w * 0.7);
-    const panelH = 130;
+    const panelH = rows.length * rowH + panelPad * 2;
     const panelX = (w - panelW) / 2;
     const panelY = h * 0.56;
 
@@ -265,25 +285,18 @@ export class ResultScene {
     this.ctx.lineWidth = 1;
     this.ctx.strokeRect(panelX, panelY, panelW, panelH);
 
-    const rows: Array<{ label: string; value: string; color: string }> = [
-      { label: 'SCORE', value: this.data.score.toLocaleString(), color: '#ffd234' },
-      { label: 'TIME BONUS', value: `+${this.data.timeBonus}`, color: '#5ec76a' },
-      { label: 'MAX COMBO', value: `×${this.data.comboMax}`, color: '#4a90e2' }
-    ];
-
-    const rowH = panelH / rows.length;
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i]!;
-      const ry = panelY + i * rowH + rowH / 2;
+      const ry = panelY + panelPad + i * rowH + rowH / 2;
 
       this.ctx.fillStyle = 'rgba(200, 180, 240, 0.6)';
-      this.ctx.font = `${Math.min(14, panelW * 0.035)}px monospace`;
+      this.ctx.font = `${Math.min(13, panelW * 0.033)}px monospace`;
       this.ctx.textAlign = 'left';
       this.ctx.textBaseline = 'middle';
       this.ctx.fillText(row.label, panelX + 20, ry);
 
       this.ctx.fillStyle = row.color;
-      this.ctx.font = `bold ${Math.min(18, panelW * 0.045)}px monospace`;
+      this.ctx.font = `bold ${Math.min(17, panelW * 0.043)}px monospace`;
       this.ctx.textAlign = 'right';
       this.ctx.fillText(row.value, panelX + panelW - 20, ry);
     }

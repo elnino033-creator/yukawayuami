@@ -34,10 +34,14 @@ export interface ResultData {
   rating: 'S' | 'A' | 'B' | 'C';
   /** クリア成否 */
   cleared: boolean;
-  /** タイムボーナス */
+  /** タイムボーナス（時間制限なしステージは 0） */
   timeBonus: number;
   /** 最大コンボ数 */
   comboMax: number;
+  /** 十字消し回数 */
+  crossCount: number;
+  /** T字消し回数 */
+  tShapeCount: number;
 }
 
 /** シーン遷移リクエスト */
@@ -619,7 +623,9 @@ export class SceneManager {
           rating: calcRating(score),
           cleared: true,
           timeBonus: stageDef.timeLimitSec > 0 ? scene.engine.timer.remain * 10 : 0,
-          comboMax: snap.maxCombo
+          comboMax: snap.maxCombo,
+          crossCount: snap.crossCount,
+          tShapeCount: snap.tShapeCount
         };
         if (stageDef.postScenario) {
           const sid = stageDef.postScenario
@@ -647,7 +653,9 @@ export class SceneManager {
           rating: calcRating(score),
           cleared: false,
           timeBonus: stageDef.timeLimitSec > 0 ? scene.engine.timer.remain * 10 : 0,
-          comboMax: snap.maxCombo
+          comboMax: snap.maxCombo,
+          crossCount: snap.crossCount,
+          tShapeCount: snap.tShapeCount
         };
         void this.transition({ to: 'result', resultData });
       }

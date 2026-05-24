@@ -17,6 +17,10 @@ export interface ScoreSnapshot {
   pairsCleared: number;
   missCount: number;
   hintUsed: number;
+  /** 十字消し回数（4タイル以上を同時消去） */
+  crossCount: number;
+  /** T字消し回数（3タイルを同時消去） */
+  tShapeCount: number;
 }
 
 type EngineEvent =
@@ -51,6 +55,10 @@ export class PuzzleEngine {
   private pairsCleared = 0;
   private missCount = 0;
   private hintUsed = 0;
+  /** 十字消し回数 */
+  private crossCount = 0;
+  /** T字消し回数 */
+  private tShapeCount = 0;
   private hintRemain = 0;
   private missPenaltySec = 0;
   private bombPenaltySec = 20;
@@ -88,6 +96,8 @@ export class PuzzleEngine {
     this.pairsCleared = 0;
     this.missCount = 0;
     this.hintUsed = 0;
+    this.crossCount = 0;
+    this.tShapeCount = 0;
     this.hintRemain = stage.hintCount;
     this.missPenaltySec = stage.missPenaltySec;
     this.bombPenaltySec = stage.bombPenaltySec ?? 20;
@@ -351,6 +361,14 @@ export class PuzzleEngine {
     const pairsThisClick = Math.floor(allRemoved.length / 2);
     this.score += 100 * pairsThisClick;
     if (this.combo >= 2) this.score += this.combo * 50;
+    // 十字消し・T字消しボーナス（同時消去タイル数で判定）
+    if (allRemoved.length >= 4) {
+      this.crossCount++;
+      this.score += 300; // 十字消しボーナス
+    } else if (allRemoved.length === 3) {
+      this.tShapeCount++;
+      this.score += 150; // T字消しボーナス
+    }
     this.pairsCleared += pairsThisClick;
     this.iceClearedCount += allRemoved.filter(t => t.type === 'ice').length;
     this.checkSpecialEvent();
@@ -419,7 +437,7 @@ export class PuzzleEngine {
     if (this.isCleared()) {
       this.timer.stop();
       // タイムボーナス・各種ボーナスを最終スコアに反映
-      this.score += this.timer.remain * 10;
+      if (this.timeLimitSec > 0) this.score += this.timer.remain * 10;
       if (this.hintUsed === 0) this.score += 1000;
       if (this.missCount === 0) this.score += 500;
       this.emit({ type: 'cleared' });
@@ -692,7 +710,9 @@ export class PuzzleEngine {
       maxCombo: this.maxCombo,
       pairsCleared: this.pairsCleared,
       missCount: this.missCount,
-      hintUsed: this.hintUsed
+      hintUsed: this.hintUsed,
+      crossCount: this.crossCount,
+      tShapeCount: this.tShapeCount
     };
   }
 
