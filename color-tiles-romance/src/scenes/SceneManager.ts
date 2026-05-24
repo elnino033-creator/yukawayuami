@@ -16,6 +16,7 @@ const LINEAR_STAGES = [
   'ch01_stage01', 'ch01_stage02', 'ch01_stage03',
   'ch02_stage01', 'ch02_stage02', 'ch02_stage03',
   'ch03_stage01', 'ch03_stage02', 'ch03_stage03',
+  'ch04_time_demo',
   'ch04_stage01', 'ch04_stage02', 'ch04_stage03',
   'ch05_stage01', 'ch05_stage02', 'ch05_stage03',
   'ch05_stage04', 'ch05_stage05', 'ch05_stage06', 'ch05_stage07',
@@ -814,7 +815,7 @@ export class SceneManager {
       'ch01_stage01', 'ch01_stage02', 'ch01_stage03',
       'ch02_stage01', 'ch02_stage02', 'ch02_stage03',
       'ch03_ice_demo', 'ch03_stage01', 'ch03_stage02', 'ch03_stage03',
-      'ch04_stage01', 'ch04_stage02', 'ch04_stage03',
+      'ch04_time_demo', 'ch04_stage01', 'ch04_stage02', 'ch04_stage03',
       'ch05_stage01', 'ch05_stage02', 'ch05_stage03',
       'ch05_stage04', 'ch05_stage05', 'ch05_stage06', 'ch05_stage07',
     ];
