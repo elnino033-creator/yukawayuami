@@ -71,7 +71,7 @@ export class NovelScene {
     // Control bar
     const bar = document.createElement('div');
     bar.style.cssText = `
-      position: absolute; top: calc(74% + 4px); right: 8px; display: flex; gap: 5px; z-index: 10;
+      position: absolute; bottom: calc(26% + 4px); right: 8px; display: flex; gap: 5px; z-index: 10;
       user-select: none; pointer-events: auto;
     `;
     bar.innerHTML = this.controlBarHTML();
