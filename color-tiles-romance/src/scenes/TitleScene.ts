@@ -6,7 +6,7 @@
 import { BgmManager } from '@/audio/BgmManager';
 
 /** メニュー選択肢の種別 */
-export type TitleChoice = 'new' | 'continue' | 'stage';
+export type TitleChoice = 'new' | 'continue' | 'load' | 'stage';
 
 /** ボタン定義 */
 interface TitleButton {
@@ -64,17 +64,22 @@ export class TitleScene {
   /** 1つ以上のステージをクリア済みかどうか（STAGE SELECT解放条件） */
   private stageSelectUnlocked: boolean;
 
+  /** シナリオセーブが存在するかどうか（LOAD ボタン有効化条件） */
+  private hasSceneSave: boolean;
+
   /**
    * @param canvas 描画対象のCanvas要素
    * @param onSelect ボタン選択時のコールバック
    * @param hasSave セーブデータが存在するかどうか
    * @param stageSelectUnlocked ステージセレクト解放済みかどうか
+   * @param hasSceneSave シナリオセーブが存在するかどうか
    */
   constructor(
     canvas: HTMLCanvasElement,
     onSelect: (choice: TitleChoice) => void,
     hasSave: boolean,
-    stageSelectUnlocked: boolean = false
+    stageSelectUnlocked: boolean = false,
+    hasSceneSave: boolean = false
   ) {
     this.canvas = canvas;
     const ctx = canvas.getContext('2d');
@@ -83,6 +88,7 @@ export class TitleScene {
     this.onSelect = onSelect;
     this.hasSave = hasSave;
     this.stageSelectUnlocked = stageSelectUnlocked;
+    this.hasSceneSave = hasSceneSave;
 
     this.boundMouseMove = (e: MouseEvent) => this.handleMouseMove(e);
     this.boundClick = (e: MouseEvent) => this.handleClick(e);
@@ -199,8 +205,8 @@ export class TitleScene {
     const bh = 48;
     const gap = 14;
     const startX = (w - bw) / 2;
-    // 階段の上部（中央下方）に配置
-    const startY = h * 0.62;
+    // 4ボタン分のスペースを確保するため少し上に配置
+    const startY = h * 0.58;
 
     this.buttons = [
       {
@@ -224,10 +230,20 @@ export class TitleScene {
         disabled: !this.hasSave
       },
       {
+        label: 'LOAD',
+        choice: 'load',
+        x: startX,
+        y: startY + (bh + gap) * 2,
+        w: bw,
+        h: bh,
+        hovered: false,
+        disabled: !this.hasSceneSave
+      },
+      {
         label: 'STAGE SELECT',
         choice: 'stage',
         x: startX,
-        y: startY + (bh + gap) * 2,
+        y: startY + (bh + gap) * 3,
         w: bw,
         h: bh,
         hovered: false,
