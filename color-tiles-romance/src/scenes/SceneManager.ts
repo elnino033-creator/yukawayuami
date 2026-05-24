@@ -69,8 +69,6 @@ export class SceneManager {
   progressStore: ProgressStore;
   /** 現在アクティブなシーン */
   private currentScene: ManagedScene | null = null;
-  /** デバッグパネル（?debug=1 時のみ生成） */
-  private debugPanelEl: HTMLElement | null = null;
 
   /**
    * @param appContainer シーンを描画するルートDOM要素
@@ -723,7 +721,6 @@ export class SceneManager {
     }));
 
     document.body.appendChild(panel);
-    this.debugPanelEl = panel;
 
     toggle.addEventListener('click', () => {
       panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
