@@ -54,6 +54,56 @@ export class NovelScene {
     await this.player.start();
   }
 
+  /**
+   * シナリオセーブデータから状態を復元してシナリオを再開する（タイトル画面LOADから呼ばれる）。
+   * @param save ロードするセーブデータ
+   */
+  async startFromSave(save: ScenarioSaveData): Promise<void> {
+    // セーブ時のシナリオJSONをロード
+    let steps: ScenarioStep[];
+    try {
+      const url = `${import.meta.env.BASE_URL}data/scenarios/${save.scenarioId}.json`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      steps = await res.json() as ScenarioStep[];
+    } catch {
+      // ロード失敗時は onEnd（タイトルへ）を呼ぶ
+      this.onEnd();
+      return;
+    }
+
+    this.player = new ScenarioPlayer(this.container, this.context);
+    this.player.setScenarioId(save.scenarioId);
+    this.player.loadScenario(steps);
+    this.player.onScenarioEnd(() => {
+      this.removeOverlay();
+      this.onEnd();
+    });
+
+    this.buildOverlay();
+
+    // 保存された状態を復元する（flags・readLines も context を通じて反映される）
+    this.player.restoreState({
+      stepIndex: save.stepIndex,
+      bgKey: save.bgKey,
+      bgmKey: save.bgmKey,
+      characters: save.characters,
+      currentName: save.currentName,
+      displayedText: save.displayedText,
+      flags: save.flags,
+      readLines: save.readLines,
+      awaitingChoice: save.awaitingChoice,
+      pendingChoices: save.pendingChoices,
+      choiceContextName: save.choiceContextName,
+      choiceContextBody: save.choiceContextBody,
+    });
+
+    this.isAutoActive = false;
+    this.isFFActive = false;
+
+    await this.player.startFromRestored();
+  }
+
   destroy(): void {
     this.removeOverlay();
     if (this.player) {

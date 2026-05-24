@@ -91,4 +91,12 @@ export class ProgressStore {
       readLines: new Set<string>()
     };
   }
+
+  /**
+   * ルートフラグのみリセットする（BADエンド後にCONTINUEで選び直せるようにする）。
+   * readLines（既読行・SKIP制御）は保持する。
+   */
+  resetFlags(): void {
+    this.scenarioContext.flags = {};
+  }
 }

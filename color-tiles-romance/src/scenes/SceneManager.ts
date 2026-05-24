@@ -7,6 +7,8 @@
 import { SaveStore } from '@/store/saveStore';
 import { ProgressStore } from '@/store/progressStore';
 import { DebugMode } from '@/debug/DebugMode';
+import { SceneSaveStore } from '@/store/sceneSaveStore';
+import type { ScenarioSaveData } from '@/store/sceneSaveStore';
 
 const LINEAR_STAGES = [
   'ch00_tutorial',
@@ -154,6 +156,8 @@ export class SceneManager {
       Object.keys(this.saveStore.getData().stageRecords).length > 0;
     // ステージセレクトは5章真エンド（currentChapter >= 6）後に解放
     const trueEndSeen = this.saveStore.getData().currentChapter >= 6;
+    // シナリオセーブが1件以上あればLOADボタンを有効化
+    const hasSceneSave = SceneSaveStore.getAll().some(s => s !== null);
 
     const scene = new TitleScene(canvas, (choice) => {
       switch (choice) {
@@ -170,11 +174,14 @@ export class SceneManager {
           );
           break;
         }
+        case 'load':
+          this.showTitleLoadPanel();
+          break;
         case 'stage':
           void this.transition({ to: 'stageSelect' });
           break;
       }
-    }, hasSave, trueEndSeen);
+    }, hasSave, trueEndSeen, hasSceneSave);
 
     this.currentScene = scene;
     scene.start();
@@ -253,6 +260,8 @@ export class SceneManager {
             this.progressStore.markLineRead(`pre:${stageId}`);
             // BAD ルートが選ばれた場合はパズルを起動せずタイトルへ戻る
             if (this.progressStore.getFlag('route_bad') > 0) {
+              // BADエンド後にCONTINUEで選び直せるようルートフラグをリセット
+              this.progressStore.resetFlags();
               void this.transition({ to: 'title' });
             } else {
               void this.launchPuzzleWithDef(stageDef);
@@ -619,6 +628,8 @@ export class SceneManager {
           void this.mountNovelSceneWithCallback(sid, () => {
             // BAD ルートが選ばれた場合はリザルトを出さずタイトルへ戻る
             if (this.progressStore.getFlag('route_bad') > 0) {
+              // BADエンド後にCONTINUEで選び直せるようルートフラグをリセット
+              this.progressStore.resetFlags();
               void this.transition({ to: 'title' });
             } else {
               void this.transition({ to: 'result', resultData });
@@ -641,6 +652,126 @@ export class SceneManager {
         void this.transition({ to: 'result', resultData });
       }
     });
+  }
+
+  /**
+   * タイトル画面上にロードパネルを表示する。
+   * シナリオセーブスロットを選択してシナリオを再開できる。
+   */
+  private showTitleLoadPanel(): void {
+    const saves = SceneSaveStore.getAll();
+
+    const overlay = document.createElement('div');
+    overlay.style.cssText = [
+      'position:fixed', 'inset:0',
+      'background:rgba(0,0,0,0.78)',
+      'z-index:200',
+      'display:flex', 'align-items:center', 'justify-content:center',
+      'font-family:sans-serif',
+    ].join(';');
+
+    const panel = document.createElement('div');
+    panel.style.cssText = [
+      'background:rgba(16,12,36,0.97)',
+      'border:1px solid rgba(180,140,255,0.5)',
+      'border-radius:10px',
+      'padding:24px 24px 20px',
+      'width:min(480px,90vw)',
+      'color:#e0dcf0',
+      'display:flex', 'flex-direction:column', 'gap:0',
+    ].join(';');
+
+    // ヘッダー
+    const header = document.createElement('div');
+    header.style.cssText = 'display:flex;align-items:center;margin-bottom:16px;';
+    const titleEl = document.createElement('span');
+    titleEl.style.cssText = 'font-size:15px;font-weight:bold;flex:1;';
+    titleEl.textContent = 'ロード';
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = '✕ 閉じる';
+    closeBtn.style.cssText = [
+      'background:rgba(20,20,40,0.78)',
+      'color:#c8c0e8',
+      'border:1px solid rgba(180,140,255,0.4)',
+      'border-radius:4px',
+      'padding:4px 10px',
+      'font-size:12px',
+      'cursor:pointer',
+    ].join(';');
+    closeBtn.addEventListener('click', () => overlay.remove());
+    header.appendChild(titleEl);
+    header.appendChild(closeBtn);
+    panel.appendChild(header);
+
+    // スロット一覧
+    const slotsEl = document.createElement('div');
+    slotsEl.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+
+    for (let i = 0; i < 3; i++) {
+      const save = saves[i];
+      const slotEl = document.createElement('div');
+      slotEl.style.cssText = [
+        'display:flex', 'align-items:center', 'gap:12px',
+        'padding:12px 16px',
+        'background:rgba(40,30,70,0.7)',
+        'border:1px solid rgba(180,140,255,0.3)',
+        'border-radius:6px',
+        save ? 'cursor:pointer' : 'cursor:default',
+      ].join(';');
+
+      if (save) {
+        slotEl.innerHTML = `
+          <div style="flex:1;">
+            <div style="font-size:12px;color:#b49fff;margin-bottom:4px;">スロット ${i + 1}</div>
+            <div style="font-size:13px;">${save.previewText || '(テキストなし)'}</div>
+            <div style="font-size:11px;color:#888;margin-top:3px;">${new Date(save.savedAt).toLocaleString('ja-JP')}</div>
+          </div>
+          <span style="font-size:11px;color:#99c8ff;">▶ ロード</span>
+        `;
+        slotEl.addEventListener('click', () => {
+          overlay.remove();
+          void this.mountNovelSceneFromSave(save);
+        });
+        slotEl.addEventListener('mouseenter', () => {
+          slotEl.style.background = 'rgba(60,45,100,0.85)';
+        });
+        slotEl.addEventListener('mouseleave', () => {
+          slotEl.style.background = 'rgba(40,30,70,0.7)';
+        });
+      } else {
+        slotEl.innerHTML = `<div style="flex:1;color:#666;">スロット ${i + 1} — 空き</div>`;
+      }
+      slotsEl.appendChild(slotEl);
+    }
+
+    panel.appendChild(slotsEl);
+    overlay.appendChild(panel);
+    document.body.appendChild(overlay);
+  }
+
+  /**
+   * シナリオセーブデータからノベルシーンをロードして再開する。
+   * ロードしたシナリオ終了後はタイトルへ戻る。
+   */
+  private async mountNovelSceneFromSave(save: ScenarioSaveData): Promise<void> {
+    const { NovelScene } = await import('@/scenes/NovelScene');
+
+    this.currentScene?.destroy();
+    this.currentScene = null;
+    this.appContainer.innerHTML = '';
+
+    const div = document.createElement('div');
+    div.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;';
+    this.appContainer.appendChild(div);
+
+    const scene = new NovelScene(
+      div,
+      save.scenarioId,
+      this.progressStore.scenarioContext,
+      () => { void this.transition({ to: 'title' }); }
+    );
+    this.currentScene = scene;
+    await scene.startFromSave(save);
   }
 
   /** デバッグパネルを document.body に生成する（?debug=1 専用） */
