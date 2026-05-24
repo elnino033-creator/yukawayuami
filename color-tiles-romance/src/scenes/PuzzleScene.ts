@@ -136,7 +136,8 @@ export class PuzzleScene {
     this.engine.loadStage(stage);
     this.noTimeLimit = stage.timeLimitSec === 0;
     if (this.noTimeLimit) {
-      this.hudTimer.textContent = '∞';
+      // タイマー欄をスコア表示に切り替え（初期値 0）
+      this.hudTimer.textContent = '000000';
     }
     this.resizeCanvasToBoard();
     this.hover = null;
@@ -1051,11 +1052,15 @@ export class PuzzleScene {
     this.hudScore.textContent = String(snap.score);
     this.hudCombo.textContent = `×${snap.combo}`;
     this.hudHint.textContent = String(this.engine.hintsRemaining);
+    // 時間無制限ステージはタイマー欄にスコアを大きく表示する
+    if (this.noTimeLimit) {
+      this.hudTimer.textContent = String(snap.score).padStart(6, '0');
+    }
   }
 
   private updateTimerHud(): void {
     if (this.noTimeLimit) {
-      this.hudTimer.textContent = '∞';
+      // タイマー tick では何もしない（updateHud() がスコアを更新する）
       return;
     }
     const sec = this.engine.timer.remain;

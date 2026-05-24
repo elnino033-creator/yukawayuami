@@ -565,9 +565,12 @@ export class ScenarioPlayer {
       }
       this.advanceStep();
     } else if ('se' in step) {
-      // playSeFile でファイル再生を試み、内部生成器にも登録があれば playSe を併用する
-      playSeFile(step.se.src, step.se.volume, step.se.durationRatio);
-      playSe(step.se.src);
+      // スキップ中は SE を鳴らさない
+      if (!this.isSkipping) {
+        // playSeFile でファイル再生を試み、内部生成器にも登録があれば playSe を併用する
+        playSeFile(step.se.src, step.se.volume, step.se.durationRatio);
+        playSe(step.se.src);
+      }
       this.advanceStep();
     } else if ('effect' in step) {
       if (this.isSkipping) {
