@@ -130,45 +130,29 @@ export class ResultScene {
   private buildButtons(): void {
     const w = this.canvas.width;
     const h = this.canvas.height;
-    const bw = Math.min(160, w * 0.3);
     const bh = 48;
     const gap = 16;
-    const totalW = bw * 3 + gap * 2;
-    const startX = (w - totalW) / 2;
     const startY = h * 0.78;
 
-    this.buttons = [
-      {
-        label: 'リトライ',
-        action: 'retry',
-        x: startX,
-        y: startY,
-        w: bw,
-        h: bh,
-        hovered: false,
-        color: 'rgba(180, 80, 80, 0.8)'
-      },
-      {
-        label: '次へ',
-        action: 'next',
-        x: startX + bw + gap,
-        y: startY,
-        w: bw,
-        h: bh,
-        hovered: false,
-        color: 'rgba(60, 140, 60, 0.8)'
-      },
-      {
-        label: 'タイトル',
-        action: 'title',
-        x: startX + (bw + gap) * 2,
-        y: startY,
-        w: bw,
-        h: bh,
-        hovered: false,
-        color: 'rgba(80, 80, 160, 0.8)'
-      }
-    ];
+    if (this.data.cleared) {
+      const bw = Math.min(160, w * 0.3);
+      const totalW = bw * 3 + gap * 2;
+      const startX = (w - totalW) / 2;
+      this.buttons = [
+        { label: 'リトライ', action: 'retry', x: startX, y: startY, w: bw, h: bh, hovered: false, color: 'rgba(180, 80, 80, 0.8)' },
+        { label: '次へ', action: 'next', x: startX + bw + gap, y: startY, w: bw, h: bh, hovered: false, color: 'rgba(60, 140, 60, 0.8)' },
+        { label: 'タイトル', action: 'title', x: startX + (bw + gap) * 2, y: startY, w: bw, h: bh, hovered: false, color: 'rgba(80, 80, 160, 0.8)' },
+      ];
+    } else {
+      // ゲームオーバー時は「次へ」を表示しない
+      const bw = Math.min(200, w * 0.38);
+      const totalW = bw * 2 + gap;
+      const startX = (w - totalW) / 2;
+      this.buttons = [
+        { label: 'リトライ', action: 'retry', x: startX, y: startY, w: bw, h: bh, hovered: false, color: 'rgba(180, 80, 80, 0.8)' },
+        { label: 'タイトル', action: 'title', x: startX + bw + gap, y: startY, w: bw, h: bh, hovered: false, color: 'rgba(80, 80, 160, 0.8)' },
+      ];
+    }
   }
 
   private startRenderLoop(): void {

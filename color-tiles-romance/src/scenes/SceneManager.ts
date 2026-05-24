@@ -6,6 +6,7 @@
 
 import { SaveStore } from '@/store/saveStore';
 import { ProgressStore } from '@/store/progressStore';
+import { DebugMode } from '@/debug/DebugMode';
 
 const LINEAR_STAGES = [
   'ch00_tutorial',
@@ -76,6 +77,9 @@ export class SceneManager {
     this.appContainer = appContainer;
     this.saveStore = new SaveStore();
     this.progressStore = new ProgressStore();
+    if (DebugMode.isActive()) {
+      this.buildDebugPanel();
+    }
   }
 
   /**
@@ -614,6 +618,112 @@ export class SceneManager {
         };
         void this.transition({ to: 'result', resultData });
       }
+    });
+  }
+
+  /** デバッグパネルを document.body に生成する（?debug=1 専用） */
+  private buildDebugPanel(): void {
+    const ALL_SCENARIOS = [
+      'intro_main', 'prologue_main', 'prologue_post', 'tutorial_intro',
+      'ch00_tutorial_post', 'ch00_tutorial2_post',
+      'ch01_s01_pre', 'ch01_s01_post', 'ch01_s02_pre', 'ch01_s02_post',
+      'ch01_s03_pre', 'ch01_s03_pre_A', 'ch01_s03_pre_B', 'ch01_s03_pre_end', 'ch01_s03_post',
+      'ch01_s04_pre', 'ch01_s04_post', 'ch01_s05_pre', 'ch01_s05_pre_A', 'ch01_s05_pre_B', 'ch01_s05_post',
+      'ch01_final_flashback', 'ch01_end',
+      'ch02_s01_pre', 'ch02_s01_post', 'ch02_s02_pre', 'ch02_s02_post',
+      'ch02_s03_pre', 'ch02_s03_pre_A', 'ch02_s03_pre_B', 'ch02_s03_puzzle', 'ch02_s03_post',
+      'ch02_s04_pre', 'ch02_s04_post', 'ch02_s05_pre', 'ch02_s05_pre_A', 'ch02_s05_pre_B',
+      'ch02_final_flashback', 'ch02_end',
+      'ch03_s01_pre', 'ch03_s01_post', 'ch03_s02_pre', 'ch03_s02_post',
+      'ch03_s03_pre', 'ch03_s03_pre_A', 'ch03_s03_pre_B', 'ch03_s03_post',
+      'ch03_s04_pre', 'ch03_s04_post', 'ch03_s05_pre', 'ch03_s05_pre_A', 'ch03_s05_pre_B',
+      'ch03_s06_pre', 'ch03_final_flashback', 'ch03_end',
+      'ch04_s01_pre', 'ch04_s01_post', 'ch04_s02_pre', 'ch04_s02_post',
+      'ch04_s03_pre', 'ch04_s03_pre_A', 'ch04_s03_pre_B', 'ch04_s03_post',
+      'ch04_s04_pre', 'ch04_s04_post', 'ch04_s05_pre', 'ch04_s05_pre_A', 'ch04_s05_pre_B',
+      'ch04_s06_pre', 'ch04_final_flashback', 'ch04_end',
+      'ch05_s01_pre', 'ch05_s01_post', 'ch05_s02_pre', 'ch05_s02_post',
+      'ch05_s03_pre', 'ch05_s03_post', 'ch05_s04_pre', 'ch05_s04_post',
+      'ch05_s05_pre', 'ch05_s05_post', 'ch05_s06_pre', 'ch05_s06_post',
+      'ch05_s07_pre', 'ch05_route_BAD', 'ch05_route_TRUE', 'ch05_final_flashback', 'ch05_end',
+      'epilogue_true',
+    ];
+    const ALL_STAGES = [
+      'ch00_prologue', 'ch00_tutorial', 'ch00_tutorial2',
+      'ch01_stage01', 'ch01_stage02', 'ch01_stage03',
+      'ch02_stage01', 'ch02_stage02', 'ch02_stage03',
+      'ch03_ice_demo', 'ch03_stage01', 'ch03_stage02', 'ch03_stage03',
+      'ch04_stage01', 'ch04_stage02', 'ch04_stage03',
+      'ch05_stage01', 'ch05_stage02', 'ch05_stage03',
+      'ch05_stage04', 'ch05_stage05', 'ch05_stage06', 'ch05_stage07',
+    ];
+
+    // トグルボタン
+    const toggle = document.createElement('button');
+    toggle.textContent = '🐛';
+    toggle.title = 'デバッグパネル（?debug=1）';
+    toggle.style.cssText = [
+      'position:fixed', 'top:4px', 'left:4px', 'z-index:9999',
+      'background:rgba(200,50,50,0.85)', 'color:#fff',
+      'border:none', 'border-radius:4px',
+      'padding:4px 8px', 'font-size:16px', 'cursor:pointer',
+      'line-height:1',
+    ].join(';');
+    document.body.appendChild(toggle);
+
+    // パネル本体
+    const panel = document.createElement('div');
+    panel.style.cssText = [
+      'position:fixed', 'top:36px', 'left:4px', 'z-index:9998',
+      'width:260px', 'max-height:80vh',
+      'background:rgba(16,12,32,0.97)', 'color:#e0dcf0',
+      'border:1px solid rgba(200,80,80,0.5)', 'border-radius:8px',
+      'font-family:monospace', 'font-size:11px',
+      'display:none', 'flex-direction:column',
+      'overflow:hidden',
+    ].join(';');
+
+    const headerStyle = 'padding:6px 10px;font-size:12px;font-weight:bold;color:#ff8888;border-bottom:1px solid rgba(200,80,80,0.3);flex-shrink:0;';
+    const listStyle = 'flex:1;overflow-y:auto;padding:4px 0;';
+    const itemStyle = 'display:block;width:100%;text-align:left;background:none;border:none;color:#ccc;padding:4px 12px;cursor:pointer;font-family:monospace;font-size:11px;';
+    const itemHoverStyle = 'background:rgba(200,80,80,0.2);color:#fff;';
+
+    const makeSection = (title: string, items: string[], onClick: (id: string) => void) => {
+      const sec = document.createElement('div');
+      sec.style.cssText = 'display:flex;flex-direction:column;min-height:0;flex-shrink:0;';
+      const hdr = document.createElement('div');
+      hdr.style.cssText = headerStyle;
+      hdr.textContent = title;
+      sec.appendChild(hdr);
+      const list = document.createElement('div');
+      list.style.cssText = listStyle + 'max-height:200px;';
+      for (const id of items) {
+        const btn = document.createElement('button');
+        btn.style.cssText = itemStyle;
+        btn.textContent = id;
+        btn.addEventListener('mouseenter', () => { btn.style.cssText = itemStyle + itemHoverStyle; });
+        btn.addEventListener('mouseleave', () => { btn.style.cssText = itemStyle; });
+        btn.addEventListener('click', () => {
+          panel.style.display = 'none';
+          onClick(id);
+        });
+        list.appendChild(btn);
+      }
+      sec.appendChild(list);
+      return sec;
+    };
+
+    panel.appendChild(makeSection('📖 SCENARIOS', ALL_SCENARIOS, (id) => {
+      void this.transition({ to: 'novel', scenarioId: id });
+    }));
+    panel.appendChild(makeSection('🎮 STAGES', ALL_STAGES, (id) => {
+      void this.transition({ to: 'puzzle', stageId: id });
+    }));
+
+    document.body.appendChild(panel);
+
+    toggle.addEventListener('click', () => {
+      panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
     });
   }
 }
