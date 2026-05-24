@@ -4,8 +4,8 @@
   "chapter": 2,
   "boardWidth": 9,
   "boardHeight": 9,
-  "timeLimitSec": 95,
-  "missPenaltySec": 30,
+  "timeLimitSec": 0,
+  "missPenaltySec": 0,
   "hintCount": 1,
   "generationParams": {
     "seed": 2003,
@@ -23,8 +23,14 @@
   "postScenario": "ch02_end.json",
   "puzzleBgm": "氷鈴の世界_last.mp3",
   "specialEvent": {
-    "trigger": { "type": "afterIceCleared", "count": 1 },
-    "effect": { "type": "addIceTiles", "count": 3 },
+    "trigger": {
+      "type": "afterIceCleared",
+      "count": 1
+    },
+    "effect": {
+      "type": "addIceTiles",
+      "count": 3
+    },
     "cutIn": {
       "character": "mio",
       "text": "ここにいて・・・"

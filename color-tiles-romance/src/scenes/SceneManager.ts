@@ -152,8 +152,8 @@ export class SceneManager {
 
     const hasSave = this.saveStore.getData().currentChapter > 0 ||
       Object.keys(this.saveStore.getData().stageRecords).length > 0;
-    // ステージセレクトは1つ以上クリア済みの場合のみ解放
-    const anyCleared = Object.values(this.saveStore.getData().stageRecords).some(r => r.cleared);
+    // ステージセレクトは5章真エンド（currentChapter >= 6）後に解放
+    const trueEndSeen = this.saveStore.getData().currentChapter >= 6;
 
     const scene = new TitleScene(canvas, (choice) => {
       switch (choice) {
@@ -174,7 +174,7 @@ export class SceneManager {
           void this.transition({ to: 'stageSelect' });
           break;
       }
-    }, hasSave, anyCleared);
+    }, hasSave, trueEndSeen);
 
     this.currentScene = scene;
     scene.start();
@@ -298,7 +298,9 @@ export class SceneManager {
     // position:relative + overflow:hidden でチュートリアルオーバーレイの絶対配置基準にする
     wrapper.style.cssText = 'position:relative;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;background:#1c1f2a;overflow:hidden;';
 
-    const hud = this.createPuzzleHud(wrapper);
+    const hud = this.createPuzzleHud(wrapper, () => {
+      void this.transition({ to: 'puzzle', stageId: stageDef.id });
+    });
 
     // キャンバスを flex で縦方向にも収める（高さが余ればセンタリング、足りなければ収縮）
     const canvasWrap = document.createElement('div');
@@ -509,7 +511,7 @@ export class SceneManager {
   }
 
   /** パズルシーンのHUD要素を作成する */
-  private createPuzzleHud(parent: HTMLElement): {
+  private createPuzzleHud(parent: HTMLElement, onRetry?: () => void): {
     timer: HTMLElement;
     score: HTMLElement;
     combo: HTMLElement;
@@ -533,6 +535,26 @@ export class SceneManager {
     const hint = makeEl('HINT', 'hud-hint-sm');
     const status = makeEl('', 'hud-status-sm');
     status.style.marginLeft = 'auto';
+
+    // リトライボタン（右端）
+    if (onRetry) {
+      const retryBtn = document.createElement('button');
+      retryBtn.textContent = '↺ リトライ';
+      retryBtn.style.cssText = [
+        'margin-left:auto',
+        'background:rgba(160,60,60,0.75)',
+        'color:#fff',
+        'border:1px solid rgba(255,120,120,0.5)',
+        'border-radius:4px',
+        'padding:2px 10px',
+        'font-size:12px',
+        'cursor:pointer',
+        'font-family:sans-serif',
+      ].join(';');
+      retryBtn.addEventListener('click', onRetry);
+      hudBar.appendChild(retryBtn);
+    }
+
     parent.appendChild(hudBar);
 
     // タイマーはパズルエリアの直上にPOPに表示
@@ -587,7 +609,7 @@ export class SceneManager {
           score,
           rating: calcRating(score),
           cleared: true,
-          timeBonus: scene.engine.timer.remain * 10,
+          timeBonus: stageDef.timeLimitSec > 0 ? scene.engine.timer.remain * 10 : 0,
           comboMax: snap.maxCombo
         };
         if (stageDef.postScenario) {
@@ -613,7 +635,7 @@ export class SceneManager {
           score,
           rating: calcRating(score),
           cleared: false,
-          timeBonus: 0,
+          timeBonus: stageDef.timeLimitSec > 0 ? scene.engine.timer.remain * 10 : 0,
           comboMax: snap.maxCombo
         };
         void this.transition({ to: 'result', resultData });

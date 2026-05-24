@@ -123,8 +123,10 @@ export class PuzzleEngine {
       }
     }
 
-    this.timer.start(stage.timeLimitSec);
-    this.timer.onTimeUp(() => this.emit({ type: 'gameOver' }));
+    if (stage.timeLimitSec > 0) {
+      this.timer.start(stage.timeLimitSec);
+      this.timer.onTimeUp(() => this.emit({ type: 'gameOver' }));
+    }
 
     // 1秒ごとに爆弾カウントダウンを減算（最初のtick=開始直後はスキップ）
     this.bombTickSkip = true;
