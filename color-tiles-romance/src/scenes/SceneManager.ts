@@ -291,18 +291,40 @@ export class SceneManager {
     this.appContainer.innerHTML = '';
 
     const wrapper = document.createElement('div');
-    wrapper.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;align-items:center;background:#1c1f2a;';
+    // position:relative + overflow:hidden でチュートリアルオーバーレイの絶対配置基準にする
+    wrapper.style.cssText = 'position:relative;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;background:#1c1f2a;overflow:hidden;';
 
     const hud = this.createPuzzleHud(wrapper);
-    const canvas = document.createElement('canvas');
-    // max-width:100% + height:auto でボードが画面幅を超えても縮小表示される
-    // pointerToCell は getBoundingClientRect() でスケールを補正するので座標ずれなし
-    canvas.style.cssText = 'margin:auto;display:block;max-width:100%;height:auto;';
-    wrapper.appendChild(canvas);
 
-    // チュートリアルダイアログ用 DOM（パズルキャンバスの下に配置）
+    // キャンバスを flex で縦方向にも収める（高さが余ればセンタリング、足りなければ収縮）
+    const canvasWrap = document.createElement('div');
+    canvasWrap.style.cssText = 'flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;';
+    const canvas = document.createElement('canvas');
+    // max-width/max-height:100% でボードを canvasWrap 内に収める
+    // pointerToCell は getBoundingClientRect() でスケールを補正するので座標ずれなし
+    canvas.style.cssText = 'display:block;max-width:100%;max-height:100%;width:auto;height:auto;';
+    canvasWrap.appendChild(canvas);
+    wrapper.appendChild(canvasWrap);
+
+    // チュートリアルダイアログ用 DOM
+    // canvas の下ではなく wrapper 内の絶対配置オーバーレイとして配置する。
+    // これにより HUD + タイマー + キャンバスの合計が画面高さを超えても
+    // テキスト枠は常にビューポート内（画面下端）に表示される。
+    // force_match ステップ中は display:none なのでタイル操作を妨げない。
     const tutorialDiv = document.createElement('div');
-    tutorialDiv.style.cssText = 'width:100%;max-width:600px;padding:0 8px;box-sizing:border-box;margin:6px auto 0;display:none;';
+    tutorialDiv.style.cssText = [
+      'position:absolute',
+      'bottom:0',
+      // left:50% + translateX(-50%) で中央寄せ、max-width で幅制限（wide screen 対応）
+      'left:50%',
+      'transform:translateX(-50%)',
+      'width:100%',
+      'max-width:640px',
+      'padding:8px',
+      'box-sizing:border-box',
+      'z-index:10',
+      'display:none',
+    ].join(';');
     wrapper.appendChild(tutorialDiv);
 
     this.appContainer.appendChild(wrapper);
