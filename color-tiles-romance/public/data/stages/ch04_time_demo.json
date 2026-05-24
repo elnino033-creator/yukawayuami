@@ -1,0 +1,43 @@
+{
+  "id": "ch04_time_demo",
+  "title": "第4章 チュートリアル：制限時間について",
+  "chapter": 4,
+  "boardWidth": 6,
+  "boardHeight": 5,
+  "timeLimitSec": 60,
+  "missPenaltySec": 0,
+  "hintCount": 3,
+  "tilesLayout": [
+    [ "red",    null, null, null, null, "red"    ],
+    [ null,     null, null, null, null, null     ],
+    [ "blue",   null, null, null, null, "blue"   ],
+    [ null,     null, null, null, null, null     ],
+    [ "yellow", null, null, null, null, "yellow" ]
+  ],
+  "blockReleaseRule": { "type": "never" },
+  "tutorialSteps": [
+    {
+      "type": "explain",
+      "speaker": "ひまり",
+      "text": "4章からは「制限時間」が付くよ！\n画面上のタイマーが０になる前に全部のタイルを消してね。\n時間切れになるとゲームオーバーだから気をつけて！",
+      "highlightCells": []
+    },
+    {
+      "type": "explain",
+      "speaker": "ひまり",
+      "text": "まずは練習！\n左端と右端の同じ色のタイルを繋いで消してみよう。\n焦らなくていいよ、まずは仕組みをつかんでね！",
+      "highlightCells": [
+        { "x": 0, "y": 0 }, { "x": 5, "y": 0 },
+        { "x": 0, "y": 2 }, { "x": 5, "y": 2 },
+        { "x": 0, "y": 4 }, { "x": 5, "y": 4 }
+      ]
+    },
+    {
+      "type": "praise",
+      "speaker": "ひまり",
+      "text": "クリア！\nこれからは時間を意識しながらパズルを解こう！",
+      "autoAdvanceMs": 2500
+    }
+  ],
+  "puzzleBgm": "オレンジ宮殿.mp3"
+}
