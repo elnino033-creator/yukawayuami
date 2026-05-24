@@ -630,6 +630,13 @@ export class SceneManager {
           crossCount: snap.crossCount,
           tShapeCount: snap.tShapeCount
         };
+        // postScenario で BADエンドを選ぶとリザルト画面が表示されず saveStore.setRecord が
+        // 呼ばれない。クリア状態を即時保存することでリロード後も再プレイが不要になる。
+        this.saveStore.setRecord(stageDef.id, {
+          bestScore: score,
+          bestRating: calcRating(score),
+          cleared: true
+        });
         if (stageDef.postScenario) {
           const sid = stageDef.postScenario
             .replace(/^scenarios\//, '')
