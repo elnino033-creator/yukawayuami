@@ -713,11 +713,25 @@ export class SceneManager {
       return sec;
     };
 
+    // デバッグ用シナリオ起動：終了後はタイトルへ戻る（通常フローと切り離す）
     panel.appendChild(makeSection('📖 SCENARIOS', ALL_SCENARIOS, (id) => {
-      void this.transition({ to: 'novel', scenarioId: id });
+      void this.mountNovelSceneWithCallback(id, () => {
+        void this.transition({ to: 'title' });
+      });
     }));
+    // デバッグ用ステージ起動：preScenario をスキップして直接ステージを開く
     panel.appendChild(makeSection('🎮 STAGES', ALL_STAGES, (id) => {
-      void this.transition({ to: 'puzzle', stageId: id });
+      void (async () => {
+        try {
+          const url = `${import.meta.env.BASE_URL}data/stages/${id}.json`;
+          const res = await fetch(url);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const stageDef = await res.json() as import('@/types').StageDefinition;
+          await this.launchPuzzleWithDef(stageDef);
+        } catch (e) {
+          console.error('[Debug] stage load failed:', id, e);
+        }
+      })();
     }));
 
     document.body.appendChild(panel);
