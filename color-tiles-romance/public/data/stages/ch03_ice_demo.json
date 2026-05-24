@@ -4,8 +4,8 @@
   "chapter": 3,
   "boardWidth": 8,
   "boardHeight": 6,
-  "timeLimitSec": 150,
-  "missPenaltySec": 30,
+  "timeLimitSec": 0,
+  "missPenaltySec": 0,
   "hintCount": 3,
   "tilesLayout": [
     [

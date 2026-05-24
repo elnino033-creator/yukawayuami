@@ -4,8 +4,8 @@
   "chapter": 3,
   "boardWidth": 10,
   "boardHeight": 8,
-  "timeLimitSec": 110,
-  "missPenaltySec": 30,
+  "timeLimitSec": 0,
+  "missPenaltySec": 0,
   "hintCount": 2,
   "generationParams": {
     "seed": 3001,
