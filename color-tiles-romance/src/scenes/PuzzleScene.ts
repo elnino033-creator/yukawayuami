@@ -134,6 +134,10 @@ export class PuzzleScene {
   /** ステージをロードして開始 */
   loadStage(stage: StageDefinition): void {
     this.engine.loadStage(stage);
+    this.noTimeLimit = stage.timeLimitSec === 0;
+    if (this.noTimeLimit) {
+      this.hudTimer.textContent = '∞';
+    }
     this.resizeCanvasToBoard();
     this.hover = null;
     this.missEffects = [];
@@ -1050,6 +1054,10 @@ export class PuzzleScene {
   }
 
   private updateTimerHud(): void {
+    if (this.noTimeLimit) {
+      this.hudTimer.textContent = '∞';
+      return;
+    }
     const sec = this.engine.timer.remain;
     const m = Math.floor(sec / 60);
     const s = sec % 60;
@@ -1067,6 +1075,8 @@ export class PuzzleScene {
   }
 
   private _lastTimerSec = -1;
+  /** 時間制限なしフラグ（timeLimitSec === 0 のステージ） */
+  private noTimeLimit = false;
 
   private flashStatus(text: string): void {
     this.hudStatus.textContent = text;
