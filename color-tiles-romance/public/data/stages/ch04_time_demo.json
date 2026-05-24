@@ -1,58 +1,41 @@
 {
   "id": "ch04_time_demo",
-  "title": "第4章 チュートリアル：時間タイルの使い方",
+  "title": "第4章 チュートリアル：制限時間について",
   "chapter": 4,
   "boardWidth": 6,
   "boardHeight": 5,
-  "timeLimitSec": 45,
+  "timeLimitSec": 60,
   "missPenaltySec": 0,
   "hintCount": 3,
   "tilesLayout": [
-    [
-      { "color": "green",  "type": "time" },
-      null, null, null, null,
-      { "color": "green",  "type": "time" }
-    ],
-    [ null, null, null, null, null, null ],
-    [
-      "red",
-      null, null, null, null,
-      "red"
-    ],
-    [ null, null, null, null, null, null ],
-    [
-      { "color": "yellow", "type": "time" },
-      null, null, null, null,
-      { "color": "yellow", "type": "time" }
-    ]
+    [ "red",    null, null, null, null, "red"    ],
+    [ null,     null, null, null, null, null     ],
+    [ "blue",   null, null, null, null, "blue"   ],
+    [ null,     null, null, null, null, null     ],
+    [ "yellow", null, null, null, null, "yellow" ]
   ],
   "blockReleaseRule": { "type": "never" },
   "tutorialSteps": [
     {
       "type": "explain",
       "speaker": "ひまり",
-      "text": "⌛のタイルは「時間タイル」だよ！\n消すと残り時間が＋１０秒になるんだ！\n4章からはタイムアタックになるから、時間タイルを積極的に狙って時間を稼ごう！",
-      "highlightCells": [
-        { "x": 0, "y": 0 }, { "x": 5, "y": 0 },
-        { "x": 0, "y": 4 }, { "x": 5, "y": 4 }
-      ]
+      "text": "4章からは「制限時間」が付くよ！\n画面上のタイマーが０になる前に全部のタイルを消してね。\n時間切れになるとゲームオーバーだから気をつけて！",
+      "highlightCells": []
     },
     {
-      "type": "force_match",
+      "type": "explain",
       "speaker": "ひまり",
-      "text": "緑の時間タイルの間の光るマスをクリックして消してみよう！",
+      "text": "まずは練習！\n左端と右端の同じ色のタイルを繋いで消してみよう。\n焦らなくていいよ、まずは仕組みをつかんでね！",
       "highlightCells": [
-        { "x": 0, "y": 0 }, { "x": 5, "y": 0 }
-      ],
-      "allowedCells": [
-        { "x": 1, "y": 0 }, { "x": 2, "y": 0 },
-        { "x": 3, "y": 0 }, { "x": 4, "y": 0 }
+        { "x": 0, "y": 0 }, { "x": 5, "y": 0 },
+        { "x": 0, "y": 2 }, { "x": 5, "y": 2 },
+        { "x": 0, "y": 4 }, { "x": 5, "y": 4 }
       ]
     },
     {
       "type": "praise",
       "speaker": "ひまり",
-      "text": "タイマーが増えたね！\n黄色の時間タイルも狙って、赤いタイルも全部消してクリアしよう！",
+      "text": "クリア！\nこれからは時間を意識しながらパズルを解こう！",
       "autoAdvanceMs": 2500
     }
   ],
