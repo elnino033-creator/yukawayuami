@@ -298,7 +298,7 @@ export class SceneManager {
 
     // キャンバスを flex で縦方向にも収める（高さが余ればセンタリング、足りなければ収縮）
     const canvasWrap = document.createElement('div');
-    canvasWrap.style.cssText = 'flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;';
+    canvasWrap.style.cssText = 'flex:1;min-height:0;width:100%;display:flex;align-items:flex-start;justify-content:center;overflow:hidden;';
     const canvas = document.createElement('canvas');
     // max-width/max-height:100% でボードを canvasWrap 内に収める
     // pointerToCell は getBoundingClientRect() でスケールを補正するので座標ずれなし
@@ -320,7 +320,12 @@ export class SceneManager {
       'transform:translateX(-50%)',
       'width:100%',
       'max-width:640px',
-      'padding:8px',
+      // 上端から 45vh まで拡張可能。コンテンツが溢れたらスクロール可能にする（iPhone 対応）
+      'max-height:45vh',
+      'overflow-y:auto',
+      '-webkit-overflow-scrolling:touch',
+      // iPhone home indicator（safe-area-inset-bottom）分だけ底辺に余白を取る
+      'padding:8px 8px calc(8px + env(safe-area-inset-bottom, 0px)) 8px',
       'box-sizing:border-box',
       'z-index:10',
       'display:none',
@@ -539,7 +544,7 @@ export class SceneManager {
     timer.id = 'hud-timer-sm';
     timer.style.cssText = [
       'font-family:"Courier New",monospace;',
-      'font-size:60px;font-weight:900;',
+      'font-size:clamp(36px, 12vw, 60px);font-weight:900;',
       'color:#ffe080;',
       'letter-spacing:8px;',
       'text-shadow:',
