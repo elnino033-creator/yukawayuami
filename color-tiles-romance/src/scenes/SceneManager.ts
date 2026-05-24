@@ -262,13 +262,15 @@ export class SceneManager {
         await this.mountNovelSceneWithCallback(
           scenarioId,
           () => {
-            this.progressStore.markLineRead(`pre:${stageId}`);
             // BAD ルートが選ばれた場合はパズルを起動せずタイトルへ戻る
             if (this.progressStore.getFlag('route_bad') > 0) {
-              // BADエンド後にCONTINUEで選び直せるようルートフラグをリセット
+              // BADエンド後にCONTINUEで選び直せるようルートフラグをリセット。
+              // markLineRead を呼ばないことで、次回 CONTINUE 時に再び選択肢が表示される。
               this.progressStore.resetFlags();
               void this.transition({ to: 'title' });
             } else {
+              // GOOD ルート：既読マークしてパズルを起動
+              this.progressStore.markLineRead(`pre:${stageId}`);
               void this.launchPuzzleWithDef(stageDef);
             }
           }
