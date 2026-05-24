@@ -454,6 +454,13 @@ export class ScenarioPlayer {
   }
 
   /**
+   * シナリオを強制終了する（デバッグ用）。
+   */
+  forceEnd(): void {
+    this.endScenario();
+  }
+
+  /**
    * リソースを解放してCanvasをコンテナから削除する。
    */
   destroy(): void {

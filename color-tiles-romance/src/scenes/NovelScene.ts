@@ -9,6 +9,7 @@ import type { ScenarioStep } from '@/novel/ScenarioPlayer';
 import type { ScenarioContext } from '@/store/progressStore';
 import { SceneSaveStore } from '@/store/sceneSaveStore';
 import type { ScenarioSaveData } from '@/store/sceneSaveStore';
+import { DebugMode } from '@/debug/DebugMode';
 
 export class NovelScene {
   private container: HTMLElement;
@@ -70,7 +71,7 @@ export class NovelScene {
     // Control bar
     const bar = document.createElement('div');
     bar.style.cssText = `
-      position: absolute; top: 8px; right: 8px; display: flex; gap: 5px; z-index: 10;
+      position: absolute; top: calc(74% + 4px); right: 8px; display: flex; gap: 5px; z-index: 10;
       user-select: none; pointer-events: auto;
     `;
     bar.innerHTML = this.controlBarHTML();
@@ -91,7 +92,7 @@ export class NovelScene {
   private controlBarHTML(): string {
     const btn = (id: string, label: string, title: string) =>
       `<button id="${id}" title="${title}" style="${this.btnStyle()}">${label}</button>`;
-    return [
+    const parts = [
       btn('btn-log', 'LOG', 'ログを表示'),
       btn('btn-save', 'SAVE', 'セーブ'),
       btn('btn-load', 'LOAD', 'ロード'),
@@ -99,7 +100,12 @@ export class NovelScene {
       btn('btn-skip', 'SKIP', '既読スキップ'),
       btn('btn-ff', '▶▶', '早送り'),
       btn('btn-auto', 'AUTO', 'オート'),
-    ].join('');
+    ];
+    if (DebugMode.isActive()) {
+      parts.push(`<span style="border-left:1px solid rgba(255,100,100,0.4);margin:0 2px;"></span>`);
+      parts.push(btn('btn-debug-end', '→END', 'シナリオ強制終了（デバッグ）'));
+    }
+    return parts.join('');
   }
 
   private btnStyle(active = false): string {
@@ -149,6 +155,15 @@ export class NovelScene {
       this.player?.setAutoMode(this.isAutoActive);
       this.syncButtonStates(bar);
     });
+
+    if (DebugMode.isActive()) {
+      const debugEndBtn = bar.querySelector<HTMLButtonElement>('#btn-debug-end');
+      if (debugEndBtn) {
+        debugEndBtn.addEventListener('click', () => {
+          this.player?.forceEnd();
+        });
+      }
+    }
   }
 
   private syncButtonStates(bar: HTMLDivElement): void {
