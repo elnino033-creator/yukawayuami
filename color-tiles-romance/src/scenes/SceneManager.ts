@@ -875,10 +875,83 @@ export class SceneManager {
       return sec;
     };
 
-    // デバッグ用シナリオ起動：終了後はタイトルへ戻る（通常フローと切り離す）
+    // シナリオ終了後の遷移先マップ（null = タイトルへ、文字列 = そのステージを起動）
+    const SCENARIO_AFTER: Record<string, string | null> = {
+      // 序章・チュートリアル
+      'intro_main':          'ch00_prologue',
+      'prologue_main':       'ch00_tutorial',
+      'prologue_post':       'ch00_tutorial',
+      'tutorial_intro':      'ch00_tutorial',
+      'ch00_tutorial_post':  'ch00_tutorial2',
+      'ch00_tutorial2_post': 'ch01_stage01',
+      // ch01
+      'ch01_s01_pre': 'ch01_stage01',  'ch01_s01_post': 'ch01_stage02',
+      'ch01_s02_pre': 'ch01_stage02',  'ch01_s02_post': 'ch01_stage03',
+      'ch01_s03_pre': 'ch01_stage03',  'ch01_s03_pre_A': 'ch01_stage03',
+      'ch01_s03_pre_B': 'ch01_stage03', 'ch01_s03_pre_end': 'ch01_stage03',
+      'ch01_s03_post': 'ch02_stage01',
+      'ch01_s04_pre': 'ch01_stage02',  'ch01_s04_post': 'ch01_stage03',
+      'ch01_s05_pre': 'ch01_stage03',  'ch01_s05_pre_A': 'ch01_stage03',
+      'ch01_s05_pre_B': 'ch01_stage03', 'ch01_s05_post': 'ch02_stage01',
+      'ch01_final_flashback': 'ch02_stage01',
+      'ch01_end': 'ch02_stage01',
+      // ch02
+      'ch02_s01_pre': 'ch02_stage01',  'ch02_s01_post': 'ch02_stage02',
+      'ch02_s02_pre': 'ch02_stage02',  'ch02_s02_post': 'ch02_stage03',
+      'ch02_s03_pre': 'ch02_stage03',  'ch02_s03_pre_A': 'ch02_stage03',
+      'ch02_s03_pre_B': 'ch02_stage03', 'ch02_s03_puzzle': 'ch02_stage03',
+      'ch02_s04_pre': 'ch02_stage02',  'ch02_s04_post': 'ch02_stage03',
+      'ch02_s05_pre': 'ch02_stage03',  'ch02_s05_pre_A': 'ch02_stage03',
+      'ch02_s05_pre_B': 'ch02_stage03',
+      'ch02_final_flashback': 'ch03_stage01',
+      'ch02_end': 'ch03_stage01',
+      // ch03
+      'ch03_s01_pre': 'ch03_stage01',  'ch03_s01_post': 'ch03_stage02',
+      'ch03_s02_pre': 'ch03_stage02',  'ch03_s02_post': 'ch03_stage03',
+      'ch03_s03_pre': 'ch03_stage03',  'ch03_s03_pre_A': 'ch03_stage03',
+      'ch03_s03_pre_B': 'ch03_stage03', 'ch03_s03_post': 'ch04_stage01',
+      'ch03_s04_pre': 'ch03_stage02',  'ch03_s04_post': 'ch03_stage03',
+      'ch03_s05_pre': 'ch03_stage03',  'ch03_s05_pre_A': 'ch03_stage03',
+      'ch03_s05_pre_B': 'ch03_stage03', 'ch03_s06_pre': 'ch03_stage03',
+      'ch03_final_flashback': 'ch04_stage01',
+      'ch03_end': 'ch04_stage01',
+      // ch04
+      'ch04_s01_pre': 'ch04_stage01',  'ch04_s01_post': 'ch04_stage02',
+      'ch04_s02_pre': 'ch04_stage02',  'ch04_s02_post': 'ch04_stage03',
+      'ch04_s03_pre': 'ch04_stage03',  'ch04_s03_pre_A': 'ch04_stage03',
+      'ch04_s03_pre_B': 'ch04_stage03', 'ch04_s03_post': 'ch05_stage01',
+      'ch04_s04_pre': 'ch04_stage02',  'ch04_s04_post': 'ch04_stage03',
+      'ch04_s05_pre': 'ch04_stage03',  'ch04_s05_pre_A': 'ch04_stage03',
+      'ch04_s05_pre_B': 'ch04_stage03', 'ch04_s06_pre': 'ch04_stage03',
+      'ch04_final_flashback': 'ch05_stage01',
+      'ch04_end': 'ch05_stage01',
+      // ch05
+      'ch05_s01_pre': 'ch05_stage01',  'ch05_s01_post': 'ch05_stage02',
+      'ch05_s02_pre': 'ch05_stage02',  'ch05_s02_post': 'ch05_stage03',
+      'ch05_s03_pre': 'ch05_stage03',  'ch05_s03_post': 'ch05_stage04',
+      'ch05_s04_pre': 'ch05_stage04',  'ch05_s04_post': 'ch05_stage05',
+      'ch05_s05_pre': 'ch05_stage05',  'ch05_s05_pre_A': 'ch05_stage05',
+      'ch05_s05_pre_B': 'ch05_stage05', 'ch05_s05_post': 'ch05_stage06',
+      'ch05_s06_pre': 'ch05_stage06',  'ch05_s06_post': 'ch05_stage07',
+      'ch05_s07_pre': 'ch05_stage07',
+      'ch05_route_BAD': null,           // BADエンド → タイトル
+      'ch05_route_TRUE': 'ch05_stage07',
+      'ch05_final_flashback': null,     // 真エンド後 → タイトル
+      'ch05_end': null,
+      'epilogue_true': null,
+    };
+
+    // デバッグ用シナリオ起動：終了後は通常フロー（次のシナリオ/ステージ）へ遷移
     panel.appendChild(makeSection('📖 SCENARIOS', ALL_SCENARIOS, (id) => {
       void this.mountNovelSceneWithCallback(id, () => {
-        void this.transition({ to: 'title' });
+        const nextStage = Object.prototype.hasOwnProperty.call(SCENARIO_AFTER, id)
+          ? SCENARIO_AFTER[id]
+          : undefined;
+        void this.transition(
+          (nextStage != null && nextStage !== undefined)
+            ? { to: 'puzzle', stageId: nextStage }
+            : { to: 'title' }
+        );
       });
     }));
     // デバッグ用ステージ起動：preScenario をスキップして直接ステージを開く
