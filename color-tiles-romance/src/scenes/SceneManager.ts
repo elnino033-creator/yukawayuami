@@ -918,12 +918,12 @@ export class SceneManager {
       'ch03_s01_pre': 'ch03_stage01',  'ch03_s01_post': 'ch03_stage02',
       'ch03_s02_pre': 'ch03_stage02',  'ch03_s02_post': 'ch03_stage03',
       'ch03_s03_pre': 'ch03_stage03',  'ch03_s03_pre_A': 'ch03_stage03',
-      'ch03_s03_pre_B': 'ch03_stage03', 'ch03_s03_post': 'ch04_stage01',
+      'ch03_s03_pre_B': 'ch03_stage03', 'ch03_s03_post': 'ch04_time_demo',
       'ch03_s04_pre': 'ch03_stage02',  'ch03_s04_post': 'ch03_stage03',
       'ch03_s05_pre': 'ch03_stage03',  'ch03_s05_pre_A': 'ch03_stage03',
       'ch03_s05_pre_B': 'ch03_stage03', 'ch03_s06_pre': 'ch03_stage03',
-      'ch03_final_flashback': 'ch04_stage01',
-      'ch03_end': 'ch04_stage01',
+      'ch03_final_flashback': 'ch04_time_demo',
+      'ch03_end': 'ch04_time_demo',
       // ch04
       'ch04_s01_pre': 'ch04_time_demo', 'ch04_s01_pre2': 'ch04_stage01',
       'ch04_s01_post': 'ch04_stage02',
@@ -951,17 +951,30 @@ export class SceneManager {
       'epilogue_true': null,
     };
 
-    // デバッグ用シナリオ起動：終了後は通常フロー（次のシナリオ/ステージ）へ遷移
+    // デバッグ用シナリオ起動：終了後は次のステージへ直接遷移（preScenario 二重再生を防ぐため launchPuzzleWithDef を使用）
     panel.appendChild(makeSection('📖 SCENARIOS', ALL_SCENARIOS, (id) => {
       void this.mountNovelSceneWithCallback(id, () => {
         const nextStage = Object.prototype.hasOwnProperty.call(SCENARIO_AFTER, id)
           ? SCENARIO_AFTER[id]
           : undefined;
-        void this.transition(
-          (nextStage != null && nextStage !== undefined)
-            ? { to: 'puzzle', stageId: nextStage }
-            : { to: 'title' }
-        );
+        if (nextStage != null && nextStage !== undefined) {
+          // transition() を使うと次ステージの preScenario が再び再生されてしまうため、
+          // STAGES パネルと同様に launchPuzzleWithDef で直接ステージを起動する。
+          void (async () => {
+            try {
+              const url = `${import.meta.env.BASE_URL}data/stages/${nextStage}.json`;
+              const res = await fetch(url);
+              if (!res.ok) throw new Error(`HTTP ${res.status}`);
+              const stageDef = await res.json() as import('@/types').StageDefinition;
+              await this.launchPuzzleWithDef(stageDef);
+            } catch (e) {
+              console.error('[Debug] stage load failed after scenario:', nextStage, e);
+              void this.transition({ to: 'title' });
+            }
+          })();
+        } else {
+          void this.transition({ to: 'title' });
+        }
       });
     }));
     // デバッグ用ステージ起動：preScenario をスキップして直接ステージを開く
