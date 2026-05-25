@@ -809,7 +809,7 @@ export class SceneManager {
       'ch03_s03_pre', 'ch03_s03_pre_A', 'ch03_s03_pre_B', 'ch03_s03_post',
       'ch03_s04_pre', 'ch03_s04_post', 'ch03_s05_pre', 'ch03_s05_pre_A', 'ch03_s05_pre_B',
       'ch03_s06_pre', 'ch03_final_flashback', 'ch03_end',
-      'ch04_s01_pre', 'ch04_s01_post', 'ch04_s02_pre', 'ch04_s02_post',
+      'ch04_s01_pre', 'ch04_s01_pre2', 'ch04_s01_post', 'ch04_s02_pre', 'ch04_s02_post',
       'ch04_s03_pre', 'ch04_s03_pre_A', 'ch04_s03_pre_B', 'ch04_s03_post',
       'ch04_s04_pre', 'ch04_s04_post', 'ch04_s05_pre', 'ch04_s05_pre_A', 'ch04_s05_pre_B',
       'ch04_s06_pre', 'ch04_final_flashback', 'ch04_end',
@@ -925,7 +925,8 @@ export class SceneManager {
       'ch03_final_flashback': 'ch04_stage01',
       'ch03_end': 'ch04_stage01',
       // ch04
-      'ch04_s01_pre': 'ch04_stage01',  'ch04_s01_post': 'ch04_stage02',
+      'ch04_s01_pre': 'ch04_time_demo', 'ch04_s01_pre2': 'ch04_stage01',
+      'ch04_s01_post': 'ch04_stage02',
       'ch04_s02_pre': 'ch04_stage02',  'ch04_s02_post': 'ch04_stage03',
       'ch04_s03_pre': 'ch04_stage03',  'ch04_s03_pre_A': 'ch04_stage03',
       'ch04_s03_pre_B': 'ch04_stage03', 'ch04_s03_post': 'ch05_stage01',

@@ -21,7 +21,7 @@
     ],
     "bombChance": 0.15
   },
-  "preScenario": "ch04_s01_pre.json",
+  "preScenario": "ch04_s01_pre2.json",
   "tutorialSteps": [
     {
       "type": "explain",

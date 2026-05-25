@@ -1,0 +1,8 @@
+[
+  { "bgm": "bgm_clockwork" },
+  { "bg": "stage4" },
+  { "chara": { "id": "himari", "expr": "smile", "pos": "center", "show": true } },
+  { "text": { "name": "ひまり", "body": "ほらほら！ ぼーっとしない！ ねえ、見て見て！ この光る黄色いタイル！ ボムタイルっていってね、触るとドカーンって爆発するんだよ！ すごくない！？ 芸術は爆発だ！ さあ、タイルを消して！" } },
+  { "text": { "name": "主人公", "body": "（……この子は——俺の中にある何かを、全部知っている気がする）" } },
+  { "chara": { "id": "himari", "hide": true } }
+]
