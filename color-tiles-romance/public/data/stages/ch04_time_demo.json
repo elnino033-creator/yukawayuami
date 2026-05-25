@@ -15,6 +15,7 @@
     [ "yellow", null, null, null, null, "yellow" ]
   ],
   "blockReleaseRule": { "type": "never" },
+  "preScenario": "ch04_s01_pre.json",
   "tutorialSteps": [
     {
       "type": "explain",
