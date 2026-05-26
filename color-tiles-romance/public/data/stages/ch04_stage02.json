@@ -21,6 +21,7 @@
     "bombChance": 0.15
   },
   "preScenario": "ch04_s02_pre.json",
+  "rewardScenario": "ch04_s02_reward.json",
   "puzzleBgm": "オレンジ宮殿.mp3",
   "bombCountdown": 15,
   "bombPenaltySec": 20,

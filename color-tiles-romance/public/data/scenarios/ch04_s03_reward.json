@@ -1,0 +1,6 @@
+[
+  { "bg": "stage4" },
+  { "chara": { "id": "himari", "expr": "smile", "pos": "center", "show": true } },
+  { "text": { "name": "ひまり", "body": "やった！ 完璧！ さすがだよ、ほんとに！\n……（仮テキスト）" } },
+  { "chara": { "id": "himari", "hide": true } }
+]
