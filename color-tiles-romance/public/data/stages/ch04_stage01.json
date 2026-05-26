@@ -22,6 +22,7 @@
     "bombChance": 0.15
   },
   "preScenario": "ch04_s01_pre2.json",
+  "rewardScenario": "ch04_s01_reward.json",
   "tutorialSteps": [
     {
       "type": "explain",

@@ -12,6 +12,7 @@
     "targetPairs": 18
   },
   "preScenario": "ch01_s03_pre.json",
+  "rewardScenario": "ch01_s03_reward.json",
   "puzzleBgm": "緋色のあかり_last.mp3",
   "postScenario": "ch01_end.json"
 }

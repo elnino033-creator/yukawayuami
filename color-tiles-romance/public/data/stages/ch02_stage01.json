@@ -82,6 +82,7 @@
     ]
   ],
   "preScenario": "ch02_s01_pre.json",
+  "rewardScenario": "ch02_s01_reward.json",
   "tutorialSteps": [
     {
       "type": "explain",

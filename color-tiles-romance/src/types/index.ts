@@ -136,6 +136,8 @@ export interface StageDefinition {
   preScenario?: string;
   /** パズル後シナリオのJSONパス（public/data/scenarios/以下） */
   postScenario?: string;
+  /** Sランククリア時に再生するご褒美シナリオのJSONパス（public/data/scenarios/以下） */
+  rewardScenario?: string;
   /** 失敗時シナリオのJSONパス（任意） */
   failScenario?: string;
   /** クリア報酬 */

@@ -20,6 +20,7 @@
     ]
   },
   "preScenario": "ch02_s03_pre.json",
+  "rewardScenario": "ch02_s03_reward.json",
   "postScenario": "ch02_end.json",
   "puzzleBgm": "氷鈴の世界_last.mp3",
   "specialEvent": {

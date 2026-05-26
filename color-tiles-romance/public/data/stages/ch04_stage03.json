@@ -20,13 +20,20 @@
     ]
   },
   "preScenario": "ch04_s03_pre.json",
+  "rewardScenario": "ch04_s03_reward.json",
   "postScenario": "ch04_end.json",
   "puzzleBgm": "Crown of Ashes.mp3",
   "bombCountdown": 15,
   "bombPenaltySec": 20,
   "specialEvent": {
-    "trigger": { "type": "afterPairs", "count": 4 },
-    "effect": { "type": "transformToBomb", "count": 12 },
+    "trigger": {
+      "type": "afterPairs",
+      "count": 4
+    },
+    "effect": {
+      "type": "transformToBomb",
+      "count": 12
+    },
     "cutIn": {
       "character": "himari",
       "text": "芸術は爆発だ！💣"
