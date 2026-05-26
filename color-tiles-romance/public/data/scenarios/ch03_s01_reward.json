@@ -1,0 +1,6 @@
+[
+  { "bg": "stage3" },
+  { "chara": { "id": "suzu", "expr": "smile", "pos": "center", "show": true } },
+  { "text": { "name": "すず", "body": "……完璧だった。本当に、すごいと思う。\n……（仮テキスト）" } },
+  { "chara": { "id": "suzu", "hide": true } }
+]

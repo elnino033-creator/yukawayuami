@@ -1,0 +1,6 @@
+[
+  { "bg": "stage2" },
+  { "chara": { "id": "mio", "expr": "smile", "pos": "center", "show": true } },
+  { "text": { "name": "みお", "body": "……すごいね。こんなに速く解けるなんて、思ってなかった。\n……（仮テキスト）" } },
+  { "chara": { "id": "mio", "hide": true } }
+]

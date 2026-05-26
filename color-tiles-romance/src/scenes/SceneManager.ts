@@ -43,6 +43,10 @@ export interface ResultData {
   crossCount: number;
   /** T字消し回数 */
   tShapeCount: number;
+  /** パズル後シナリオID（.json拡張子なし）。リザルト画面の「次へ」後に再生する */
+  postScenario?: string;
+  /** Sランク時のご褒美シナリオID（.json拡張子なし）。postScenario より先に再生する */
+  rewardScenario?: string;
 }
 
 /** シーン遷移リクエスト */
@@ -445,51 +449,65 @@ export class SceneManager {
         this.transition({ to: 'puzzle', stageId: data.stageId });
       },
       () => {
-        // 最終ステージクリアならエンディングシーケンスへ
-        if (data.stageId === 'ch05_stage07' && data.cleared) {
-          void this.mountNovelSceneWithCallback('ch05_final_flashback', () => {
-            void this.mountNovelSceneWithCallback('epilogue_true', () => {
-              this.mountEndRoll();
+        // シナリオチェーン：rewardScenario(Sランク) → postScenario(BAD ENDチェック) → 次ステージ
+        // ① 章末flashback / 次ステージへ進む
+        const goNext = () => {
+          if (data.stageId === 'ch05_stage07' && data.cleared) {
+            void this.mountNovelSceneWithCallback('ch05_final_flashback', () => {
+              void this.mountNovelSceneWithCallback('epilogue_true', () => {
+                this.mountEndRoll();
+              });
             });
-          });
-        } else if (data.stageId === 'ch01_stage03' && data.cleared) {
-          void this.mountNovelSceneWithCallback('ch01_final_flashback', () => {
+          } else if (data.stageId === 'ch01_stage03' && data.cleared) {
+            void this.mountNovelSceneWithCallback('ch01_final_flashback', () => {
+              const next = this.getNextStage(data.stageId);
+              void this.transition(next ? { to: 'puzzle', stageId: next } : { to: 'title' });
+            });
+          } else if (data.stageId === 'ch02_stage03' && data.cleared) {
+            void this.mountNovelSceneWithCallback('ch02_final_flashback', () => {
+              const next = this.getNextStage(data.stageId);
+              void this.transition(next ? { to: 'puzzle', stageId: next } : { to: 'title' });
+            });
+          } else if (data.stageId === 'ch03_stage03' && data.cleared) {
+            void this.mountNovelSceneWithCallback('ch03_final_flashback', () => {
+              const next = this.getNextStage(data.stageId);
+              void this.transition(next ? { to: 'puzzle', stageId: next } : { to: 'title' });
+            });
+          } else if (data.stageId === 'ch04_stage03' && data.cleared) {
+            void this.mountNovelSceneWithCallback('ch04_final_flashback', () => {
+              const next = this.getNextStage(data.stageId);
+              void this.transition(next ? { to: 'puzzle', stageId: next } : { to: 'title' });
+            });
+          } else {
             const next = this.getNextStage(data.stageId);
-            void this.transition(next
-              ? { to: 'puzzle', stageId: next }
-              : { to: 'title' }
-            );
-          });
-        } else if (data.stageId === 'ch02_stage03' && data.cleared) {
-          void this.mountNovelSceneWithCallback('ch02_final_flashback', () => {
-            const next = this.getNextStage(data.stageId);
-            void this.transition(next
-              ? { to: 'puzzle', stageId: next }
-              : { to: 'title' }
-            );
-          });
-        } else if (data.stageId === 'ch03_stage03' && data.cleared) {
-          void this.mountNovelSceneWithCallback('ch03_final_flashback', () => {
-            const next = this.getNextStage(data.stageId);
-            void this.transition(next
-              ? { to: 'puzzle', stageId: next }
-              : { to: 'title' }
-            );
-          });
-        } else if (data.stageId === 'ch04_stage03' && data.cleared) {
-          void this.mountNovelSceneWithCallback('ch04_final_flashback', () => {
-            const next = this.getNextStage(data.stageId);
-            void this.transition(next
-              ? { to: 'puzzle', stageId: next }
-              : { to: 'title' }
-            );
+            void this.transition(next ? { to: 'puzzle', stageId: next } : { to: 'title' });
+          }
+        };
+
+        // ② postScenario（BAD ENDチェック付き）→ ① へ
+        const afterReward = () => {
+          if (data.postScenario && data.cleared) {
+            void this.mountNovelSceneWithCallback(data.postScenario, () => {
+              if (this.progressStore.getFlag('route_bad') > 0) {
+                // BADエンド後にCONTINUEで選び直せるようフラグをリセット
+                this.progressStore.resetFlags();
+                void this.transition({ to: 'title' });
+              } else {
+                goNext();
+              }
+            });
+          } else {
+            goNext();
+          }
+        };
+
+        // ③ rewardScenario（Sランクボーナス）→ ② → ① へ
+        if (data.cleared && data.rating === 'S' && data.rewardScenario) {
+          void this.mountNovelSceneWithCallback(data.rewardScenario, () => {
+            afterReward();
           });
         } else {
-          const next = this.getNextStage(data.stageId);
-          void this.transition(next
-            ? { to: 'puzzle', stageId: next }
-            : { to: 'title' }
-          );
+          afterReward();
         }
       },
       () => {
@@ -628,32 +646,19 @@ export class SceneManager {
           timeBonus: stageDef.timeLimitSec > 0 ? scene.engine.timer.remain * 10 : 0,
           comboMax: snap.maxCombo,
           crossCount: snap.crossCount,
-          tShapeCount: snap.tShapeCount
+          tShapeCount: snap.tShapeCount,
+          // postScenario / rewardScenario はリザルト画面の「次へ」後に処理する
+          postScenario: stageDef.postScenario?.replace(/^scenarios\//, '').replace(/\.json$/, ''),
+          rewardScenario: stageDef.rewardScenario?.replace(/^scenarios\//, '').replace(/\.json$/, ''),
         };
-        // postScenario で BADエンドを選ぶとリザルト画面が表示されず saveStore.setRecord が
-        // 呼ばれない。クリア状態を即時保存することでリロード後も再プレイが不要になる。
+        // BADエンドでリザルトを経由しない場合も cleared を保存するため即時セーブ
         this.saveStore.setRecord(stageDef.id, {
           bestScore: score,
           bestRating: calcRating(score),
           cleared: true
         });
-        if (stageDef.postScenario) {
-          const sid = stageDef.postScenario
-            .replace(/^scenarios\//, '')
-            .replace(/\.json$/, '');
-          void this.mountNovelSceneWithCallback(sid, () => {
-            // BAD ルートが選ばれた場合はリザルトを出さずタイトルへ戻る
-            if (this.progressStore.getFlag('route_bad') > 0) {
-              // BADエンド後にCONTINUEで選び直せるようルートフラグをリセット
-              this.progressStore.resetFlags();
-              void this.transition({ to: 'title' });
-            } else {
-              void this.transition({ to: 'result', resultData });
-            }
-          });
-        } else {
-          void this.transition({ to: 'result', resultData });
-        }
+        // クリア後は常にリザルト画面を先に表示する
+        void this.transition({ to: 'result', resultData });
       } else if (e.type === 'gameOver') {
         const snap = scene.engine.getScoreSnapshot();
         const score = snap.score;

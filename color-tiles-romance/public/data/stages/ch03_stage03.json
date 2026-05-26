@@ -26,11 +26,17 @@
     "count": 10
   },
   "preScenario": "ch03_s03_pre.json",
+  "rewardScenario": "ch03_s03_reward.json",
   "postScenario": "ch03_end.json",
   "puzzleBgm": "翠葉の迷宮.mp3",
   "specialEvent": {
-    "trigger": { "type": "whenBlocksHalfway" },
-    "effect": { "type": "restoreBlocks", "newReleaseCount": 14 },
+    "trigger": {
+      "type": "whenBlocksHalfway"
+    },
+    "effect": {
+      "type": "restoreBlocks",
+      "newReleaseCount": 14
+    },
     "cutIn": {
       "character": "suzu",
       "text": "なぜ休んでくれないのですか"

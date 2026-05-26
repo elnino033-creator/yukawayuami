@@ -1,0 +1,6 @@
+[
+  { "bg": "stage1_bef" },
+  { "chara": { "id": "akari", "expr": "smile", "pos": "center", "show": true } },
+  { "text": { "name": "あかり", "body": "わあ……すごい！ ぜんぶきれいに消せてる。\n……（仮テキスト）" } },
+  { "chara": { "id": "akari", "hide": true } }
+]

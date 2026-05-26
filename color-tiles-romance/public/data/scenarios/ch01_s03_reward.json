@@ -1,0 +1,6 @@
+[
+  { "bg": "stage1_bef" },
+  { "chara": { "id": "akari", "expr": "smile", "pos": "center", "show": true } },
+  { "text": { "name": "あかり", "body": "最後まで一番で！ ……なんだか、誇らしい気持ちがするな。\n……（仮テキスト）" } },
+  { "chara": { "id": "akari", "hide": true } }
+]

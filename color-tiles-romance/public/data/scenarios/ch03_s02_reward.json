@@ -1,0 +1,6 @@
+[
+  { "bg": "stage3" },
+  { "chara": { "id": "suzu", "expr": "smile", "pos": "center", "show": true } },
+  { "text": { "name": "すず", "body": "また一番……。なんで、あなたって迷わないの？\n……（仮テキスト）" } },
+  { "chara": { "id": "suzu", "hide": true } }
+]

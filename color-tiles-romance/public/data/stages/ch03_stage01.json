@@ -26,6 +26,7 @@
     "count": 12
   },
   "preScenario": "ch03_s01_pre.json",
+  "rewardScenario": "ch03_s01_reward.json",
   "tutorialSteps": [
     {
       "type": "explain",

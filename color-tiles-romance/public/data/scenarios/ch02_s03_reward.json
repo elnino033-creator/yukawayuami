@@ -1,0 +1,6 @@
+[
+  { "bg": "stage2" },
+  { "chara": { "id": "mio", "expr": "smile", "pos": "center", "show": true } },
+  { "text": { "name": "みお", "body": "……ありがとう。ちゃんと、見てくれてたんだね。\n……（仮テキスト）" } },
+  { "chara": { "id": "mio", "hide": true } }
+]

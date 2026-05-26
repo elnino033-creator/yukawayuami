@@ -1,0 +1,6 @@
+[
+  { "bg": "stage2" },
+  { "chara": { "id": "mio", "expr": "smile", "pos": "center", "show": true } },
+  { "text": { "name": "みお", "body": "また満点……。あなたって、集中したらすごいんだね。\n……（仮テキスト）" } },
+  { "chara": { "id": "mio", "hide": true } }
+]
