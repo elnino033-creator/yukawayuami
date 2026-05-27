@@ -33,6 +33,7 @@
     "count": 18
   },
   "preScenario": "ch05_s06_pre.json",
+  "rewardScenario": "ch05_s06_reward.json",
   "postScenario": "ch05_s06_post.json",
   "puzzleBgm": "黒階段の誓い.mp3"
 }

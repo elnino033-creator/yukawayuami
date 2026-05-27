@@ -38,6 +38,8 @@ export interface SaveData {
   stageRecords: Record<string, StageRecord>;
   /** ゲーム設定 */
   settings: GameSettings;
+  /** Sランク報酬シナリオの閲覧済みIDリスト（ギャラリー解放に使用） */
+  viewedRewards: string[];
 }
 
 /** デフォルトのゲーム設定 */
@@ -54,7 +56,8 @@ const DEFAULT_SAVE_DATA: SaveData = {
   currentChapter: 0,
   currentStage: 0,
   stageRecords: {},
-  settings: { ...DEFAULT_SETTINGS }
+  settings: { ...DEFAULT_SETTINGS },
+  viewedRewards: []
 };
 
 /**
@@ -205,13 +208,32 @@ export class SaveStore {
     };
   }
 
+  /**
+   * Sランク報酬シナリオを閲覧済みとして記録する（ギャラリー解放）。
+   * @param rewardId 報酬シナリオID（拡張子なし）
+   */
+  markRewardViewed(rewardId: string): void {
+    if (!this.data.viewedRewards.includes(rewardId)) {
+      this.data.viewedRewards.push(rewardId);
+      this.save();
+    }
+  }
+
+  /**
+   * 閲覧済み報酬シナリオIDの一覧を返す。
+   */
+  getViewedRewards(): string[] {
+    return [...this.data.viewedRewards];
+  }
+
   private mergeWithDefault(partial: Partial<SaveData>): SaveData {
     return {
       version: partial.version ?? 1,
       currentChapter: partial.currentChapter ?? 0,
       currentStage: partial.currentStage ?? 0,
       stageRecords: partial.stageRecords ?? {},
-      settings: { ...DEFAULT_SETTINGS, ...(partial.settings ?? {}) }
+      settings: { ...DEFAULT_SETTINGS, ...(partial.settings ?? {}) },
+      viewedRewards: partial.viewedRewards ?? []
     };
   }
 }
