@@ -1,14 +1,77 @@
 [
-  { "bg": "stage5" },
-  { "chara": { "id": "yukari", "expr": "surprise", "pos": "center", "show": true } },
-  { "text": { "name": "", "body": "ゆかりが、珍しく声を上げた。" } },
-  { "text": { "name": "ゆかり", "body": "……っ。" } },
-  { "text": { "name": "主人公", "body": "どうした。" } },
-  { "text": { "name": "ゆかり", "body": "……いいえ。ただ、少し、驚いただけです。" } },
-  { "text": { "name": "主人公", "body": "お前が驚くことがあるのか。" } },
-  { "text": { "name": "ゆかり", "body": "……たまには。あなたがあそこまでやるとは、思っていなかった。" } },
-  { "chara": { "id": "yukari", "expr": "normal", "pos": "center" } },
-  { "text": { "name": "ゆかり", "body": "……やっぱり、あなたは面白い人だ。私が選んだだけのことはある。" } },
-  { "text": { "name": "主人公", "body": "（……選んだ、というのが気になったが、今は聞かないでおいた）" } },
-  { "chara": { "id": "yukari", "hide": true } }
+  {
+    "bg": "stage5"
+  },
+  {
+    "bgm": "bgm_tower_entrance"
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "surprise",
+      "pos": "center",
+      "show": true
+    }
+  },
+  {
+    "text": {
+      "name": "",
+      "body": "ゆかりが、珍しく声を上げた。"
+    }
+  },
+  {
+    "text": {
+      "name": "ゆかり",
+      "body": "……っ。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "どうした。"
+    }
+  },
+  {
+    "text": {
+      "name": "ゆかり",
+      "body": "……いいえ。ただ、少し、驚いただけです。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "お前が驚くことがあるのか。"
+    }
+  },
+  {
+    "text": {
+      "name": "ゆかり",
+      "body": "……たまには。あなたがあそこまでやるとは、思っていなかった。"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center"
+    }
+  },
+  {
+    "text": {
+      "name": "ゆかり",
+      "body": "……やっぱり、あなたは面白い人だ。私が選んだだけのことはある。"
+    }
+  },
+  {
+    "text": {
+      "name": "主人公",
+      "body": "（……選んだ、というのが気になったが、今は聞かないでおいた）"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "hide": true
+    }
+  }
 ]

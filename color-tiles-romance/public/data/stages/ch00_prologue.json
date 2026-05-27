@@ -14,5 +14,6 @@
     [null,    null, null,    null,    null, null   ]
   ],
   "blockReleaseRule": { "type": "never" },
+  "puzzleBgm": "妖精の小径.mp3",
   "postScenario": "scenarios/prologue_post.json"
 }
