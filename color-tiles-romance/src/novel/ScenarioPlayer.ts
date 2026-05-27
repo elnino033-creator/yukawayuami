@@ -299,7 +299,10 @@ export class ScenarioPlayer {
       scenarioId: this.currentScenarioId,
       stepIndex: this.stepIndex,
       bgKey: this.currentBgKey,
-      bgmKey: this.currentBgmKey,
+      // currentBgmKey はシナリオ内の {bgm:...} ステップで設定された値。
+      // null の場合はシナリオがパズル等から BGM を継承しているので、
+      // BgmManager が実際に再生中のキーを記録する（ロード時に再生を復元するため）。
+      bgmKey: this.currentBgmKey ?? (BgmManager.getCurrentKey() || null),
       characters: this.characters.map(c => ({
         id: c.id, expr: c.expr, pos: c.pos, scale: c.scale, y: c.y
       })),

@@ -98,6 +98,15 @@ class BgmManagerClass {
   }
 
   /**
+   * 現在ロード済み（再生中 or 一時停止中）の BGM ファイル名を返す。
+   * 何も再生していない場合は空文字列を返す。
+   * ScenarioPlayer がセーブデータに BGM キーを記録するために使用する。
+   */
+  getCurrentKey(): string {
+    return this.currentKey;
+  }
+
+  /**
    * BGM を完全に停止してリソースを解放する。
    * 明示的に無音にしたいとき（エンドロールなど）に使用する。
    * stop() と違い currentKey もリセットするため、次回 play() は必ず頭から開始する。
