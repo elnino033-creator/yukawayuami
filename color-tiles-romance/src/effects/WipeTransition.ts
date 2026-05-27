@@ -57,7 +57,10 @@ function easeInCubic(t: number):   number { return t ** 3; }
 function easeInOutSine(t: number): number { return -(Math.cos(Math.PI * t) - 1) / 2; }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// wipe ― 斜めカーテン（260 + 240 ms）
+// wipe ― 斜めカーテン 1パス通過（400 ms）
+//
+// パネルが左端から右端まで1回だけ通過する。
+// 画面が完全に覆われた瞬間（通過の中盤）に onCovered() を呼ぶ。
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface Sparkle {
@@ -69,20 +72,26 @@ interface Sparkle {
 function wipeTransitionImpl(onCovered: () => void): Promise<void> {
   return new Promise((resolve) => {
     const [canvas, ctx, W, H] = makeCanvas();
-    const SLANT        = Math.round(H * 0.28);
-    const PHASE_IN_MS  = 260;
-    const PHASE_OUT_MS = 240;
+    const SLANT       = Math.round(H * 0.28);
+    const PANEL_W     = W + SLANT * 2;          // 画面を確実に覆える幅
+    const START_LB    = -(PANEL_W + 10);        // leading edge が -10 から始まる
+    const END_LB      = W + SLANT + 10;         // trailing edge が W+10 で退場完了
+    const COVER_LB    = -SLANT;                 // trailing が -SLANT になると全面カバー
+    const TOTAL_MS    = 400;
 
     const sparkles: Sparkle[] = [];
+    let coveredCalled = false;
+    const startTime = performance.now();
+    let lastTime = startTime;
+    let spawnAccum = 0;
 
-    function spawnSparkles(etx: number, ebx: number): void {
+    function spawnSparkles(rtx: number, rbx: number): void {
       const count = 2 + Math.floor(Math.random() * 3);
       for (let i = 0; i < count; i++) {
         const ry = Math.random();
         sparkles.push({
-          ox: etx + (ebx - etx) * ry, oy: ry * H,
-          vx: (Math.random() - 0.3) * 3,
-          vy: (Math.random() - 0.5) * 3,
+          ox: rtx + (rbx - rtx) * ry, oy: ry * H,
+          vx: (Math.random() - 0.3) * 3, vy: (Math.random() - 0.5) * 3,
           life: 1.0, size: 1.5 + Math.random() * 2.5,
         });
       }
@@ -114,19 +123,33 @@ function wipeTransitionImpl(onCovered: () => void): Promise<void> {
       }
     }
 
-    function drawPhaseIn(rtx: number, rbx: number): void {
-      const g = ctx.createLinearGradient(rtx - 160, 0, rtx + 20, 0);
-      g.addColorStop(0,    '#16093a');
-      g.addColorStop(0.65, '#2d1260');
-      g.addColorStop(0.88, '#5a2495');
-      g.addColorStop(1,    '#7b3bb0');
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.moveTo(-10, -10); ctx.lineTo(rtx, -10);
-      ctx.lineTo(rbx, H + 10); ctx.lineTo(-10, H + 10);
-      ctx.closePath(); ctx.fill();
+    /** trailing edge = leftBottom を基準にパネルを描画 */
+    function drawPanel(leftBottom: number): void {
+      const rightBottom = leftBottom + PANEL_W;
+      const leftTop     = leftBottom - SLANT;
+      const rightTop    = rightBottom - SLANT;
 
-      const sg = ctx.createLinearGradient(rtx - 18, 0, rbx + 6, H);
+      // パネル本体（trailing → leading 方向でグラデーション）
+      const grad = ctx.createLinearGradient(leftTop, 0, rightTop, 0);
+      grad.addColorStop(0,    '#7b3bb0');
+      grad.addColorStop(0.06, '#5a2495');
+      grad.addColorStop(0.22, '#2d1260');
+      grad.addColorStop(0.78, '#16093a');
+      grad.addColorStop(0.90, '#2d1260');
+      grad.addColorStop(0.96, '#5a2495');
+      grad.addColorStop(1,    '#7b3bb0');
+      ctx.fillStyle = grad;
+
+      ctx.beginPath();
+      ctx.moveTo(leftTop,    -10);
+      ctx.lineTo(rightTop,   -10);
+      ctx.lineTo(rightBottom, H + 10);
+      ctx.lineTo(leftBottom,  H + 10);
+      ctx.closePath();
+      ctx.fill();
+
+      // 先端（leading/right）エッジのシマー
+      const sg = ctx.createLinearGradient(rightTop - 18, 0, rightBottom + 6, H);
       sg.addColorStop(0,    'rgba(255,220,140,0)');
       sg.addColorStop(0.35, 'rgba(255,240,180,0.65)');
       sg.addColorStop(0.5,  'rgba(255,255,255,0.9)');
@@ -134,41 +157,13 @@ function wipeTransitionImpl(onCovered: () => void): Promise<void> {
       sg.addColorStop(1,    'rgba(255,200,100,0)');
       ctx.fillStyle = sg;
       ctx.beginPath();
-      ctx.moveTo(rtx - 18, -10); ctx.lineTo(rtx + 6, -10);
-      ctx.lineTo(rbx + 6, H + 10); ctx.lineTo(rbx - 18, H + 10);
-      ctx.closePath(); ctx.fill();
+      ctx.moveTo(rightTop - 18, -10);
+      ctx.lineTo(rightTop +  6, -10);
+      ctx.lineTo(rightBottom + 6, H + 10);
+      ctx.lineTo(rightBottom - 18, H + 10);
+      ctx.closePath();
+      ctx.fill();
     }
-
-    function drawPhaseOut(ltx: number, lbx: number): void {
-      const g = ctx.createLinearGradient(ltx - 20, 0, ltx + 160, 0);
-      g.addColorStop(0,    '#7b3bb0');
-      g.addColorStop(0.12, '#5a2495');
-      g.addColorStop(0.35, '#2d1260');
-      g.addColorStop(1,    '#16093a');
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.moveTo(ltx, -10); ctx.lineTo(W + 10, -10);
-      ctx.lineTo(W + 10, H + 10); ctx.lineTo(lbx, H + 10);
-      ctx.closePath(); ctx.fill();
-
-      const sg = ctx.createLinearGradient(ltx - 6, 0, lbx + 18, H);
-      sg.addColorStop(0,    'rgba(255,200,100,0)');
-      sg.addColorStop(0.35, 'rgba(255,220,140,0.55)');
-      sg.addColorStop(0.5,  'rgba(255,255,255,0.9)');
-      sg.addColorStop(0.65, 'rgba(255,240,180,0.65)');
-      sg.addColorStop(1,    'rgba(255,220,140,0)');
-      ctx.fillStyle = sg;
-      ctx.beginPath();
-      ctx.moveTo(ltx - 6, -10); ctx.lineTo(ltx + 18, -10);
-      ctx.lineTo(lbx + 18, H + 10); ctx.lineTo(lbx - 6, H + 10);
-      ctx.closePath(); ctx.fill();
-    }
-
-    let phase: 1 | 2 = 1;
-    let phaseStart = performance.now();
-    let coveredCalled = false;
-    let lastTime = performance.now();
-    let spawnAccum = 0;
 
     function frame(now: number): void {
       const dt = Math.min((now - lastTime) / 1000, 0.05);
@@ -176,36 +171,29 @@ function wipeTransitionImpl(onCovered: () => void): Promise<void> {
       ctx.clearRect(0, 0, W, H);
       updateSparkles(dt);
 
-      if (phase === 1) {
-        const t = Math.min((now - phaseStart) / PHASE_IN_MS, 1);
-        const eased = easeOutCubic(t);
-        const rbx = eased * (W + SLANT) - SLANT;
-        const rtx = rbx - SLANT;
-        drawPhaseIn(rtx, rbx);
-        drawSparkles();
-        spawnAccum += dt;
-        if (spawnAccum > 0.025 && rbx > -SLANT && rbx < W + SLANT) {
-          spawnAccum = 0; spawnSparkles(rtx, rbx);
-        }
-        if (t >= 1) {
-          if (!coveredCalled) { coveredCalled = true; onCovered(); }
-          phase = 2; phaseStart = now;
-        }
-      } else {
-        const t = Math.min((now - phaseStart) / PHASE_OUT_MS, 1);
-        const eased = easeInCubic(t);
-        const lbx = eased * (W + SLANT) - SLANT;
-        const ltx = lbx - SLANT;
-        if (lbx < W + SLANT) {
-          drawPhaseOut(ltx, lbx);
-          drawSparkles();
-          spawnAccum += dt;
-          if (spawnAccum > 0.025 && lbx > -SLANT && lbx < W + SLANT) {
-            spawnAccum = 0; spawnSparkles(ltx, lbx);
-          }
-        }
-        if (t >= 1) { canvas.remove(); resolve(); return; }
+      const t          = Math.min((now - startTime) / TOTAL_MS, 1);
+      const eased      = easeInOutSine(t);
+      const leftBottom = START_LB + (END_LB - START_LB) * eased;
+      const rightBottom = leftBottom + PANEL_W;
+      const rightTop    = rightBottom - SLANT;
+
+      drawPanel(leftBottom);
+      drawSparkles();
+
+      // 画面が完全に覆われた瞬間に onCovered を呼ぶ
+      if (!coveredCalled && leftBottom >= COVER_LB) {
+        coveredCalled = true;
+        onCovered();
       }
+
+      // leading edge が画面内にある間スパークルを生成
+      spawnAccum += dt;
+      if (spawnAccum > 0.025 && rightBottom > -10 && rightBottom < W + SLANT * 2) {
+        spawnAccum = 0;
+        spawnSparkles(rightTop, rightBottom);
+      }
+
+      if (t >= 1) { canvas.remove(); resolve(); return; }
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
