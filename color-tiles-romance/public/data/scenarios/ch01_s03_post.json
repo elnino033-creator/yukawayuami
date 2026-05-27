@@ -3,6 +3,9 @@
     "bg": "stage1_bef"
   },
   {
+    "bgm": "緋色のあかり_last.mp3"
+  },
+  {
     "chara": {
       "id": "akari",
       "expr": "smile",
