@@ -42,6 +42,11 @@ export interface ScenarioSaveData {
   choiceContextName?: string;
   /** 選択肢と一緒に表示する直前のセリフ（本文） */
   choiceContextBody?: string;
+  /**
+   * このシナリオが終了したあとに起動すべきステージID（preScenario として呼ばれた場合のみ設定）。
+   * タイトル画面LOADからロードしたとき、GOODルートを選んだ場合にパズルへ進むために使用する。
+   */
+  nextStageId?: string;
 }
 
 const STORAGE_KEY = 'ctr-scene-saves';

@@ -17,6 +17,8 @@ export class NovelScene {
   private context: ScenarioContext;
   private onEnd: () => void;
   private player: ScenarioPlayer | null = null;
+  /** preScenario として呼ばれた場合に設定される、終了後に起動するステージID */
+  private nextStageId: string | undefined = undefined;
 
   // DOM overlay elements
   private overlayEl: HTMLDivElement | null = null;
@@ -102,6 +104,15 @@ export class NovelScene {
     this.isFFActive = false;
 
     await this.player.startFromRestored();
+  }
+
+  /**
+   * preScenario として起動された場合に、終了後に起動するステージIDをセットする。
+   * セーブ時にこの値をセーブデータへ含めることで、タイトルLOADからのロード後も
+   * GOODルートを選んだ場合にパズルへ正しく遷移できるようにする。
+   */
+  setNextStageId(id: string): void {
+    this.nextStageId = id;
   }
 
   destroy(): void {
@@ -400,6 +411,8 @@ export class NovelScene {
       ...state,
       slot,
       savedAt: new Date().toISOString(),
+      // preScenario として起動された場合はステージIDを保持する（タイトルLOADからの復帰用）
+      nextStageId: this.nextStageId,
     };
     SceneSaveStore.set(slot, save);
     if (this.saveLoadPanelEl) {

@@ -289,7 +289,8 @@ export class SceneManager {
               this.progressStore.markLineRead(`pre:${stageId}`);
               void this.launchPuzzleWithDef(stageDef);
             }
-          }
+          },
+          stageId  // preScenario として起動されたステージIDをセーブデータに含める
         );
         return;
       }
@@ -400,7 +401,7 @@ export class SceneManager {
   }
 
   /** シナリオ終了後にコールバックを呼ぶ一時的なノベル画面マウント */
-  private async mountNovelSceneWithCallback(scenarioId: string, onEnd: () => void): Promise<void> {
+  private async mountNovelSceneWithCallback(scenarioId: string, onEnd: () => void, nextStageId?: string): Promise<void> {
     // モジュールを事前ロード（遷移アニメーション中に遅延しないよう）
     const [{ NovelScene }, { sceneTransition }] = await Promise.all([
       import('@/scenes/NovelScene'),
@@ -449,6 +450,10 @@ export class SceneManager {
         this.progressStore.scenarioContext,
         onEnd
       );
+      // preScenario として起動された場合はステージIDを NovelScene に伝える（セーブ用）
+      if (nextStageId) {
+        holder.scene.setNextStageId(nextStageId);
+      }
     });
 
     // 遷移アニメーションが完全に抜けたらシーンを開始する
@@ -1170,7 +1175,21 @@ export class SceneManager {
       div,
       save.scenarioId,
       this.progressStore.scenarioContext,
-      () => { void this.transition({ to: 'title' }); }
+      () => {
+        // BADルートが選ばれた場合はフラグをリセットしてタイトルへ
+        if (this.progressStore.getFlag('route_bad') > 0) {
+          this.progressStore.resetFlags();
+          void this.transition({ to: 'title' });
+        } else if (save.nextStageId) {
+          // preScenario のロードで、GOODルートを選んだ場合はパズルへ進む
+          // markLineRead することで mountPuzzleScene が preScenario を再度再生しない
+          this.progressStore.markLineRead(`pre:${save.nextStageId}`);
+          void this.transition({ to: 'puzzle', stageId: save.nextStageId });
+        } else {
+          // nextStageId がない場合（通常シナリオ等）はタイトルへ
+          void this.transition({ to: 'title' });
+        }
+      }
     );
     this.currentScene = scene;
     await scene.startFromSave(save);
