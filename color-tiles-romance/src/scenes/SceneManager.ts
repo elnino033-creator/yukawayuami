@@ -407,18 +407,24 @@ export class SceneManager {
       import('@/effects/WipeTransition'),
     ]);
 
-    // シナリオ ID から遷移タイプと SE を自動判定
-    //   flashback / epilogue → cloud（夢幻的な白い雲）＋ playDream()
-    //   reward               → sparkle（黄金グリッター）＋ playWipe()
-    //   それ以外             → wipe（斜めカーテン）    ＋ playWipe()
+    // シナリオ ID から遷移タイプと SE を自動判定（優先度順）
+    //  1. flashback / epilogue → cloud（夢幻的な白い雲）  + playDream()
+    //  2. reward               → sparkle（黄金グリッター）+ playWipe()
+    //  3. ch05_* / route_BAD   → dark（暗い curtain）     + playDark()
+    //  4. それ以外             → wipe（斜めカーテン）     + playWipe()
     const isFlashback = /flashback|epilogue/i.test(scenarioId);
     const isReward    = /reward/i.test(scenarioId);
+    const isDark      = !isFlashback && !isReward &&
+                        (/route_bad/i.test(scenarioId) || scenarioId.startsWith('ch05'));
     const transType   = isFlashback ? 'cloud' as const
                       : isReward    ? 'sparkle' as const
+                      : isDark      ? 'dark' as const
                       :               'wipe' as const;
 
     if (isFlashback) {
       soundEngine.playDream();
+    } else if (isDark) {
+      soundEngine.playDark();
     } else {
       soundEngine.playWipe();
     }

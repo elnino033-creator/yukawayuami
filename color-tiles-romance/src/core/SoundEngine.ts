@@ -282,6 +282,51 @@ export class SoundEngine {
   }
 
   /**
+   * ダークシーン遷移効果音（ずんっ）
+   * 低音の不穏な和音 ＋ 上から下への下降スウィープ。
+   * dark トランジション（5章・BAD END など）に合わせた重厚な音。
+   */
+  playDark(): void {
+    const ctx = this.getCtx();
+    const now = ctx.currentTime;
+
+    // 低音の不穏な短和音（D2, F2, Ab2）
+    const chordNotes = [73.42, 87.31, 103.83]; // D2, F2, Ab2
+    for (const freq of chordNotes) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(this.getMasterGain());
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, now);
+
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.055, now + 0.07);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.52);
+
+      osc.start(now);
+      osc.stop(now + 0.53);
+    }
+
+    // 上から下への下降スウィープ（C5 → D3）
+    const swOsc = ctx.createOscillator();
+    const swGain = ctx.createGain();
+    swOsc.connect(swGain);
+    swGain.connect(this.getMasterGain());
+
+    swOsc.type = 'sine';
+    swOsc.frequency.setValueAtTime(523.25, now);               // C5
+    swOsc.frequency.exponentialRampToValueAtTime(146.83, now + 0.38); // D3
+    swGain.gain.setValueAtTime(0, now);
+    swGain.gain.linearRampToValueAtTime(0.05, now + 0.04);
+    swGain.gain.exponentialRampToValueAtTime(0.001, now + 0.48);
+
+    swOsc.start(now);
+    swOsc.stop(now + 0.49);
+  }
+
+  /**
    * 回想・夢想シーン遷移効果音（ふわりん）
    * ソフトな C メジャーコード ＋ 高音ハーモニクス。
    * cloud トランジション（回想シーン）に合わせた穏やかな音。
