@@ -239,7 +239,7 @@ export class SoundEngine {
   /**
    * ワイプトランジション効果音（ぴろぴろりん）
    * 上昇アルペジオ ＋ クリアなベル。シナリオ間遷移時に再生する。
-   * タイミングはワイプアニメーション（フェーズ1: 380ms）と同期している。
+   * タイミングはワイプアニメーション（フェーズ1: 260ms）と同期している。
    */
   playWipe(): void {
     const ctx = this.getCtx();
@@ -279,6 +279,50 @@ export class SoundEngine {
 
     bellOsc.start(bellStart);
     bellOsc.stop(bellStart + 0.49);
+  }
+
+  /**
+   * 回想・夢想シーン遷移効果音（ふわりん）
+   * ソフトな C メジャーコード ＋ 高音ハーモニクス。
+   * cloud トランジション（回想シーン）に合わせた穏やかな音。
+   */
+  playDream(): void {
+    const ctx = this.getCtx();
+    const now = ctx.currentTime;
+
+    // C メジャーコード（C4, E4, G4）を柔らかく
+    const chordNotes = [261.63, 329.63, 392.0]; // C4 E4 G4
+    for (const freq of chordNotes) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(this.getMasterGain());
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.065, now + 0.22);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.70);
+
+      osc.start(now);
+      osc.stop(now + 0.71);
+    }
+
+    // 高音シマー（G6）を重ねる
+    const shimOsc = ctx.createOscillator();
+    const shimGain = ctx.createGain();
+    shimOsc.connect(shimGain);
+    shimGain.connect(this.getMasterGain());
+
+    shimOsc.type = 'sine';
+    shimOsc.frequency.setValueAtTime(1568.0, now); // G6
+    shimGain.gain.setValueAtTime(0, now);
+    shimGain.gain.linearRampToValueAtTime(0.045, now + 0.08);
+    shimGain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+
+    shimOsc.start(now);
+    shimOsc.stop(now + 0.56);
   }
 }
 
