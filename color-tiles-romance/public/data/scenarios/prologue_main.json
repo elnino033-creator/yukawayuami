@@ -1,5 +1,5 @@
 [
-  {"bgm": "氷鈴の追憶_monokuro.mp3"},
+  {"bgm": "bgm_monokuro"},
   {"bg": "sidewalk"},
 
   {"text": {"name": "", "body": "雨は、僕たちのデートが終わるのを待っていたかのように、きれいに上がった。"}},
@@ -45,7 +45,7 @@
   {"text": {"name": "", "body": "……この温もりが、この鮮やかな色彩が、永遠に続くと信じて疑わなかった"}},
 
   {"text": {"name": "", "body": "けれど、世界は僕が思っているよりもずっと残酷で、ひどく脆いキャンバスで出来ていた。"}},
-  {"bgm": "Hollow Underfloor.mp3"},
+  {"bgm": "bgm_hollow_underfloor"},
   {"text": {"name": "", "body": "理不尽は、ひどく静かに訪れた。"}},
   {"se": {"src": "se_ambulance.mp3", "volume": 0.35, "durationRatio": 0.5}},
   {"text": {"name": "", "body": "そう、何の前触れもなく、彼女の時間は止まり、二度と目を覚まさなくなった。"}},

@@ -4,6 +4,7 @@
   "bgm_cold_wind":          "氷鈴の世界.mp3",
   "bgm_forest_ambient":     "翠葉の迷宮.mp3",
   "bgm_clockwork":          "オレンジ宮殿.mp3",
+  "bgm_clockwork_monokuro": "オレンジ宮殿_monokuro.mp3",
   "bgm_chapter_clear":      "Golden_Spires_Rising.mp3",
   "bgm_tension":            "Steel_and_Shadows.mp3",
   "bgm_tension_high":       "Tooth_And_Lever.mp3",
@@ -14,8 +15,10 @@
   "bgm_piano_sad_loop":     "君のいない色彩.mp3",
   "bgm_tutorial":           "amaotonomeiro.mp3",
   "bgm_tower_entrance":     "Vesper of Ash.mp3",
-  "bgm_ch05":               "Vesper of Ash.mp3",
   "bgm_flashback":          "AfterSchoolLibrary.mp3",
+  "bgm_hollow_underfloor":  "Hollow Underfloor.mp3",
+  "bgm_monokuro":           "氷鈴の追憶_monokuro.mp3",
   "緋色のあかり":           "緋色のあかり.mp3",
+  "緋色のあかり_edTheme":   "緋色のあかり_edTheme.mp3",
   "色彩の再起":             "色彩の再起.mp3"
 }
