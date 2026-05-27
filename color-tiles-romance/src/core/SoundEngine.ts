@@ -235,6 +235,51 @@ export class SoundEngine {
       osc.stop(now + i * 0.1 + 0.07);
     }
   }
+
+  /**
+   * ワイプトランジション効果音（ぴろぴろりん）
+   * 上昇アルペジオ ＋ クリアなベル。シナリオ間遷移時に再生する。
+   * タイミングはワイプアニメーション（フェーズ1: 380ms）と同期している。
+   */
+  playWipe(): void {
+    const ctx = this.getCtx();
+    const now = ctx.currentTime;
+
+    // ぴろぴろ：上昇アルペジオ（sine 波、高音域 A5→C#6→E6→A6）
+    const arpeggioNotes = [880, 1108.73, 1318.51, 1760]; // A5 C#6 E6 A6
+    for (let i = 0; i < arpeggioNotes.length; i++) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(this.getMasterGain());
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(arpeggioNotes[i]!, now + i * 0.048);
+
+      gain.gain.setValueAtTime(0, now + i * 0.048);
+      gain.gain.linearRampToValueAtTime(0.14, now + i * 0.048 + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.048 + 0.16);
+
+      osc.start(now + i * 0.048);
+      osc.stop(now + i * 0.048 + 0.17);
+    }
+
+    // りん：クリアなベル（triangle 波、E7 高音）
+    const bellStart = now + 0.22;
+    const bellOsc = ctx.createOscillator();
+    const bellGain = ctx.createGain();
+    bellOsc.connect(bellGain);
+    bellGain.connect(this.getMasterGain());
+
+    bellOsc.type = 'triangle';
+    bellOsc.frequency.setValueAtTime(2637.02, bellStart); // E7
+    bellGain.gain.setValueAtTime(0, bellStart);
+    bellGain.gain.linearRampToValueAtTime(0.18, bellStart + 0.015);
+    bellGain.gain.exponentialRampToValueAtTime(0.001, bellStart + 0.48);
+
+    bellOsc.start(bellStart);
+    bellOsc.stop(bellStart + 0.49);
+  }
 }
 
 /** シングルトンインスタンス */

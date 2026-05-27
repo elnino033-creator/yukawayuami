@@ -401,24 +401,43 @@ export class SceneManager {
 
   /** シナリオ終了後にコールバックを呼ぶ一時的なノベル画面マウント */
   private async mountNovelSceneWithCallback(scenarioId: string, onEnd: () => void): Promise<void> {
-    const { NovelScene } = await import('@/scenes/NovelScene');
+    // モジュールを事前ロード（ワイプ中に遅延しないよう）
+    const [{ NovelScene }, { wipeTransition }] = await Promise.all([
+      import('@/scenes/NovelScene'),
+      import('@/effects/WipeTransition'),
+    ]);
 
-    // 前のシーン（PuzzleScene など）の BGM とリソースを明示的に解放する
-    this.currentScene?.destroy();
-    this.currentScene = null;
-    this.appContainer.innerHTML = '';
-    const div = document.createElement('div');
-    div.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;';
-    this.appContainer.appendChild(div);
+    // ワイプ SE（ぴろぴろりん）とアニメーションを同時起動
+    soundEngine.playWipe();
 
-    const scene = new NovelScene(
-      div,
-      scenarioId,
-      this.progressStore.scenarioContext,
-      onEnd
-    );
-    this.currentScene = scene;
-    await scene.start();
+    // TypeScript CFA はコールバック内の変数代入を追跡できないため
+    // オブジェクトのプロパティとして保持することで型安全に取り出す
+    const holder: { scene: InstanceType<typeof NovelScene> | null } = { scene: null };
+
+    await wipeTransition(() => {
+      // 画面が完全に覆われたタイミングで旧シーンを破棄し、新シーンの DOM を用意する
+      this.currentScene?.destroy();
+      this.currentScene = null;
+      this.appContainer.innerHTML = '';
+
+      const div = document.createElement('div');
+      div.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;';
+      this.appContainer.appendChild(div);
+
+      holder.scene = new NovelScene(
+        div,
+        scenarioId,
+        this.progressStore.scenarioContext,
+        onEnd
+      );
+    });
+
+    // ワイプが完全に抜けたらシーンを開始する（新シーンが画面に露出した後）
+    const scene = holder.scene;
+    if (scene !== null) {
+      this.currentScene = scene;
+      await scene.start();
+    }
   }
 
   private async mountResultScene(data: ResultData): Promise<void> {
