@@ -45,7 +45,6 @@ export class TitleScene {
   private buttons: TitleButton[] = [];
   private rafId: number | null = null;
   private startTime: number = Date.now();
-  private bgmAudio: HTMLAudioElement | null = null;
   private bgImage: HTMLImageElement | null = null;
 
   /** 花びらパーティクル */
@@ -105,18 +104,10 @@ export class TitleScene {
    * シーンを開始してアニメーションループを起動する。
    */
   start(): void {
-    BgmManager.stop();
     this.handleResize(); // buildButtons / initPetals / loadBgImage を内包
     this.startRenderLoop();
-    this.bgmAudio = new Audio(`${import.meta.env.BASE_URL}assets/bgm/${encodeURIComponent('妖精の小径.mp3')}`);
-    this.bgmAudio.loop = true;
-    this.bgmAudio.volume = 0.4;
-    this.bgmAudio.play().catch(() => {
-      const resume = () => {
-        this.bgmAudio?.play().catch(() => {});
-      };
-      this.canvas.addEventListener('click', resume, { once: true });
-    });
+    // BgmManager 経由で再生することで bgmVolume 設定が反映される
+    BgmManager.play('妖精の小径.mp3');
   }
 
   /**
@@ -128,11 +119,7 @@ export class TitleScene {
     this.canvas.removeEventListener('click', this.boundClick);
     this.canvas.removeEventListener('touchend', this.boundTouchEnd);
     window.removeEventListener('resize', this.boundResize);
-    if (this.bgmAudio) {
-      this.bgmAudio.pause();
-      this.bgmAudio.src = '';
-      this.bgmAudio = null;
-    }
+    // BGM は BgmManager 管理のため、次シーンの play() 呼び出し時に自動停止される
   }
 
   // ---------- プライベートメソッド ----------
