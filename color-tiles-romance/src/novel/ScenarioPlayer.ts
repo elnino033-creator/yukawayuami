@@ -462,13 +462,15 @@ export class ScenarioPlayer {
 
   /**
    * リソースを解放してCanvasをコンテナから削除する。
+   * BGM は停止しない。次のシーンの play() 呼び出しで自動切り替え or 継続する。
+   * 同じ BGM を使う隣接シーン間で曲が頭から再スタートするのを防ぐためのポリシー。
    */
   destroy(): void {
     if (this.rafId !== null) cancelAnimationFrame(this.rafId);
     if (this.typewriterTimer !== null) clearTimeout(this.typewriterTimer);
     if (this.autoAdvanceTimer !== null) clearTimeout(this.autoAdvanceTimer);
     if (this.blackoutTimer !== null) clearTimeout(this.blackoutTimer);
-    this.stopBgm();
+    // stopBgm() を呼ばない — BGM継続ポリシーのため
     this.canvas.removeEventListener('click', this.boundClick);
     window.removeEventListener('keydown', this.boundKey);
     window.removeEventListener('resize', this.boundResize);
