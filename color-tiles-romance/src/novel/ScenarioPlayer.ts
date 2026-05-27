@@ -345,7 +345,8 @@ export class ScenarioPlayer {
     if (state.bgmKey) {
       BgmManager.play(state.bgmKey);
     } else {
-      BgmManager.stop();
+      // セーブ時点でBGMなし → 完全停止（forceStop: currentKey もリセット）
+      BgmManager.forceStop();
     }
 
     // Restore characters
@@ -562,8 +563,9 @@ export class ScenarioPlayer {
         this.currentBgmKey = step.bgm;
         BgmManager.play(step.bgm);
       } else {
+        // {bgm: null} — 明示的に無音を指定 → forceStop（currentKey もリセット）
         this.currentBgmKey = null;
-        BgmManager.stop();
+        BgmManager.forceStop();
       }
       this.advanceStep();
     } else if ('se' in step) {
@@ -840,7 +842,8 @@ export class ScenarioPlayer {
     }
     // Remove keydown listener immediately to prevent re-triggering endScenario via keypresses
     window.removeEventListener('keydown', this.boundKey);
-    this.stopBgm();
+    // stopBgm() を呼ばない — destroy() と同じBGM継続ポリシー
+    // 次シーン（シナリオ→シナリオ含む）の play() が遷移を担う
     // Null out callbacks before calling to prevent double-fire if endScenario is somehow called again
     const cb = this.endCallback;
     const res = this.resolveStart;
