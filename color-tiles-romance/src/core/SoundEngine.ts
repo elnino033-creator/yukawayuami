@@ -7,6 +7,8 @@
 
 export class SoundEngine {
   private ctx: AudioContext | null = null;
+  private masterGain: GainNode | null = null;
+  private volume = 1.0;
 
   /** AudioContext を遅延初期化する */
   private getCtx(): AudioContext {
@@ -14,6 +16,29 @@ export class SoundEngine {
       this.ctx = new AudioContext();
     }
     return this.ctx;
+  }
+
+  /** マスターゲインノードを取得する（遅延初期化） */
+  private getMasterGain(): GainNode {
+    const ctx = this.getCtx();
+    if (!this.masterGain) {
+      this.masterGain = ctx.createGain();
+      this.masterGain.gain.setValueAtTime(this.volume, ctx.currentTime);
+      this.masterGain.connect(ctx.destination);
+    }
+    return this.masterGain;
+  }
+
+  /**
+   * SE全体の音量を設定する（0.0 – 1.0）。
+   * SaveStore.settings.seVolume と連動させる。
+   * @param v 音量値（0.0 – 1.0）
+   */
+  setVolume(v: number): void {
+    this.volume = Math.max(0, Math.min(1, v));
+    if (this.masterGain && this.ctx) {
+      this.masterGain.gain.setValueAtTime(this.volume, this.ctx.currentTime);
+    }
   }
 
   /**
@@ -24,7 +49,7 @@ export class SoundEngine {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(this.getMasterGain());
 
     osc.type = 'sine';
     osc.frequency.setValueAtTime(800, ctx.currentTime);
@@ -49,7 +74,7 @@ export class SoundEngine {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(this.getMasterGain());
 
       osc.type = 'sine';
       osc.frequency.setValueAtTime(notes[i]!, now + i * 0.07);
@@ -71,7 +96,7 @@ export class SoundEngine {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(this.getMasterGain());
 
     osc.type = 'sawtooth';
     osc.frequency.setValueAtTime(180, ctx.currentTime);
@@ -109,7 +134,7 @@ export class SoundEngine {
 
     source.connect(filter);
     filter.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(this.getMasterGain());
 
     gain.gain.setValueAtTime(0.5, ctx.currentTime);
 
@@ -129,7 +154,7 @@ export class SoundEngine {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(this.getMasterGain());
 
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(notes[i]!, now + i * 0.12);
@@ -149,7 +174,7 @@ export class SoundEngine {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(this.getMasterGain());
 
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, chordStart);
@@ -174,7 +199,7 @@ export class SoundEngine {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(this.getMasterGain());
 
       osc.type = 'sine';
       osc.frequency.setValueAtTime(notes[i]!, now + i * 0.2);
@@ -198,7 +223,7 @@ export class SoundEngine {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(this.getMasterGain());
 
       osc.type = 'square';
       osc.frequency.setValueAtTime(i === 0 ? 900 : 700, now + i * 0.1);

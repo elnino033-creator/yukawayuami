@@ -6,7 +6,7 @@
 import { BgmManager } from '@/audio/BgmManager';
 
 /** メニュー選択肢の種別 */
-export type TitleChoice = 'new' | 'continue' | 'load' | 'stage';
+export type TitleChoice = 'new' | 'continue' | 'load' | 'stage' | 'settings' | 'gallery';
 
 /** ボタン定義 */
 interface TitleButton {
@@ -202,11 +202,15 @@ export class TitleScene {
     const w = this.canvas.width;
     const h = this.canvas.height;
     const bw = Math.min(260, w * 0.45);
-    const bh = 48;
-    const gap = 14;
+    const bh = 44;
+    const gap = 11;
     const startX = (w - bw) / 2;
-    // 4ボタン分のスペースを確保するため少し上に配置
-    const startY = h * 0.58;
+    // 5行（4全幅 + 1横並び2ボタン）分のスペースを確保
+    const startY = h * 0.53;
+
+    // 下段2ボタン（SETTINGS・GALLERY）は横並びで半幅
+    const halfGap = 8;
+    const hw = (bw - halfGap) / 2;
 
     this.buttons = [
       {
@@ -223,7 +227,7 @@ export class TitleScene {
         label: 'CONTINUE',
         choice: 'continue',
         x: startX,
-        y: startY + bh + gap,
+        y: startY + (bh + gap),
         w: bw,
         h: bh,
         hovered: false,
@@ -248,6 +252,26 @@ export class TitleScene {
         h: bh,
         hovered: false,
         disabled: !this.stageSelectUnlocked
+      },
+      {
+        label: 'SETTINGS',
+        choice: 'settings',
+        x: startX,
+        y: startY + (bh + gap) * 4,
+        w: hw,
+        h: bh,
+        hovered: false,
+        disabled: false
+      },
+      {
+        label: 'GALLERY',
+        choice: 'gallery',
+        x: startX + hw + halfGap,
+        y: startY + (bh + gap) * 4,
+        w: hw,
+        h: bh,
+        hovered: false,
+        disabled: false
       }
     ];
   }

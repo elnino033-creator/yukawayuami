@@ -138,10 +138,6 @@ export interface StageDefinition {
   postScenario?: string;
   /** Sランククリア時に再生するご褒美シナリオのJSONパス（public/data/scenarios/以下） */
   rewardScenario?: string;
-  /** 失敗時シナリオのJSONパス（任意） */
-  failScenario?: string;
-  /** クリア報酬 */
-  rewards?: { S?: string[]; A?: string[]; B?: string[]; C?: string[] };
   /** チュートリアルステップ（指定時はガイド付きモードで進行） */
   tutorialSteps?: TutorialStep[];
   /** 爆弾タイルの初期カウントダウン秒数（省略時15秒） */

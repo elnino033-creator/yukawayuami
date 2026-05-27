@@ -9,6 +9,8 @@ import { ProgressStore } from '@/store/progressStore';
 import { DebugMode } from '@/debug/DebugMode';
 import { SceneSaveStore } from '@/store/sceneSaveStore';
 import type { ScenarioSaveData } from '@/store/sceneSaveStore';
+import { BgmManager } from '@/audio/BgmManager';
+import { soundEngine } from '@/core/SoundEngine';
 
 const LINEAR_STAGES = [
   'ch00_tutorial',
@@ -97,6 +99,10 @@ export class SceneManager {
    * アプリを起動してタイトル画面を表示する。
    */
   async start(): Promise<void> {
+    // 保存済み設定を音量に反映する
+    const settings = this.saveStore.getSettings();
+    BgmManager.setVolume(settings.bgmVolume);
+    soundEngine.setVolume(settings.seVolume);
     await this.transition({ to: 'title' });
   }
 
@@ -188,6 +194,12 @@ export class SceneManager {
           break;
         case 'stage':
           void this.transition({ to: 'stageSelect' });
+          break;
+        case 'settings':
+          this.showSettingsPanel();
+          break;
+        case 'gallery':
+          this.showGalleryPanel();
           break;
       }
     }, hasSave, trueEndSeen, hasSceneSave);
@@ -503,6 +515,8 @@ export class SceneManager {
 
         // ③ rewardScenario（Sランクボーナス）→ ② → ① へ
         if (data.cleared && data.rating === 'S' && data.rewardScenario) {
+          // ギャラリー解放のため閲覧済みとして記録
+          this.saveStore.markRewardViewed(data.rewardScenario);
           void this.mountNovelSceneWithCallback(data.rewardScenario, () => {
             afterReward();
           });
@@ -675,6 +689,333 @@ export class SceneManager {
         void this.transition({ to: 'result', resultData });
       }
     });
+  }
+
+  /**
+   * 設定パネルをタイトル画面上に表示する。
+   * bgmVolume / seVolume / textSpeed / autoSave を変更して保存できる。
+   */
+  private showSettingsPanel(): void {
+    const settings = this.saveStore.getSettings();
+
+    const overlay = document.createElement('div');
+    overlay.style.cssText = [
+      'position:fixed', 'inset:0',
+      'background:rgba(0,0,0,0.78)',
+      'z-index:200',
+      'display:flex', 'align-items:center', 'justify-content:center',
+      'font-family:sans-serif',
+    ].join(';');
+
+    const panel = document.createElement('div');
+    panel.style.cssText = [
+      'background:rgba(16,12,36,0.97)',
+      'border:1px solid rgba(180,140,255,0.5)',
+      'border-radius:10px',
+      'padding:24px 24px 20px',
+      'width:min(420px,90vw)',
+      'color:#e0dcf0',
+      'display:flex', 'flex-direction:column', 'gap:16px',
+    ].join(';');
+
+    // ヘッダー
+    const header = document.createElement('div');
+    header.style.cssText = 'display:flex;align-items:center;';
+    const titleEl = document.createElement('span');
+    titleEl.style.cssText = 'font-size:15px;font-weight:bold;flex:1;letter-spacing:0.05em;';
+    titleEl.textContent = '⚙ 設定';
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = '✕ 閉じる';
+    closeBtn.style.cssText = [
+      'background:rgba(20,20,40,0.78)',
+      'color:#c8c0e8',
+      'border:1px solid rgba(180,140,255,0.4)',
+      'border-radius:4px',
+      'padding:4px 10px',
+      'font-size:12px',
+      'cursor:pointer',
+    ].join(';');
+    closeBtn.addEventListener('click', () => overlay.remove());
+    header.appendChild(titleEl);
+    header.appendChild(closeBtn);
+    panel.appendChild(header);
+
+    /** スライダー行を作成するヘルパー */
+    const makeSliderRow = (
+      label: string,
+      initVal: number,
+      onChange: (v: number) => void
+    ): HTMLElement => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
+      const labelRow = document.createElement('div');
+      labelRow.style.cssText = 'display:flex;justify-content:space-between;font-size:13px;';
+      const lbl = document.createElement('span');
+      lbl.textContent = label;
+      const valEl = document.createElement('span');
+      valEl.style.color = '#b49fff';
+      valEl.textContent = Math.round(initVal * 100) + '%';
+      labelRow.appendChild(lbl);
+      labelRow.appendChild(valEl);
+      const slider = document.createElement('input');
+      slider.type = 'range';
+      slider.min = '0';
+      slider.max = '100';
+      slider.value = String(Math.round(initVal * 100));
+      slider.style.cssText = 'width:100%;accent-color:#9b70ff;cursor:pointer;';
+      slider.addEventListener('input', () => {
+        const v = Number(slider.value) / 100;
+        valEl.textContent = Math.round(v * 100) + '%';
+        onChange(v);
+      });
+      row.appendChild(labelRow);
+      row.appendChild(slider);
+      return row;
+    };
+
+    // BGM音量
+    panel.appendChild(makeSliderRow('BGM音量', settings.bgmVolume, (v) => {
+      this.saveStore.setSettings({ bgmVolume: v });
+      BgmManager.setVolume(v);
+    }));
+
+    // SE音量
+    panel.appendChild(makeSliderRow('SE音量', settings.seVolume, (v) => {
+      this.saveStore.setSettings({ seVolume: v });
+      soundEngine.setVolume(v);
+      soundEngine.playClick();
+    }));
+
+    // テキスト速度
+    const speedRow = document.createElement('div');
+    speedRow.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
+    const speedLabel = document.createElement('span');
+    speedLabel.style.cssText = 'font-size:13px;';
+    speedLabel.textContent = 'テキスト速度';
+    const speedBtns = document.createElement('div');
+    speedBtns.style.cssText = 'display:flex;gap:8px;';
+    const speeds: Array<{ label: string; val: 'slow' | 'normal' | 'fast' }> = [
+      { label: 'ゆっくり', val: 'slow' },
+      { label: '標準', val: 'normal' },
+      { label: '速い', val: 'fast' },
+    ];
+    const updateSpeedBtns = (current: string) => {
+      speedBtns.querySelectorAll('button').forEach((btn) => {
+        const b = btn as HTMLButtonElement;
+        const active = b.dataset['val'] === current;
+        b.style.background = active ? 'rgba(120,80,220,0.85)' : 'rgba(30,25,60,0.7)';
+        b.style.borderColor = active ? 'rgba(180,140,255,0.9)' : 'rgba(180,140,255,0.3)';
+        b.style.color = active ? '#fff' : '#b0a8d8';
+      });
+    };
+    for (const s of speeds) {
+      const btn = document.createElement('button');
+      btn.dataset['val'] = s.val;
+      btn.textContent = s.label;
+      btn.style.cssText = [
+        'flex:1', 'padding:6px 0', 'border-radius:4px',
+        'border:1px solid rgba(180,140,255,0.3)',
+        'font-size:12px', 'cursor:pointer', 'color:#b0a8d8',
+        'background:rgba(30,25,60,0.7)',
+      ].join(';');
+      btn.addEventListener('click', () => {
+        this.saveStore.setSettings({ textSpeed: s.val });
+        updateSpeedBtns(s.val);
+      });
+      speedBtns.appendChild(btn);
+    }
+    updateSpeedBtns(settings.textSpeed);
+    speedRow.appendChild(speedLabel);
+    speedRow.appendChild(speedBtns);
+    panel.appendChild(speedRow);
+
+    // オートセーブ
+    const autoRow = document.createElement('div');
+    autoRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;font-size:13px;';
+    const autoLabel = document.createElement('span');
+    autoLabel.textContent = 'オートセーブ';
+    const autoToggle = document.createElement('button');
+    const updateAutoToggle = (on: boolean) => {
+      autoToggle.textContent = on ? 'ON' : 'OFF';
+      autoToggle.style.background = on ? 'rgba(60,180,100,0.8)' : 'rgba(160,50,50,0.7)';
+      autoToggle.style.borderColor = on ? 'rgba(80,220,120,0.6)' : 'rgba(220,80,80,0.4)';
+    };
+    autoToggle.style.cssText = [
+      'padding:4px 18px', 'border-radius:4px',
+      'border:1px solid', 'font-size:12px',
+      'font-weight:bold', 'cursor:pointer', 'color:#fff',
+    ].join(';');
+    updateAutoToggle(settings.autoSave);
+    autoToggle.addEventListener('click', () => {
+      const current = this.saveStore.getSettings().autoSave;
+      this.saveStore.setSettings({ autoSave: !current });
+      updateAutoToggle(!current);
+    });
+    autoRow.appendChild(autoLabel);
+    autoRow.appendChild(autoToggle);
+    panel.appendChild(autoRow);
+
+    overlay.appendChild(panel);
+    document.body.appendChild(overlay);
+  }
+
+  /**
+   * ギャラリーパネルをタイトル画面上に表示する。
+   * Sランクご褒美シナリオの閲覧済み一覧を表示し、解放済みを再生できる。
+   */
+  private showGalleryPanel(): void {
+    /** ギャラリーに登録する全ご褒美シナリオ */
+    const GALLERY_ENTRIES: Array<{
+      id: string;
+      title: string;
+      chapter: string;
+    }> = [
+      // 1章 — あかり
+      { id: 'ch01_s01_reward', title: 'ステージ1 Sランク', chapter: '第1章 あかり' },
+      { id: 'ch01_s02_reward', title: 'ステージ2 Sランク', chapter: '第1章 あかり' },
+      { id: 'ch01_s03_reward', title: 'ステージ3 Sランク', chapter: '第1章 あかり' },
+      // 2章 — みお
+      { id: 'ch02_s01_reward', title: 'ステージ1 Sランク', chapter: '第2章 みお' },
+      { id: 'ch02_s02_reward', title: 'ステージ2 Sランク', chapter: '第2章 みお' },
+      { id: 'ch02_s03_reward', title: 'ステージ3 Sランク', chapter: '第2章 みお' },
+      // 3章 — すず
+      { id: 'ch03_s01_reward', title: 'ステージ1 Sランク', chapter: '第3章 すず' },
+      { id: 'ch03_s02_reward', title: 'ステージ2 Sランク', chapter: '第3章 すず' },
+      { id: 'ch03_s03_reward', title: 'ステージ3 Sランク', chapter: '第3章 すず' },
+      // 4章 — ひまり
+      { id: 'ch04_s01_reward', title: 'ステージ1 Sランク', chapter: '第4章 ひまり' },
+      { id: 'ch04_s02_reward', title: 'ステージ2 Sランク', chapter: '第4章 ひまり' },
+      { id: 'ch04_s03_reward', title: 'ステージ3 Sランク', chapter: '第4章 ひまり' },
+      // 5章 — ゆかり
+      { id: 'ch05_s01_reward', title: 'ステージ1 Sランク', chapter: '第5章 ゆかり' },
+      { id: 'ch05_s02_reward', title: 'ステージ2 Sランク', chapter: '第5章 ゆかり' },
+      { id: 'ch05_s03_reward', title: 'ステージ3 Sランク', chapter: '第5章 ゆかり' },
+      { id: 'ch05_s04_reward', title: 'ステージ4 Sランク', chapter: '第5章 ゆかり' },
+      { id: 'ch05_s05_reward', title: 'ステージ5 Sランク', chapter: '第5章 ゆかり' },
+      { id: 'ch05_s06_reward', title: 'ステージ6 Sランク', chapter: '第5章 ゆかり' },
+      { id: 'ch05_s07_reward', title: 'ステージ7 Sランク', chapter: '第5章 ゆかり' },
+    ];
+
+    const viewed = new Set(this.saveStore.getViewedRewards());
+
+    const overlay = document.createElement('div');
+    overlay.style.cssText = [
+      'position:fixed', 'inset:0',
+      'background:rgba(0,0,0,0.78)',
+      'z-index:200',
+      'display:flex', 'align-items:center', 'justify-content:center',
+      'font-family:sans-serif',
+    ].join(';');
+
+    const panel = document.createElement('div');
+    panel.style.cssText = [
+      'background:rgba(16,12,36,0.97)',
+      'border:1px solid rgba(180,140,255,0.5)',
+      'border-radius:10px',
+      'padding:24px 24px 20px',
+      'width:min(480px,90vw)',
+      'max-height:85vh',
+      'color:#e0dcf0',
+      'display:flex', 'flex-direction:column', 'gap:0',
+      'overflow:hidden',
+    ].join(';');
+
+    // ヘッダー
+    const header = document.createElement('div');
+    header.style.cssText = 'display:flex;align-items:center;margin-bottom:14px;flex-shrink:0;';
+    const titleEl = document.createElement('span');
+    titleEl.style.cssText = 'font-size:15px;font-weight:bold;flex:1;letter-spacing:0.05em;';
+    titleEl.textContent = '🖼 ギャラリー';
+    const unlockedCount = GALLERY_ENTRIES.filter(e => viewed.has(e.id)).length;
+    const countEl = document.createElement('span');
+    countEl.style.cssText = 'font-size:12px;color:#9b70ff;margin-right:12px;';
+    countEl.textContent = `${unlockedCount} / ${GALLERY_ENTRIES.length} 解放`;
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = '✕ 閉じる';
+    closeBtn.style.cssText = [
+      'background:rgba(20,20,40,0.78)',
+      'color:#c8c0e8',
+      'border:1px solid rgba(180,140,255,0.4)',
+      'border-radius:4px',
+      'padding:4px 10px',
+      'font-size:12px',
+      'cursor:pointer',
+    ].join(';');
+    closeBtn.addEventListener('click', () => overlay.remove());
+    header.appendChild(titleEl);
+    header.appendChild(countEl);
+    header.appendChild(closeBtn);
+    panel.appendChild(header);
+
+    // エントリー一覧（スクロール可）
+    const list = document.createElement('div');
+    list.style.cssText = 'display:flex;flex-direction:column;gap:6px;overflow-y:auto;flex:1;padding-right:4px;';
+
+    // 章ごとにグループ化して表示
+    let currentChapter = '';
+    for (const entry of GALLERY_ENTRIES) {
+      if (entry.chapter !== currentChapter) {
+        currentChapter = entry.chapter;
+        const chapterHeader = document.createElement('div');
+        chapterHeader.style.cssText = [
+          'font-size:12px', 'font-weight:bold',
+          'color:#b49fff', 'padding:8px 0 4px',
+          'border-bottom:1px solid rgba(180,140,255,0.2)',
+          'margin-top:4px',
+        ].join(';');
+        chapterHeader.textContent = entry.chapter;
+        list.appendChild(chapterHeader);
+      }
+
+      const isUnlocked = viewed.has(entry.id);
+      const item = document.createElement('div');
+      item.style.cssText = [
+        'display:flex', 'align-items:center', 'gap:10px',
+        'padding:8px 12px',
+        'background:rgba(40,30,70,0.6)',
+        'border:1px solid',
+        `border-color:${isUnlocked ? 'rgba(180,140,255,0.35)' : 'rgba(80,70,110,0.25)'}`,
+        'border-radius:5px',
+        isUnlocked ? 'cursor:pointer' : 'cursor:default',
+        `opacity:${isUnlocked ? '1' : '0.5'}`,
+      ].join(';');
+
+      const lockIcon = document.createElement('span');
+      lockIcon.style.cssText = 'font-size:14px;flex-shrink:0;';
+      lockIcon.textContent = isUnlocked ? '💌' : '🔒';
+
+      const text = document.createElement('span');
+      text.style.cssText = 'flex:1;font-size:12px;';
+      text.textContent = entry.title;
+
+      const actionEl = document.createElement('span');
+      actionEl.style.cssText = 'font-size:11px;color:#99c8ff;flex-shrink:0;';
+      actionEl.textContent = isUnlocked ? '▶ 再生' : '';
+
+      item.appendChild(lockIcon);
+      item.appendChild(text);
+      item.appendChild(actionEl);
+
+      if (isUnlocked) {
+        item.addEventListener('mouseenter', () => {
+          item.style.background = 'rgba(70,50,120,0.8)';
+        });
+        item.addEventListener('mouseleave', () => {
+          item.style.background = 'rgba(40,30,70,0.6)';
+        });
+        item.addEventListener('click', () => {
+          overlay.remove();
+          void this.mountNovelSceneWithCallback(entry.id, () => {
+            void this.transition({ to: 'title' });
+          });
+        });
+      }
+      list.appendChild(item);
+    }
+
+    panel.appendChild(list);
+    overlay.appendChild(panel);
+    document.body.appendChild(overlay);
   }
 
   /**
