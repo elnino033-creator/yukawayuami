@@ -341,9 +341,9 @@ export class ScenarioPlayer {
       this.currentBgKey = null;
     }
 
-    // Restore bgm
+    // Restore bgm（音量は BgmManager のデフォルト値 = SaveStore.bgmVolume を使用）
     if (state.bgmKey) {
-      BgmManager.play(state.bgmKey, 0.5);
+      BgmManager.play(state.bgmKey);
     } else {
       BgmManager.stop();
     }
@@ -558,7 +558,7 @@ export class ScenarioPlayer {
     } else if ('bgm' in step) {
       if (step.bgm !== null) {
         this.currentBgmKey = step.bgm;
-        BgmManager.play(step.bgm, 0.5);
+        BgmManager.play(step.bgm);
       } else {
         this.currentBgmKey = null;
         BgmManager.stop();
