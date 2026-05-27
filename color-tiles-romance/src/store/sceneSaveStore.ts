@@ -42,6 +42,20 @@ export interface ScenarioSaveData {
   choiceContextName?: string;
   /** 選択肢と一緒に表示する直前のセリフ（本文） */
   choiceContextBody?: string;
+  /**
+   * このシナリオが終了したあとに起動すべきステージID。
+   * - scenarioRole === 'pre': このステージのパズルを起動する（既読マーク付き）
+   * - scenarioRole === 'post': このステージの次のステージへ進む（既読マーク不要）
+   * タイトル画面LOADからロードしたとき、GOODルートを選んだ場合の遷移先に使用する。
+   */
+  nextStageId?: string;
+  /**
+   * シナリオの種別（タイトルLOADからの正しい遷移先を判定するために使用）。
+   * - 'pre': パズル前シナリオ → GOODルート後はパズル起動（pre:stageId を既読マーク）
+   * - 'post': パズル後/flashback → GOODルート後は次ステージへ（既読マーク不要）
+   * undefined のセーブ（過去互換）は 'pre' として扱う。
+   */
+  scenarioRole?: 'pre' | 'post';
 }
 
 const STORAGE_KEY = 'ctr-scene-saves';

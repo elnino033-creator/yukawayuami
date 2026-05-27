@@ -17,6 +17,10 @@ export class NovelScene {
   private context: ScenarioContext;
   private onEnd: () => void;
   private player: ScenarioPlayer | null = null;
+  /** このシナリオが終了したあとに起動すべきステージID（セーブ/タイトルLOAD用） */
+  private nextStageId: string | undefined = undefined;
+  /** nextStageId と対になるシナリオ種別（'pre' / 'post'） */
+  private scenarioContinueRole: 'pre' | 'post' | undefined = undefined;
 
   // DOM overlay elements
   private overlayEl: HTMLDivElement | null = null;
@@ -102,6 +106,18 @@ export class NovelScene {
     this.isFFActive = false;
 
     await this.player.startFromRestored();
+  }
+
+  /**
+   * シナリオ終了後の継続先をセットする（タイトルLOADからの正しい遷移先判定に使用）。
+   * - role === 'pre': preScenario として起動 → GOODルート後にパズルへ（既読マーク付き）
+   * - role === 'post': postScenario / flashback → GOODルート後に次ステージへ（既読マーク不要）
+   * @param role シナリオ種別
+   * @param stageId 終了後に起動するステージID
+   */
+  setScenarioContinue(role: 'pre' | 'post', stageId: string): void {
+    this.scenarioContinueRole = role;
+    this.nextStageId = stageId;
   }
 
   destroy(): void {
@@ -400,6 +416,9 @@ export class NovelScene {
       ...state,
       slot,
       savedAt: new Date().toISOString(),
+      // シナリオ継続情報を保持する（タイトルLOADからの正しい遷移先判定に使用）
+      nextStageId: this.nextStageId,
+      scenarioRole: this.scenarioContinueRole,
     };
     SceneSaveStore.set(slot, save);
     if (this.saveLoadPanelEl) {
@@ -450,6 +469,11 @@ export class NovelScene {
       choiceContextName: save.choiceContextName,
       choiceContextBody: save.choiceContextBody,
     });
+
+    // ロードしたセーブのシナリオ継続情報に更新する
+    // （別スロットをロードした場合に、次のセーブが正しい情報を引き継ぐよう保持）
+    this.nextStageId = save.nextStageId;
+    this.scenarioContinueRole = save.scenarioRole;
 
     // Reset button states
     this.isAutoActive = false;
