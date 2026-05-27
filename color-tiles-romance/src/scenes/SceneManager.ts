@@ -401,20 +401,39 @@ export class SceneManager {
 
   /** シナリオ終了後にコールバックを呼ぶ一時的なノベル画面マウント */
   private async mountNovelSceneWithCallback(scenarioId: string, onEnd: () => void): Promise<void> {
-    // モジュールを事前ロード（ワイプ中に遅延しないよう）
-    const [{ NovelScene }, { wipeTransition }] = await Promise.all([
+    // モジュールを事前ロード（遷移アニメーション中に遅延しないよう）
+    const [{ NovelScene }, { sceneTransition }] = await Promise.all([
       import('@/scenes/NovelScene'),
       import('@/effects/WipeTransition'),
     ]);
 
-    // ワイプ SE（ぴろぴろりん）とアニメーションを同時起動
-    soundEngine.playWipe();
+    // シナリオ ID から遷移タイプと SE を自動判定（優先度順）
+    //  1. flashback / epilogue → cloud（夢幻的な白い雲）  + playDream()
+    //  2. reward               → sparkle（黄金グリッター）+ playWipe()
+    //  3. ch05_* / route_BAD   → dark（暗い curtain）     + playDark()
+    //  4. それ以外             → wipe（斜めカーテン）     + playWipe()
+    const isFlashback = /flashback|epilogue/i.test(scenarioId);
+    const isReward    = /reward/i.test(scenarioId);
+    const isDark      = !isFlashback && !isReward &&
+                        (/route_bad/i.test(scenarioId) || scenarioId.startsWith('ch05'));
+    const transType   = isFlashback ? 'cloud' as const
+                      : isReward    ? 'sparkle' as const
+                      : isDark      ? 'dark' as const
+                      :               'wipe' as const;
+
+    if (isFlashback) {
+      soundEngine.playDream();
+    } else if (isDark) {
+      soundEngine.playDark();
+    } else {
+      soundEngine.playWipe();
+    }
 
     // TypeScript CFA はコールバック内の変数代入を追跡できないため
-    // オブジェクトのプロパティとして保持することで型安全に取り出す
+    // オブジェクトのプロパティとして保持して型安全に取り出す
     const holder: { scene: InstanceType<typeof NovelScene> | null } = { scene: null };
 
-    await wipeTransition(() => {
+    await sceneTransition(transType, () => {
       // 画面が完全に覆われたタイミングで旧シーンを破棄し、新シーンの DOM を用意する
       this.currentScene?.destroy();
       this.currentScene = null;
@@ -432,7 +451,7 @@ export class SceneManager {
       );
     });
 
-    // ワイプが完全に抜けたらシーンを開始する（新シーンが画面に露出した後）
+    // 遷移アニメーションが完全に抜けたらシーンを開始する
     const scene = holder.scene;
     if (scene !== null) {
       this.currentScene = scene;
