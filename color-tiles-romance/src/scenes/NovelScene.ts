@@ -30,6 +30,8 @@ export class NovelScene {
   // Button active states
   private isAutoActive = false;
   private isFFActive = false;
+  /** 操作ボタン群を折りたたんで隠しているか（スマホで名前プレートと重なるのを防ぐ） */
+  private uiCollapsed = true;
 
   constructor(
     container: HTMLElement,
@@ -171,7 +173,13 @@ export class NovelScene {
       parts.push(`<span style="border-left:1px solid rgba(255,100,100,0.4);margin:0 2px;"></span>`);
       parts.push(btn('btn-debug-end', '→END', 'シナリオ強制終了（デバッグ）'));
     }
-    return parts.join('');
+    // 操作ボタン群は折りたたみ可能なコンテナに入れ、常時表示の ≡ トグルで開閉する。
+    // これによりスマホ縦画面で名前プレートとボタンが重なるのを防ぐ。
+    const actionsDisplay = this.uiCollapsed ? 'none' : 'flex';
+    return `
+      <div id="ui-actions" style="display:${actionsDisplay};gap:5px;align-items:center;">${parts.join('')}</div>
+      <button id="btn-ui-toggle" title="メニューの表示/非表示" style="${this.btnStyle()}">${this.uiCollapsed ? '☰' : '✕'}</button>
+    `;
   }
 
   private btnStyle(active = false): string {
@@ -191,6 +199,14 @@ export class NovelScene {
 
   private attachControlBarEvents(bar: HTMLDivElement): void {
     const getBtn = (id: string) => bar.querySelector<HTMLButtonElement>(`#${id}`)!;
+
+    const toggleBtn = getBtn('btn-ui-toggle');
+    toggleBtn.addEventListener('click', () => {
+      this.uiCollapsed = !this.uiCollapsed;
+      const actionsEl = bar.querySelector<HTMLDivElement>('#ui-actions');
+      if (actionsEl) actionsEl.style.display = this.uiCollapsed ? 'none' : 'flex';
+      toggleBtn.textContent = this.uiCollapsed ? '☰' : '✕';
+    });
 
     getBtn('btn-log').addEventListener('click', () => this.openLog());
 
