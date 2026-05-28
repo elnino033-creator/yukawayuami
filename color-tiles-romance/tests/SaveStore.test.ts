@@ -79,6 +79,18 @@ describe('SaveStore', () => {
     expect(localStorageMock.setItem).toHaveBeenCalled();
   });
 
+  it('reset 後に viewedRewards が空に戻る（デフォルト配列の共有汚染がない）', () => {
+    store.markRewardViewed('ch01_s01_reward');
+    expect(store.getViewedRewards()).toContain('ch01_s01_reward');
+    store.reset();
+    expect(store.getViewedRewards()).toEqual([]);
+
+    // 別インスタンスもデフォルトが汚染されていないこと
+    const fresh = new SaveStore();
+    fresh.reset();
+    expect(fresh.getViewedRewards()).toEqual([]);
+  });
+
   it('save/load のラウンドトリップが正常に動作する', () => {
     store.setRecord('ch01_stage02', { bestScore: 4200, bestRating: 'A', cleared: true });
     store.setCurrentChapter(1);

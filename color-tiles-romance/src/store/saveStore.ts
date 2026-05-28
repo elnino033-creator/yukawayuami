@@ -204,7 +204,8 @@ export class SaveStore {
     return {
       ...DEFAULT_SAVE_DATA,
       stageRecords: {},
-      settings: { ...DEFAULT_SETTINGS }
+      settings: { ...DEFAULT_SETTINGS },
+      viewedRewards: []
     };
   }
 
