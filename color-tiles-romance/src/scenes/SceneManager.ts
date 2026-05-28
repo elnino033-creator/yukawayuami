@@ -1193,16 +1193,28 @@ export class SceneManager {
         if (this.progressStore.getFlag('route_bad') > 0) {
           this.progressStore.resetFlags();
           void this.transition({ to: 'title' });
+          return;
+        }
+        // 章末 post（chXX_end）のセーブは、通常クリア時と同じ章末フロー
+        // （章末フラッシュバック → 次章 / 真エンド）を再現する。
+        // ※ scenarioRole / nextStageId に依存せず scenarioId で判定する
+        //   （ch05_end は継続情報を持たないため）。
+        if (/^ch0[1-5]_end$/.test(save.scenarioId)) {
+          this.continueAfterLoadedPost(save.scenarioId, save.nextStageId);
+          return;
+        }
+        const role = save.scenarioRole ?? 'pre'; // undefined は過去互換で 'pre' 扱い
+        if (role === 'post') {
+          // 章末以外の post: GOODルート後は次ステージへ（次ステージの preScenario は自然に再生）
+          void this.transition(save.nextStageId
+            ? { to: 'puzzle', stageId: save.nextStageId }
+            : { to: 'title' });
         } else if (save.nextStageId) {
-          const role = save.scenarioRole ?? 'pre'; // undefined は過去互換で 'pre' 扱い
-          if (role === 'pre') {
-            // preScenario: GOODルート後はパズルへ（既読マークで preScenario の再生を防ぐ）
-            this.progressStore.markLineRead(`pre:${save.nextStageId}`);
-          }
-          // 'post': GOODルート後は次ステージへ（既読マーク不要、次ステージの preScenario は自然に再生）
+          // preScenario: GOODルート後はパズルへ（既読マークで preScenario の再生を防ぐ）
+          this.progressStore.markLineRead(`pre:${save.nextStageId}`);
           void this.transition({ to: 'puzzle', stageId: save.nextStageId });
         } else {
-          // nextStageId がない場合（真エンドフロー・単独シナリオ等）はタイトルへ
+          // nextStageId がない場合（単独シナリオ等）はタイトルへ
           void this.transition({ to: 'title' });
         }
       }
@@ -1214,6 +1226,37 @@ export class SceneManager {
     }
     this.currentScene = scene;
     await scene.startFromSave(save);
+  }
+
+  /**
+   * 章末 post セーブ（chXX_end）を GOOD ルートで読み終えたあとの遷移。
+   * 通常クリア時（ResultScene の goNext）と同じ章末フローを再現する。
+   * - ch01〜04_end: chXX_final_flashback を挟んでから次ステージへ
+   * - ch05_end:     ch05_final_flashback → epilogue_true → EndRoll（真エンド）
+   */
+  private continueAfterLoadedPost(scenarioId: string, nextStageId?: string): void {
+    if (scenarioId === 'ch05_end') {
+      void this.mountNovelSceneWithCallback('ch05_final_flashback', () => {
+        void this.mountNovelSceneWithCallback('epilogue_true', () => {
+          this.mountEndRoll();
+        });
+      });
+      return;
+    }
+    const m = /^ch0([1-4])_end$/.exec(scenarioId);
+    if (m) {
+      const flashback = `ch0${m[1]}_final_flashback`;
+      void this.mountNovelSceneWithCallback(
+        flashback,
+        () => {
+          void this.transition(nextStageId ? { to: 'puzzle', stageId: nextStageId } : { to: 'title' });
+        },
+        nextStageId ? { role: 'post', stageId: nextStageId } : undefined
+      );
+      return;
+    }
+    // フォールバック（想定外の scenarioId）: 次ステージへ
+    void this.transition(nextStageId ? { to: 'puzzle', stageId: nextStageId } : { to: 'title' });
   }
 
   /** デバッグパネルを document.body に生成する（?debug=1 専用） */
