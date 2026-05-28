@@ -129,7 +129,7 @@
         "label": "……ここで、君とずっといたい",
         "flag": "route_bad",
         "value": 1,
-        "next": "ch05_route_BAD"
+        "next": "ch01_route_BAD"
       },
       {
         "label": "ごめん、あかり。行かなきゃいけない",
