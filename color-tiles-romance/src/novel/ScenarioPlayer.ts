@@ -268,6 +268,20 @@ export class ScenarioPlayer {
         clearTimeout(this.autoAdvanceTimer);
         this.autoAdvanceTimer = null;
       }
+      // 早送り中の高速な BGM 切替で play() が中断されて停止したままに
+      // なることがあるため、現在の BGM を再アサートして確実に再生させる。
+      this.ensureBgmPlaying();
+    }
+  }
+
+  /**
+   * 現在ステップに対応する BGM が確実に鳴っている状態にする。
+   * BgmManager.play は同一曲なら一時停止中のみ再開する（再生中は音量更新のみ）。
+   * currentBgmKey が null（演出上の無音）のときは何もしないため、意図した無音は保たれる。
+   */
+  private ensureBgmPlaying(): void {
+    if (this.currentBgmKey) {
+      BgmManager.play(this.currentBgmKey);
     }
   }
 
@@ -788,8 +802,11 @@ export class ScenarioPlayer {
       this.autoAdvanceTimer = null;
     }
     // Stop FF/skip on manual click
+    const wasAccelerating = this.isFastForward || this.isSkipping;
     this.isFastForward = false;
     this.isSkipping = false;
+    // 早送り/スキップ解除時は BGM を再アサートして停止したままになるのを防ぐ
+    if (wasAccelerating) this.ensureBgmPlaying();
 
     if (this.isTyping) {
       this.finishTyping();
@@ -808,8 +825,10 @@ export class ScenarioPlayer {
       if (!this.awaitingChoice) {
         // Cancel auto-advance
         if (this.autoAdvanceTimer !== null) { clearTimeout(this.autoAdvanceTimer); this.autoAdvanceTimer = null; }
+        const wasAccelerating = this.isFastForward || this.isSkipping;
         this.isFastForward = false;
         this.isSkipping = false;
+        if (wasAccelerating) this.ensureBgmPlaying();
         if (this.isTyping) {
           this.finishTyping();
         } else if (this.targetText) {
