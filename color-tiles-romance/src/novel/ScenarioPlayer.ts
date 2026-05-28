@@ -295,6 +295,8 @@ export class ScenarioPlayer {
 
   /** セーブ用の状態スナップショットを返す */
   getState(): Omit<ScenarioSaveData, 'slot' | 'savedAt'> {
+    // タイプライター演出の途中でセーブしても行全体を保存する（残りが欠落しないように）
+    const fullText = this.isTyping ? this.targetText : this.displayedText;
     return {
       scenarioId: this.currentScenarioId,
       stepIndex: this.stepIndex,
@@ -304,10 +306,10 @@ export class ScenarioPlayer {
         id: c.id, expr: c.expr, pos: c.pos, scale: c.scale, y: c.y
       })),
       currentName: this.currentName,
-      displayedText: this.displayedText,
+      displayedText: fullText,
       flags: { ...this.context.flags },
       readLines: [...this.context.readLines],
-      previewText: (this.displayedText || this.currentName || '').slice(0, 40),
+      previewText: (fullText || this.currentName || '').slice(0, 40),
       // 選択肢表示中のセーブに対応：選択肢内容を保持してロード時に復元できるようにする
       awaitingChoice: this.awaitingChoice || undefined,
       pendingChoices: this.awaitingChoice

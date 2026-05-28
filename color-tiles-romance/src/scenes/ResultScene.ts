@@ -42,6 +42,8 @@ export class ResultScene {
   private mouseX = 0;
   private mouseY = 0;
   private rafId: number | null = null;
+  /** ボタンアクションを一度きりに制限するフラグ（遷移中の二度押し防止） */
+  private actionFired = false;
   private startTime: number = Date.now();
 
   /** イベントリスナー保持 */
@@ -364,9 +366,13 @@ export class ResultScene {
   }
 
   private activateButton(mx: number, my: number): void {
+    // 遷移はアニメーション完了まで非同期で進むため、その間に旧シーンのリスナーが
+    // 残存する。二度押しで onNext 等が二重発火しないよう一度きりに制限する。
+    if (this.actionFired) return;
     for (const btn of this.buttons) {
       if (mx >= btn.x && mx <= btn.x + btn.w &&
         my >= btn.y && my <= btn.y + btn.h) {
+        this.actionFired = true;
         switch (btn.action) {
           case 'retry': this.onRetry(); break;
           case 'next': this.onNext(); break;

@@ -67,6 +67,8 @@ export class PuzzleEngine {
   private blocksReleased = false;
   private startedAtMs = 0;
   private bombTickSkip = false;
+  /** タイマーリスナーを登録済みか（loadStage 複数回呼び出しでの累積を防ぐ） */
+  private timerListenersAttached = false;
   private specialEventDef: import('@/types').SpecialEventDef | null = null;
   private specialEventFired = false;
   private originalBlocks: Tile[] = [];
@@ -138,19 +140,28 @@ export class PuzzleEngine {
 
     if (stage.timeLimitSec > 0) {
       this.timer.start(stage.timeLimitSec);
-      this.timer.onTimeUp(() => this.emit({ type: 'gameOver' }));
     } else {
       // 時間無制限：ダミー値でタイマーを起動して isRunning=true を維持する。
-      // onTimeUp を登録しないのでゲームオーバーは発生しない。
       this.timer.start(86400);
     }
 
-    // 1秒ごとに爆弾カウントダウンを減算（最初のtick=開始直後はスキップ）
+    // 最初のtick=開始直後はスキップ（毎ロードでリセット）
     this.bombTickSkip = true;
-    this.timer.onTick(() => {
-      if (this.bombTickSkip) { this.bombTickSkip = false; return; }
-      this.tickBombs();
-    });
+
+    // タイマーリスナーはエンジンインスタンスごとに一度だけ登録する。
+    // loadStage を複数回呼んでも onTimeUp / onTick が累積しないようにする。
+    if (!this.timerListenersAttached) {
+      this.timerListenersAttached = true;
+      // 時間切れ：制限時間ありのステージのみゲームオーバーにする
+      this.timer.onTimeUp(() => {
+        if (this.timeLimitSec > 0) this.emit({ type: 'gameOver' });
+      });
+      // 1秒ごとに爆弾カウントダウンを減算
+      this.timer.onTick(() => {
+        if (this.bombTickSkip) { this.bombTickSkip = false; return; }
+        this.tickBombs();
+      });
+    }
   }
 
   /**
