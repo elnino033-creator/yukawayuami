@@ -1,9 +1,15 @@
 [
   {
-    "effect": { "type": "blackout", "duration": 700 }
+    "effect": {
+      "type": "blackout",
+      "duration": 700
+    }
   },
   {
-    "chara": { "id": "akari", "hide": true }
+    "chara": {
+      "id": "akari",
+      "hide": true
+    }
   },
   {
     "bgm": "bgm_tower_entrance"
@@ -14,7 +20,7 @@
   {
     "text": {
       "name": "主人公",
-      "body": "……グレーの世界に戻る。もう、傷つきたくない。"
+      "body": "……グレーの世界に戻る。もう、傷つきたくない"
     }
   },
   {
