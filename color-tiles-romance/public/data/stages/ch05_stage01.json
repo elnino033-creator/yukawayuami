@@ -1,16 +1,16 @@
 {
   "id": "ch05_stage01",
-  "title": "第5章 ステージ1：全てのギミック",
+  "title": "第5章 ステージ1：黒のキャンバス",
   "chapter": 5,
   "boardWidth": 10,
   "boardHeight": 9,
-  "timeLimitSec": 70,
+  "timeLimitSec": 75,
   "missPenaltySec": 30,
   "hintCount": 1,
   "generationParams": {
     "seed": 5001,
     "targetPairs": 40,
-    "iceChance": 0.08,
+    "iceChance": 0.14,
     "timeTileChance": 0.1,
     "blockCount": 3,
     "colors": [
@@ -26,6 +26,20 @@
   "blockReleaseRule": {
     "type": "afterPairs",
     "count": 15
+  },
+  "specialEvent": {
+    "trigger": {
+      "type": "afterIceCleared",
+      "count": 1
+    },
+    "effect": {
+      "type": "addIceTiles",
+      "count": 3
+    },
+    "cutIn": {
+      "character": "mio",
+      "text": "ここにいて・・・"
+    }
   },
   "preScenario": "ch05_s01_pre.json",
   "rewardScenario": "ch05_s01_reward.json",

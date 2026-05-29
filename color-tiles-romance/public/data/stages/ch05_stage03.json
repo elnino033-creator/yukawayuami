@@ -1,10 +1,10 @@
 {
   "id": "ch05_stage03",
-  "title": "第5章 ステージ3：彼女の真心",
+  "title": "第5章 ステージ3：真白の貌",
   "chapter": 5,
   "boardWidth": 13,
   "boardHeight": 11,
-  "timeLimitSec": 95,
+  "timeLimitSec": 100,
   "missPenaltySec": 30,
   "hintCount": 1,
   "generationParams": {
@@ -31,6 +31,20 @@
   "blockReleaseRule": {
     "type": "afterPairs",
     "count": 10
+  },
+  "specialEvent": {
+    "trigger": {
+      "type": "afterPairs",
+      "count": 4
+    },
+    "effect": {
+      "type": "transformToBomb",
+      "count": 12
+    },
+    "cutIn": {
+      "character": "himari",
+      "text": "芸術は爆発だ！💣"
+    }
   },
   "preScenario": "ch05_s03_pre.json",
   "rewardScenario": "ch05_s03_reward.json",

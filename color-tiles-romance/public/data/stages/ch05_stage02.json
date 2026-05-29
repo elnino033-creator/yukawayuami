@@ -1,10 +1,10 @@
 {
   "id": "ch05_stage02",
-  "title": "第5章 ステージ2：混沌の嵐",
+  "title": "第5章 ステージ2：番人たちの色",
   "chapter": 5,
   "boardWidth": 12,
   "boardHeight": 10,
-  "timeLimitSec": 80,
+  "timeLimitSec": 90,
   "missPenaltySec": 30,
   "hintCount": 1,
   "generationParams": {
@@ -12,7 +12,7 @@
     "targetPairs": 60,
     "iceChance": 0.05,
     "timeTileChance": 0.1,
-    "blockCount": 4,
+    "blockCount": 8,
     "dense": true,
     "colors": [
       "red",
@@ -28,6 +28,19 @@
   "blockReleaseRule": {
     "type": "afterPairs",
     "count": 20
+  },
+  "specialEvent": {
+    "trigger": {
+      "type": "whenBlocksHalfway"
+    },
+    "effect": {
+      "type": "restoreBlocks",
+      "newReleaseCount": 18
+    },
+    "cutIn": {
+      "character": "suzu",
+      "text": "なぜ休んでくれないのですか"
+    }
   },
   "preScenario": "ch05_s02_pre.json",
   "rewardScenario": "ch05_s02_reward.json",

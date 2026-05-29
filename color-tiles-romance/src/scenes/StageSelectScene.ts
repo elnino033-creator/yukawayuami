@@ -96,7 +96,8 @@ const CHAPTERS: ChapterInfo[] = [
     stageIds: [
       'ch05_stage01',
       'ch05_stage02',
-      'ch05_stage03'
+      'ch05_stage03',
+      'ch05_stage04'
     ]
   }
 ];
