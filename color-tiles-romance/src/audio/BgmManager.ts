@@ -20,6 +20,8 @@ class BgmManagerClass {
   private map: Record<string, string> = {};
   /** デフォルト音量（SaveStore.settings.bgmVolume と連動） */
   private defaultVolume = 0.4;
+  /** 自動再生ブロック時の「次の操作で再開」リスナーが登録済みか */
+  private unlockArmed = false;
 
   /**
    * public/data/bgm_map.json を読み込む。
@@ -65,7 +67,7 @@ class BgmManagerClass {
       // 同じファイル：一時停止中なら続きから再開、再生中は音量だけ更新
       this.current.volume = vol;
       if (this.current.paused) {
-        this.current.play().catch(() => {});
+        this.playCurrentWithUnlock();
       }
       return;
     }
@@ -80,9 +82,42 @@ class BgmManagerClass {
     const audio = new Audio(url);
     audio.loop = true;
     audio.volume = vol;
-    audio.play().catch(() => {});
     this.current = audio;
     this.currentKey = filename;
+    this.playCurrentWithUnlock();
+  }
+
+  /**
+   * 現在の BGM を再生する。自動再生がブロック／中断されて play() が reject した場合は、
+   * 次のユーザー操作（タップ等）で自動的に再開するようリスナーを登録する。
+   *
+   * 早送り（タイマー進行）からパズルへ遷移したときなど、ユーザー操作を伴わずに
+   * play() が呼ばれると iOS Safari 等の自動再生ポリシーで再生がブロックされるため。
+   */
+  private playCurrentWithUnlock(): void {
+    const audio = this.current;
+    if (!audio) return;
+    audio.play().catch(() => this.armUnlock());
+  }
+
+  /** 次のユーザー操作で現在の BGM の再生を再試行するワンショットリスナーを登録する */
+  private armUnlock(): void {
+    if (this.unlockArmed) return;
+    this.unlockArmed = true;
+    const resume = () => {
+      this.unlockArmed = false;
+      document.removeEventListener('pointerdown', resume);
+      document.removeEventListener('touchend', resume);
+      document.removeEventListener('click', resume);
+      document.removeEventListener('keydown', resume);
+      if (this.current && this.current.paused) {
+        this.current.play().catch(() => {});
+      }
+    };
+    document.addEventListener('pointerdown', resume);
+    document.addEventListener('touchend', resume);
+    document.addEventListener('click', resume);
+    document.addEventListener('keydown', resume);
   }
 
   /**
