@@ -216,10 +216,12 @@ JSON 配列形式。各要素は以下のいずれか（フィールド名で識
 
 立ち絵表情は 7 種類: `normal / smile / angry / sad / shy / blush / surprise`。シナリオ内では `phone:ringing` のようにオブジェクト系のキャラも `chara` で扱われる（該当画像はリポジトリには無く、画像未ロード時はプレースホルダ矩形）。
 
-### 6.3 シナリオファイル一覧（`public/data/scenarios/` 全 86 ファイル）
+### 6.3 シナリオファイル一覧（`public/data/scenarios/` 全 81 ファイル）
 
-> 旧「1章=5ステージ」設計の残骸（`chXX_s04/s05/s06_*` 等）24 ファイルを
-> session #4 で削除済み。到達可能性分析の詳細は `docs/session-report-4.md` を参照。
+> 旧「1章=5ステージ」設計の残骸（`chXX_s04/s05/s06_*` 等）と置換済みの導入・
+> 章中間 post 計 29 ファイルを session #4 で削除済み。`ch00_tutorial(2)_post` は
+> `postScenario` を設定して本来のフローへ復活。到達可能性分析の詳細は
+> `docs/session-report-4.md` を参照。
 
 主要グループ:
 - `intro_main.json`: 導入（電話／日常の朝）
