@@ -928,24 +928,19 @@ export class SceneManager {
       // 1章 — あかり
       { id: 'ch01_s01_reward', title: 'ステージ1 Sランク', chapter: '第1章 あかり' },
       { id: 'ch01_s02_reward', title: 'ステージ2 Sランク', chapter: '第1章 あかり' },
-      { id: 'ch01_s03_reward', title: 'ステージ3 Sランク', chapter: '第1章 あかり' },
       // 2章 — みお
       { id: 'ch02_s01_reward', title: 'ステージ1 Sランク', chapter: '第2章 みお' },
       { id: 'ch02_s02_reward', title: 'ステージ2 Sランク', chapter: '第2章 みお' },
-      { id: 'ch02_s03_reward', title: 'ステージ3 Sランク', chapter: '第2章 みお' },
       // 3章 — すず
       { id: 'ch03_s01_reward', title: 'ステージ1 Sランク', chapter: '第3章 すず' },
       { id: 'ch03_s02_reward', title: 'ステージ2 Sランク', chapter: '第3章 すず' },
-      { id: 'ch03_s03_reward', title: 'ステージ3 Sランク', chapter: '第3章 すず' },
       // 4章 — ひまり
       { id: 'ch04_s01_reward', title: 'ステージ1 Sランク', chapter: '第4章 ひまり' },
       { id: 'ch04_s02_reward', title: 'ステージ2 Sランク', chapter: '第4章 ひまり' },
-      { id: 'ch04_s03_reward', title: 'ステージ3 Sランク', chapter: '第4章 ひまり' },
       // 5章 — ゆかり
       { id: 'ch05_s01_reward', title: 'ステージ1 Sランク', chapter: '第5章 ゆかり' },
       { id: 'ch05_s02_reward', title: 'ステージ2 Sランク', chapter: '第5章 ゆかり' },
       { id: 'ch05_s03_reward', title: 'ステージ3 Sランク', chapter: '第5章 ゆかり' },
-      { id: 'ch05_s07_reward', title: '最終決戦 Sランク', chapter: '第5章 ゆかり' },
     ];
 
     const viewed = new Set(this.saveStore.getViewedRewards());

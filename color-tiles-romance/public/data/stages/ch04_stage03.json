@@ -20,7 +20,6 @@
     ]
   },
   "preScenario": "ch04_s03_pre.json",
-  "rewardScenario": "ch04_s03_reward.json",
   "postScenario": "ch04_end.json",
   "puzzleBgm": "Crown of Ashes.mp3",
   "bombCountdown": 15,
