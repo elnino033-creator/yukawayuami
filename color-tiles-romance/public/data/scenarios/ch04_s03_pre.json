@@ -71,13 +71,13 @@
     "choice": [
       {
         "label": "……そうだな。描かなくても、頭の中にあれば十分かもしれない",
-        "next": "ch04_s05_pre_B",
+        "next": "ch04_s03_pre_B",
         "flag": "route_bad",
         "value": 1
       },
       {
         "label": "形にしたい。誰かに届けたいから",
-        "next": "ch04_s05_pre_A"
+        "next": "ch04_s03_pre_A"
       }
     ],
     "prompt": "ひまりの誘いに、どう答えるか"

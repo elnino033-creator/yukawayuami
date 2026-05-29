@@ -73,7 +73,7 @@ ch05_stage01..07
 | ch03_stage03 | 第3章 ステージ3：岩盤の彼方 | 3 | 10x10 | 105 | 30 | 1 | afterPairs(10) | whenBlocksHalfway → restoreBlocks(newReleaseCount=14), cutIn=suzu「なぜ休んでくれないのですか」 | 翠葉の迷宮.mp3 |
 | ch04_stage01 | 第4章 ステージ1：時間との戦い | 4 | 10x8 | 100 | 30 | 2 | – | – | オレンジ宮殿.mp3 |
 | ch04_stage02 | 第4章 ステージ2：氷の連鎖 | 4 | 10x9 | 90 | 30 | 2 | – | – | オレンジ宮殿.mp3 |
-| ch04_stage03 | 第4章 ステージ3：ひまりの爆発 | 4 | 10x10 | 480 | 30 | 1 | – | afterPairs(4) → transformToBomb×12, cutIn=himari「芸術は爆発だ！💣」 | Crown of Ashes.mp3 |
+| ch04_stage03 | 第4章 ステージ3：ひまりの爆発 | 4 | 10x10 | 180 | 30 | 1 | – | afterPairs(4) → transformToBomb×12, cutIn=himari「芸術は爆発だ！💣」 | Crown of Ashes.mp3 |
 | ch05_stage01 | 第5章 ステージ1：全てのギミック | 5 | 10x9 | 70 | 30 | 1 | afterPairs(15) | – | 黒階段の誓い.mp3 |
 | ch05_stage02 | 第5章 ステージ2：混沌の嵐 | 5 | 12x10 | 80 | 30 | 1 | afterPairs(20) | – | 黒階段の誓い.mp3 |
 | ch05_stage03 | 第5章 ステージ3：彼女の真心 | 5 | 13x11 | 95 | 30 | 1 | afterPairs(10) | – | 黒階段の誓い.mp3 |
@@ -390,7 +390,7 @@ SaveData = {
 4. **シナリオ内 BGM `Hollow Underfloor.mp3` を直指定**しているシナリオがあるが（key 化されていない）、ファイルは存在する（OK）。
 5. **bgm 直指定で `緋色のあかり` のように key が日本語まま**: bgm_map.json に登録があるためマップヒットするが、ローカル fonts/エンコード問題のリスクあり。
 6. **TitleScene の BGM**: コード上 `BgmManager.stop()` を呼んだ直後に独自 `new Audio('妖精の小径.mp3')` を生成しており、`BgmManager` を経由しない（destroy 時に手動停止）。BGM 一元管理の方針と若干食い違う。
-7. **ch04_stage03 の `timeLimitSec: 480`**: 他の章末ステージ（55〜120）に比べて極端に大きい。テスト用の置き忘れに見える可能性。
+7. ~~**ch04_stage03 の `timeLimitSec: 480`**~~: session #5 で **180 秒に調整済み**（12 個の爆弾化ギミックの救済を加味しつつ、章内進行 100→90 との一貫性を確保）。
 8. **`ch04_stage03` の `targetPairs: 36`** で `boardWidth*Height = 100`、生成時に 72 枚以上配置されるが、追加で +12 タイル爆弾変換が起きる構造。難易度のバランスは要検証。
 9. **未参照 / 孤立シナリオファイル**: `ch02_s03_puzzle.json`, `ch01_s03_pre_end.json`, `chXX_s04_pre.json` / `chXX_s05_pre.json` / `chXX_s06_pre.json` 等、ステージ JSON から参照されていないものが多い（A/B 分岐や旧版の残骸と推測）。
 10. **ステージ JSON にない preScenario の参照ファイル**: 各 `_post.json` は SceneManager が `postScenario` を読み込むだけなので OK だが、`ch01_s04_pre.json` のようにステージ ID（s04 以降）がそもそも存在しない章もある。
