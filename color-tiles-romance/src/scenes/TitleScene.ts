@@ -38,6 +38,10 @@ interface Petal {
  * ゴシックファンタジー調の背景画像上にメニューボタンを描画する。
  */
 export class TitleScene {
+  /** 一度でも音声アンロック（ユーザー操作によるBGM開始）が済んだか。
+   *  済んでいればタイトル再訪時はゲートを出さず直接BGMを再生する。 */
+  private static audioUnlocked = false;
+
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private onSelect: (choice: TitleChoice) => void;
@@ -65,6 +69,9 @@ export class TitleScene {
 
   /** シナリオセーブが存在するかどうか（LOAD ボタン有効化条件） */
   private hasSceneSave: boolean;
+
+  /** 「タップでスタート」ゲートのDOM要素（表示中のみ非null） */
+  private startGateEl: HTMLDivElement | null = null;
 
   /**
    * @param canvas 描画対象のCanvas要素
@@ -106,8 +113,59 @@ export class TitleScene {
   start(): void {
     this.handleResize(); // buildButtons / initPetals / loadBgImage を内包
     this.startRenderLoop();
-    // BgmManager 経由で再生することで bgmVolume 設定が反映される
-    BgmManager.play('妖精の小径.mp3');
+    // ブラウザの自動再生ポリシーにより、ユーザー操作前は BGM の再生がブロックされる。
+    // 初回はゲート（タップでスタート）を表示し、そのタップを起点に BGM を再生する。
+    // 一度アンロック済みなら（タイトル再訪時など）直接再生する。
+    if (TitleScene.audioUnlocked) {
+      BgmManager.play('妖精の小径.mp3');
+    } else {
+      this.showStartGate();
+    }
+  }
+
+  /**
+   * 「タップでスタート」ゲートを表示する。
+   * 初回ロード時にユーザー操作（タップ）を受けて BGM をアンロック再生し、ゲートを閉じる。
+   */
+  private showStartGate(): void {
+    const parent = this.canvas.parentElement ?? document.body;
+    const gate = document.createElement('div');
+    gate.style.cssText = [
+      'position:absolute', 'inset:0',
+      'display:flex', 'align-items:center', 'justify-content:center',
+      'background:rgba(8,6,20,0.55)',
+      'z-index:50',
+      'cursor:pointer',
+      'user-select:none', '-webkit-tap-highlight-color:transparent',
+      'font-family:sans-serif',
+    ].join(';');
+    gate.innerHTML = `
+      <div style="
+        color:#e8e0ff;
+        font-size:clamp(18px,5vw,30px);
+        font-weight:bold;
+        letter-spacing:0.18em;
+        text-shadow:0 2px 12px rgba(0,0,0,0.7);
+        animation:ctr-tap-pulse 1.4s ease-in-out infinite;
+      ">TAP TO START</div>
+      <style>@keyframes ctr-tap-pulse{0%,100%{opacity:0.45}50%{opacity:1}}</style>
+    `;
+    const onGate = (e: Event) => {
+      e.preventDefault();
+      gate.removeEventListener('pointerdown', onGate);
+      gate.removeEventListener('touchend', onGate);
+      gate.removeEventListener('click', onGate);
+      gate.remove();
+      this.startGateEl = null;
+      TitleScene.audioUnlocked = true;
+      // ユーザー操作のコンテキスト内で再生 → 自動再生制限を回避
+      BgmManager.play('妖精の小径.mp3');
+    };
+    gate.addEventListener('pointerdown', onGate);
+    gate.addEventListener('touchend', onGate);
+    gate.addEventListener('click', onGate);
+    parent.appendChild(gate);
+    this.startGateEl = gate;
   }
 
   /**
@@ -119,6 +177,10 @@ export class TitleScene {
     this.canvas.removeEventListener('click', this.boundClick);
     this.canvas.removeEventListener('touchend', this.boundTouchEnd);
     window.removeEventListener('resize', this.boundResize);
+    if (this.startGateEl) {
+      this.startGateEl.remove();
+      this.startGateEl = null;
+    }
     // BGM は BgmManager 管理のため、次シーンの play() 呼び出し時に自動停止される
   }
 
