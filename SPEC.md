@@ -216,7 +216,12 @@ JSON 配列形式。各要素は以下のいずれか（フィールド名で識
 
 立ち絵表情は 7 種類: `normal / smile / angry / sad / shy / blush / surprise`。シナリオ内では `phone:ringing` のようにオブジェクト系のキャラも `chara` で扱われる（該当画像はリポジトリには無く、画像未ロード時はプレースホルダ矩形）。
 
-### 6.3 シナリオファイル一覧（`public/data/scenarios/` 全 88 ファイル）
+### 6.3 シナリオファイル一覧（`public/data/scenarios/` 全 81 ファイル）
+
+> 旧「1章=5ステージ」設計の残骸（`chXX_s04/s05/s06_*` 等）と置換済みの導入・
+> 章中間 post 計 29 ファイルを session #4 で削除済み。`ch00_tutorial(2)_post` は
+> `postScenario` を設定して本来のフローへ復活。到達可能性分析の詳細は
+> `docs/session-report-4.md` を参照。
 
 主要グループ:
 - `intro_main.json`: 導入（電話／日常の朝）
@@ -361,6 +366,17 @@ SaveData = {
 ## 10. 既知の問題・修正予定
 
 コードを読み込んで気付いた点を記録する。
+
+> **更新メモ（session #4）**: 本書初版以降の実装で、以下は既に**解消済み**。
+> - #1 タイトル背景画像（`title_bg.jpg` / `title_bg_phone.jpg` 追加済み）
+> - #2 パズル BGM 404（`Crown of Ashes.mp3` 等を含め実ファイル配置済み）
+> - #13 `playTimeLow` 未配線（`PuzzleScene` から呼び出し済み）
+> - #16 `ScenarioPlayer` の resize リスナーリーク（`boundResize` で正しく解除）
+> - #12 シナリオ `se` ステップ（`playSeFile` + `playSe` 併用に変更済み）
+>
+> また本書未記載の追加システムとして、**S ランクご褒美シナリオ＋ギャラリー**、
+> **3スロット手動セーブ/ロード**、**LOG / SKIP / 早送り(▶▶) / AUTO UI**、
+> **BAD/TRUE ルート分岐**が実装済み。以下のリストは初版時点の記録として残す。
 
 ### 仕様上の不整合・データ欠落
 1. **タイトル背景画像なし**: `TitleScene.loadBgImage` は `assets/bg/title_bg.jpg` を期待するが当該ファイルがリポジトリに存在しない。フォールバックの黒系グラデで表示される。

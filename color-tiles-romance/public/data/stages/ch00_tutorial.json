@@ -2,6 +2,7 @@
   "id": "ch00_tutorial",
   "title": "チュートリアル1：横に消してみよう",
   "chapter": 0,
+  "postScenario": "ch00_tutorial_post.json",
   "boardWidth": 6,
   "boardHeight": 4,
   "timeLimitSec": 0,
