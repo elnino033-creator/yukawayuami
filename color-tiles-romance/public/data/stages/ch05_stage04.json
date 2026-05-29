@@ -1,18 +1,18 @@
 {
   "id": "ch05_stage04",
-  "title": "第5章 ステージ4：記憶の奔流",
+  "title": "第5章 最終決戦：黒を塗りつぶせ",
   "chapter": 5,
-  "boardWidth": 14,
-  "boardHeight": 12,
-  "timeLimitSec": 105,
+  "boardWidth": 16,
+  "boardHeight": 14,
+  "timeLimitSec": 120,
   "missPenaltySec": 30,
-  "hintCount": 1,
+  "hintCount": 0,
   "generationParams": {
-    "seed": 5004,
-    "targetPairs": 100,
-    "iceChance": 0.05,
-    "timeTileChance": 0.12,
-    "blockCount": 10,
+    "seed": 5007,
+    "targetPairs": 160,
+    "iceChance": 0.08,
+    "timeTileChance": 0.2,
+    "blockCount": 18,
     "dense": true,
     "colors": [
       "red",
@@ -22,16 +22,32 @@
       "purple",
       "orange",
       "pink",
-      "cyan"
+      "cyan",
+      "teal",
+      "brown"
     ],
-    "minFreePairs": 10
+    "minFreePairs": 18
   },
   "blockReleaseRule": {
     "type": "afterPairs",
-    "count": 12
+    "count": 15
   },
-  "preScenario": "ch05_s04_pre.json",
-  "rewardScenario": "ch05_s04_reward.json",
-  "postScenario": "ch05_s04_post.json",
+  "specialEvent": {
+    "trigger": {
+      "type": "whenIceRemaining",
+      "count": 5
+    },
+    "effect": {
+      "type": "transformToBomb",
+      "count": 16
+    },
+    "cutIn": {
+      "character": "yukari",
+      "text": "あなたの色を——見せて"
+    }
+  },
+  "preScenario": "ch05_s07_pre.json",
+  "rewardScenario": "ch05_s07_reward.json",
+  "postScenario": "ch05_end.json",
   "puzzleBgm": "黒階段の誓い.mp3"
 }

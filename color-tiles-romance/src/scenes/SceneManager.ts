@@ -20,8 +20,7 @@ const LINEAR_STAGES = [
   'ch03_stage01', 'ch03_stage02', 'ch03_stage03',
   'ch04_time_demo',
   'ch04_stage01', 'ch04_stage02', 'ch04_stage03',
-  'ch05_stage01', 'ch05_stage02', 'ch05_stage03',
-  'ch05_stage04', 'ch05_stage05', 'ch05_stage06', 'ch05_stage07',
+  'ch05_stage01', 'ch05_stage02', 'ch05_stage03', 'ch05_stage04',
 ] as const;
 
 /** アプリ内のシーン種別 */
@@ -493,7 +492,7 @@ export class SceneManager {
         'ch02_stage03': 3,
         'ch03_stage03': 4,
         'ch04_stage03': 5,
-        'ch05_stage07': 6,
+        'ch05_stage04': 6,
       };
       const nextChapter = CHAPTER_LAST_STAGES[data.stageId];
       if (nextChapter !== undefined) {
@@ -515,7 +514,7 @@ export class SceneManager {
         // シナリオチェーン：rewardScenario(Sランク) → postScenario(BAD ENDチェック) → 次ステージ
         // ① 章末flashback / 次ステージへ進む
         const goNext = () => {
-          if (data.stageId === 'ch05_stage07' && data.cleared) {
+          if (data.stageId === 'ch05_stage04' && data.cleared) {
             // 真エンドルート: flashback → epilogue_true → endRoll（次ステージなし）
             void this.mountNovelSceneWithCallback('ch05_final_flashback', () => {
               void this.mountNovelSceneWithCallback('epilogue_true', () => {
@@ -946,10 +945,7 @@ export class SceneManager {
       { id: 'ch05_s01_reward', title: 'ステージ1 Sランク', chapter: '第5章 ゆかり' },
       { id: 'ch05_s02_reward', title: 'ステージ2 Sランク', chapter: '第5章 ゆかり' },
       { id: 'ch05_s03_reward', title: 'ステージ3 Sランク', chapter: '第5章 ゆかり' },
-      { id: 'ch05_s04_reward', title: 'ステージ4 Sランク', chapter: '第5章 ゆかり' },
-      { id: 'ch05_s05_reward', title: 'ステージ5 Sランク', chapter: '第5章 ゆかり' },
-      { id: 'ch05_s06_reward', title: 'ステージ6 Sランク', chapter: '第5章 ゆかり' },
-      { id: 'ch05_s07_reward', title: 'ステージ7 Sランク', chapter: '第5章 ゆかり' },
+      { id: 'ch05_s07_reward', title: '最終決戦 Sランク', chapter: '第5章 ゆかり' },
     ];
 
     const viewed = new Set(this.saveStore.getViewedRewards());
@@ -1277,8 +1273,7 @@ export class SceneManager {
       'ch04_s03_pre', 'ch04_s03_pre_A', 'ch04_s03_pre_B',
       'ch04_final_flashback', 'ch04_end',
       'ch05_s01_pre', 'ch05_s01_post', 'ch05_s02_pre', 'ch05_s02_post',
-      'ch05_s03_pre', 'ch05_s03_post', 'ch05_s04_pre', 'ch05_s04_post',
-      'ch05_s05_pre', 'ch05_s05_post', 'ch05_s06_pre', 'ch05_s06_post',
+      'ch05_s03_pre', 'ch05_s03_post',
       'ch05_s07_pre', 'ch05_route_BAD', 'ch05_route_TRUE', 'ch05_final_flashback', 'ch05_end',
       'epilogue_true',
     ];
@@ -1288,8 +1283,7 @@ export class SceneManager {
       'ch02_stage01', 'ch02_stage02', 'ch02_stage03',
       'ch03_ice_demo', 'ch03_stage01', 'ch03_stage02', 'ch03_stage03',
       'ch04_time_demo', 'ch04_stage01', 'ch04_stage02', 'ch04_stage03',
-      'ch05_stage01', 'ch05_stage02', 'ch05_stage03',
-      'ch05_stage04', 'ch05_stage05', 'ch05_stage06', 'ch05_stage07',
+      'ch05_stage01', 'ch05_stage02', 'ch05_stage03', 'ch05_stage04',
     ];
 
     // トグルボタン
@@ -1388,12 +1382,9 @@ export class SceneManager {
       'ch05_s01_pre': 'ch05_stage01',  'ch05_s01_post': 'ch05_stage02',
       'ch05_s02_pre': 'ch05_stage02',  'ch05_s02_post': 'ch05_stage03',
       'ch05_s03_pre': 'ch05_stage03',  'ch05_s03_post': 'ch05_stage04',
-      'ch05_s04_pre': 'ch05_stage04',  'ch05_s04_post': 'ch05_stage05',
-      'ch05_s05_pre': 'ch05_stage05',  'ch05_s05_post': 'ch05_stage06',
-      'ch05_s06_pre': 'ch05_stage06',  'ch05_s06_post': 'ch05_stage07',
-      'ch05_s07_pre': 'ch05_stage07',
+      'ch05_s07_pre': 'ch05_stage04',
       'ch05_route_BAD': null,           // BADエンド → タイトル
-      'ch05_route_TRUE': 'ch05_stage07',
+      'ch05_route_TRUE': 'ch05_stage04',
       'ch05_final_flashback': null,     // 真エンド後 → タイトル
       'ch05_end': null,
       'epilogue_true': null,
