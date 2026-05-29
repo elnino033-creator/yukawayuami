@@ -133,7 +133,7 @@ export class TitleScene {
     gate.style.cssText = [
       'position:absolute', 'inset:0',
       'display:flex', 'align-items:center', 'justify-content:center',
-      'background:rgba(8,6,20,0.55)',
+      'background:#000',
       'z-index:50',
       'cursor:pointer',
       'user-select:none', '-webkit-tap-highlight-color:transparent',
