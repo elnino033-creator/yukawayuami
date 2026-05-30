@@ -10,7 +10,8 @@
       "id": "akari",
       "expr": "smile",
       "pos": "center",
-      "show": true
+      "show": true,
+      "distance": "far"
     }
   },
   {
@@ -32,6 +33,14 @@
     }
   },
   {
+    "chara": {
+      "id": "akari",
+      "expr": "smile",
+      "pos": "center",
+      "distance": "normal"
+    }
+  },
+  {
     "text": {
       "name": "主人公",
       "body": "落ち着け——"
@@ -41,6 +50,14 @@
     "text": {
       "name": "",
       "body": "言い終わる前に、あかりの手が俺の袖をぎゅっとつかんだ。"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "blush",
+      "pos": "center",
+      "distance": "veryClose"
     }
   },
   {
