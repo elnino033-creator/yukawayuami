@@ -34,7 +34,8 @@
       "id": "akari",
       "expr": "blush",
       "pos": "center",
-      "show": true
+      "show": true,
+      "distance": "far"
     }
   },
   {
@@ -126,7 +127,8 @@
     "chara": {
       "id": "akari",
       "expr": "surprise",
-      "pos": "center"
+      "pos": "center",
+      "distance": "veryClose"
     }
   },
   {
@@ -205,7 +207,8 @@
     "chara": {
       "id": "akari",
       "expr": "smile",
-      "pos": "center"
+      "pos": "center",
+      "distance": "normal"
     }
   },
   {

@@ -28,7 +28,8 @@
       "id": "yukari",
       "expr": "normal",
       "pos": "center",
-      "show": true
+      "show": true,
+      "distance": "far"
     }
   },
   {

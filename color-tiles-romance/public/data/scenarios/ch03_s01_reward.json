@@ -20,6 +20,14 @@
     }
   },
   {
+    "chara": {
+      "id": "suzu",
+      "expr": "smile",
+      "pos": "center",
+      "distance": "close"
+    }
+  },
+  {
     "text": {
       "name": "",
       "body": "すずは静かに俺の隣に立った。少し間を空けて、でもはっきりと、隣に。"
@@ -41,6 +49,14 @@
     "text": {
       "name": "すず",
       "body": "うん。……ちょっとだけ、触れてもいい？"
+    }
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "smile",
+      "pos": "center",
+      "distance": "veryClose"
     }
   },
   {

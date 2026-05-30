@@ -390,10 +390,11 @@ export class ScenarioPlayer {
       BgmManager.forceStop();
     }
 
-    // Restore characters
+    // Restore characters（currentScale はセーブに無いため scale に揃えて即時表示）
     this.characters = state.characters.map(ch => ({
       ...ch,
-      color: (CHARA_COLORS as Record<string, string>)[ch.id] ?? CHARA_COLORS['default']!
+      color: (CHARA_COLORS as Record<string, string>)[ch.id] ?? CHARA_COLORS['default']!,
+      currentScale: ch.scale
     }));
 
     // Preload character images

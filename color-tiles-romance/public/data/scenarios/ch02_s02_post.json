@@ -44,6 +44,14 @@
     }
   },
   {
+    "chara": {
+      "id": "mio",
+      "expr": "normal",
+      "pos": "center",
+      "distance": "far"
+    }
+  },
+  {
     "text": {
       "name": "",
       "body": "みおが氷柱の間から、静かに主人公を見ている。"
@@ -53,7 +61,8 @@
     "chara": {
       "id": "mio",
       "expr": "angry",
-      "pos": "center"
+      "pos": "center",
+      "distance": "far"
     }
   },
   {

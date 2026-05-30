@@ -74,6 +74,14 @@
     }
   },
   {
+    "chara": {
+      "id": "suzu",
+      "expr": "normal",
+      "pos": "center",
+      "distance": "veryClose"
+    }
+  },
+  {
     "text": {
       "name": "",
       "body": "誘われるまま、すずの膝に頭を乗せ、葉っぱのベッドに身を預けた。"
@@ -89,7 +97,8 @@
     "chara": {
       "id": "suzu",
       "expr": "surprise",
-      "pos": "center"
+      "pos": "center",
+      "distance": "close"
     }
   },
   {

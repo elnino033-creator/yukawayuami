@@ -82,6 +82,14 @@
     }
   },
   {
+    "chara": {
+      "id": "himari",
+      "expr": "smile",
+      "pos": "center",
+      "distance": "veryFar"
+    }
+  },
+  {
     "text": {
       "name": "",
       "body": "ひまりの体が、黄金の光の粒子となって空に溶けていく。最後まで、笑っていた。"

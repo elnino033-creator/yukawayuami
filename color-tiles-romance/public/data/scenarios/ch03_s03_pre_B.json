@@ -38,6 +38,14 @@
     }
   },
   {
+    "chara": {
+      "id": "suzu",
+      "expr": "normal",
+      "pos": "center",
+      "distance": "veryClose"
+    }
+  },
+  {
     "text": {
       "name": "すず",
       "body": "私がずっと、頭を撫でていてあげますから"

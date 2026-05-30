@@ -68,6 +68,14 @@
     }
   },
   {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "distance": "veryClose"
+    }
+  },
+  {
     "text": {
       "name": "",
       "body": "ゆかりが、主人公の手に触れた。"
@@ -89,6 +97,14 @@
     "text": {
       "name": "",
       "body": "三年間、よく耐えました。おかえりなさい。"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "distance": "veryFar"
     }
   },
   {

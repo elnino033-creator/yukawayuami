@@ -22,7 +22,8 @@
       "id": "akari",
       "expr": "normal",
       "pos": "center",
-      "show": true
+      "show": true,
+      "distance": "far"
     }
   },
   {
@@ -35,6 +36,14 @@
     "text": {
       "name": "",
       "body": "あかりが静かに歩み寄ってきた。その表情は、今まで見たことのない、穏やかな顔だった。"
+    }
+  },
+  {
+    "chara": {
+      "id": "akari",
+      "expr": "normal",
+      "pos": "center",
+      "distance": "normal"
     }
   },
   {
@@ -65,7 +74,8 @@
     "chara": {
       "id": "akari",
       "expr": "sad",
-      "pos": "center"
+      "pos": "center",
+      "distance": "close"
     }
   },
   {

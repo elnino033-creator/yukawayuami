@@ -56,6 +56,14 @@
     }
   },
   {
+    "chara": {
+      "id": "suzu",
+      "expr": "normal",
+      "pos": "center",
+      "distance": "close"
+    }
+  },
+  {
     "text": {
       "name": "",
       "body": "すずが、主人公の顔を静かに覗き込んだ。"

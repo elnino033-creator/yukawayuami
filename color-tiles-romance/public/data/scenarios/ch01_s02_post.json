@@ -78,7 +78,8 @@
     "chara": {
       "id": "akari",
       "expr": "surprise",
-      "pos": "center"
+      "pos": "center",
+      "distance": "far"
     }
   },
   {
@@ -139,7 +140,8 @@
     "chara": {
       "id": "akari",
       "expr": "smile",
-      "pos": "center"
+      "pos": "center",
+      "distance": "normal"
     }
   },
   {
@@ -164,7 +166,8 @@
     "chara": {
       "id": "akari",
       "expr": "surprise",
-      "pos": "center"
+      "pos": "center",
+      "distance": "close"
     }
   },
   {

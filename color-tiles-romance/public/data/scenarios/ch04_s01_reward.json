@@ -10,7 +10,8 @@
       "id": "himari",
       "expr": "smile",
       "pos": "center",
-      "show": true
+      "show": true,
+      "distance": "far"
     }
   },
   {
@@ -23,6 +24,14 @@
     "text": {
       "name": "",
       "body": "ひまりが叫びながら走ってくる。止まれないやつだ、と思った次の瞬間——"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "smile",
+      "pos": "center",
+      "distance": "veryClose"
     }
   },
   {

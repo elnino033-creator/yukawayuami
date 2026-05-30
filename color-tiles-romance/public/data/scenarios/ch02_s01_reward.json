@@ -26,6 +26,14 @@
     }
   },
   {
+    "chara": {
+      "id": "mio",
+      "expr": "smile",
+      "pos": "center",
+      "distance": "close"
+    }
+  },
+  {
     "text": {
       "name": "",
       "body": "俺の隣に、静かに並ぶ。"
@@ -47,6 +55,14 @@
     "text": {
       "name": "みお",
       "body": "うん。……ちょっとだけ"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "smile",
+      "pos": "center",
+      "distance": "veryClose"
     }
   },
   {

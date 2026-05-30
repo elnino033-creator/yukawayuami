@@ -104,6 +104,15 @@
     }
   },
   {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true,
+      "distance": "far"
+    }
+  },
+  {
     "text": {
       "name": "",
       "body": "その声は、どこか遠くの場所から届いているようだった。"

@@ -44,6 +44,14 @@
     }
   },
   {
+    "chara": {
+      "id": "mio",
+      "expr": "normal",
+      "pos": "center",
+      "distance": "veryClose"
+    }
+  },
+  {
     "text": {
       "name": "",
       "body": "みおの冷たい手が、頬に触れる。"
