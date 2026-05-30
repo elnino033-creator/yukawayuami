@@ -74,6 +74,14 @@
     }
   },
   {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "distance": "veryFar"
+    }
+  },
+  {
     "text": {
       "name": "",
       "body": "ゆかりの姿が、灰色の中に消えていく。"

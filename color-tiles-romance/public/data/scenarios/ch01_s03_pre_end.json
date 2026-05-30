@@ -81,6 +81,14 @@
     }
   },
   {
+    "chara": {
+      "id": "akari",
+      "expr": "smile",
+      "pos": "center",
+      "distance": "far"
+    }
+  },
+  {
     "text": {
       "name": "",
       "body": "その体が——ゆっくりと、光の粒子に変わり始める。"

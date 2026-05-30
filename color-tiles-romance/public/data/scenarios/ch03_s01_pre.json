@@ -34,13 +34,22 @@
       "id": "suzu",
       "expr": "normal",
       "pos": "center",
-      "show": true
+      "show": true,
+      "distance": "far"
     }
   },
   {
     "text": {
       "name": "すず",
       "body": "あ……いらっしゃいませ。お待ちしていましたよ"
+    }
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "normal",
+      "pos": "center",
+      "distance": "normal"
     }
   },
   {

@@ -62,6 +62,14 @@
     }
   },
   {
+    "chara": {
+      "id": "akari",
+      "expr": "normal",
+      "pos": "center",
+      "distance": "close"
+    }
+  },
+  {
     "text": {
       "name": "あかり",
       "body": "その代わり、パズルには全力でぶつかってきなさい"

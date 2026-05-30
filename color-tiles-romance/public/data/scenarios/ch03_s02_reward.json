@@ -32,6 +32,14 @@
     }
   },
   {
+    "chara": {
+      "id": "suzu",
+      "expr": "smile",
+      "pos": "center",
+      "distance": "veryClose"
+    }
+  },
+  {
     "text": {
       "name": "",
       "body": "すずは少し間を置いてから、俺の隣に近づいた。音もなく肩を寄せてくる。"

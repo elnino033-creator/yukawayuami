@@ -10,6 +10,7 @@
   { "text": { "name": "主人公", "body": "だったら——ここで、君と絵を描いていたい" } },
   { "chara": { "id": "akari", "expr": "blush", "pos": "center" } },
   { "text": { "name": "あかり", "body": "……うん。うん！　約束だよ" } },
+  { "chara": { "id": "akari", "expr": "blush", "pos": "center", "distance": "close" } },
   { "text": { "name": "", "body": "赤い光に満ちた広間で、二人はいつまでも筆を走らせた。" } },
   { "text": { "name": "", "body": "色は無限に湧き、キャンバスは決して尽きない。エラーも、悲しみも、ここには訪れない。" } },
   { "bgm": "bgm_piano_sad_loop" },

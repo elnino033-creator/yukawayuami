@@ -26,6 +26,14 @@
     }
   },
   {
+    "chara": {
+      "id": "himari",
+      "expr": "smile",
+      "pos": "center",
+      "distance": "close"
+    }
+  },
+  {
     "text": {
       "name": "",
       "body": "ひまりが顔をぐいっと近づけてくる。近い。近すぎる。鼻先がぶつかりそうだった。"
@@ -65,6 +73,14 @@
     "text": {
       "name": "ひまり",
       "body": "なってる！ ちょっと待って、ほんとだ——"
+    }
+  },
+  {
+    "chara": {
+      "id": "himari",
+      "expr": "smile",
+      "pos": "center",
+      "distance": "veryClose"
     }
   },
   {

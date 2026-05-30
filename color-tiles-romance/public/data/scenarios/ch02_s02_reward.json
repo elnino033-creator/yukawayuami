@@ -32,6 +32,14 @@
     }
   },
   {
+    "chara": {
+      "id": "mio",
+      "expr": "smile",
+      "pos": "center",
+      "distance": "close"
+    }
+  },
+  {
     "text": {
       "name": "",
       "body": "みおはそう言って、俺の横顔をじっと見ていた。"
@@ -71,6 +79,14 @@
     "text": {
       "name": "主人公",
       "body": "なんだ"
+    }
+  },
+  {
+    "chara": {
+      "id": "mio",
+      "expr": "smile",
+      "pos": "center",
+      "distance": "veryClose"
     }
   },
   {

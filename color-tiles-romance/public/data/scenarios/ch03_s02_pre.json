@@ -16,7 +16,8 @@
       "id": "suzu",
       "expr": "normal",
       "pos": "center",
-      "show": true
+      "show": true,
+      "distance": "close"
     }
   },
   {

@@ -171,6 +171,14 @@
     }
   },
   {
+    "chara": {
+      "id": "mio",
+      "expr": "smile",
+      "pos": "center",
+      "distance": "veryFar"
+    }
+  },
+  {
     "text": {
       "name": "",
       "body": "みおの輪郭が、青い光の粒子となってほどけていく。"

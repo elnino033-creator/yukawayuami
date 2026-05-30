@@ -58,7 +58,8 @@
       "id": "mashiro",
       "expr": "happy",
       "pos": "center",
-      "show": true
+      "show": true,
+      "distance": "far"
     }
   },
   {
@@ -90,7 +91,8 @@
       "id": "mashiro",
       "expr": "smile",
       "pos": "center",
-      "show": true
+      "show": true,
+      "distance": "close"
     }
   },
   {
@@ -272,7 +274,8 @@
       "id": "mashiro",
       "expr": "smile",
       "pos": "center",
-      "show": true
+      "show": true,
+      "distance": "veryClose"
     }
   },
   {

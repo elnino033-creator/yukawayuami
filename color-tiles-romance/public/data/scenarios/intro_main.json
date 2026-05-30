@@ -539,7 +539,8 @@
       "id": "yukari",
       "expr": "normal",
       "pos": "center",
-      "show": true
+      "show": true,
+      "distance": "far"
     }
   },
   {
@@ -621,6 +622,15 @@
     "text": {
       "name": "ゆかり",
       "body": "詳しいことは、塔の上で話せます"
+    }
+  },
+  {
+    "chara": {
+      "id": "yukari",
+      "expr": "normal",
+      "pos": "center",
+      "show": true,
+      "distance": "veryFar"
     }
   },
   {

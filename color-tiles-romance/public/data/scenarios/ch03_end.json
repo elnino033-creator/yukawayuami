@@ -38,6 +38,14 @@
     }
   },
   {
+    "chara": {
+      "id": "suzu",
+      "expr": "normal",
+      "pos": "center",
+      "distance": "close"
+    }
+  },
+  {
     "text": {
       "name": "",
       "body": "すずがゆっくりと立ち上がり、主人公の前に立った。"
@@ -84,6 +92,14 @@
     "text": {
       "name": "すず",
       "body": "ご自分の足で、歩き出せるのですね。……いってらっしゃいませ"
+    }
+  },
+  {
+    "chara": {
+      "id": "suzu",
+      "expr": "surprise",
+      "pos": "center",
+      "distance": "veryFar"
     }
   },
   {

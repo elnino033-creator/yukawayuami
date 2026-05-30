@@ -26,6 +26,14 @@
     }
   },
   {
+    "chara": {
+      "id": "mio",
+      "expr": "normal",
+      "pos": "center",
+      "distance": "close"
+    }
+  },
+  {
     "text": {
       "name": "",
       "body": "みおが主人公の前に立った。"
