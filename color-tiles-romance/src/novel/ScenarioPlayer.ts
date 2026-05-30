@@ -36,6 +36,17 @@ export interface EffectStep {
   effect: { type: string; duration: number };
 }
 
+/**
+ * キャラと主人公の距離感プリセット。
+ * 指定すると scale の代わりに使われる（scale と併用した場合は distance 優先）。
+ * - veryClose : 手を取る・抱擁など超接近（×1.35）
+ * - close     : 顔を近づける・囁くなど近距離（×1.15）
+ * - normal    : 通常の会話（×1.0）
+ * - far       : 少し離れた距離（×0.80）
+ * - veryFar   : 遠くに離れている・見送りなど（×0.60）
+ */
+export type CharaDistance = 'veryClose' | 'close' | 'normal' | 'far' | 'veryFar';
+
 /** キャラクター表示ステップ */
 export interface CharaStep {
   chara: {
@@ -44,8 +55,10 @@ export interface CharaStep {
     pos: 'left' | 'center' | 'right';
     show?: boolean;
     hide?: boolean;
-    /** 表示スケール倍率（省略時 1.0）*/
+    /** 表示スケール倍率（省略時 1.0）。distance と併用した場合は distance 優先 */
     scale?: number;
+    /** 距離感プリセット（指定すると scale より優先される） */
+    distance?: CharaDistance;
     /**
      * 縦位置（0.0=画面上端に画像の上端を合わせる, 1.0=画面下端に画像の下端を合わせる）
      * 省略時は 1.0（下固定・通常キャラの立ち絵向け）
@@ -89,7 +102,10 @@ interface CharaState {
   expr: string;
   pos: 'left' | 'center' | 'right';
   color: string;
+  /** 目標スケール（distance または scale から解決済み） */
   scale: number;
+  /** 補間中の現在スケール（毎フレーム scale へ近づく） */
+  currentScale: number;
   /** 縦位置 (0〜1, 省略時 1.0) */
   y: number;
 }
@@ -103,6 +119,15 @@ const CHARA_COLORS: Record<string, string> = {
   yukari: '#9c6bd8',
   mashiro: '#dce8ff',
   default: '#ffd234'
+};
+
+/** 距離感プリセット → スケール倍率 */
+const DISTANCE_SCALE: Record<CharaDistance, number> = {
+  veryClose: 1.35,
+  close:     1.15,
+  normal:    1.0,
+  far:       0.80,
+  veryFar:   0.60,
 };
 
 
@@ -718,15 +743,20 @@ export class ScenarioPlayer {
   private updateChara(charaData: CharaStep['chara']): void {
     const existing = this.characters.find(c => c.id === charaData.id);
     const color = CHARA_COLORS[charaData.id] ?? CHARA_COLORS['default']!;
-    const scale = charaData.scale ?? 1.0;
+    // distance プリセットが指定されていれば優先、なければ scale（省略時 1.0）
+    const targetScale = charaData.distance != null
+      ? DISTANCE_SCALE[charaData.distance]
+      : (charaData.scale ?? 1.0);
     const y = charaData.y ?? 1.0;
     if (existing) {
       existing.expr = charaData.expr;
       existing.pos = charaData.pos ?? existing.pos;
-      existing.scale = scale;
+      existing.scale = targetScale;
       existing.y = y;
+      // currentScale はそのまま保持して補間アニメーションを継続
     } else {
-      this.characters.push({ id: charaData.id, expr: charaData.expr, pos: charaData.pos ?? 'center', color, scale, y });
+      // 初回登場時は currentScale = targetScale（アニメーションなし）
+      this.characters.push({ id: charaData.id, expr: charaData.expr, pos: charaData.pos ?? 'center', color, scale: targetScale, currentScale: targetScale, y });
     }
   }
 
@@ -928,6 +958,10 @@ export class ScenarioPlayer {
 
   private drawCharacters(w: number, h: number): void {
     for (const chara of this.characters) {
+      // スケールをターゲットへ向けて補間（~250ms でほぼ到達）
+      const lerpSpeed = 0.12;
+      chara.currentScale += (chara.scale - chara.currentScale) * lerpSpeed;
+
       let cx = w / 2;
       if (chara.pos === 'left') cx = w * 0.27;
       else if (chara.pos === 'right') cx = w * 0.73;
@@ -937,7 +971,7 @@ export class ScenarioPlayer {
         // キャラ: 高さ85%・幅85%のうち小さいスケールを採用して縦画面でもはみ出さない
         const scaleByH = (h * 0.85) / img.naturalHeight;
         const scaleByW = (w * 0.85) / img.naturalWidth;
-        const charaScale = Math.min(scaleByH, scaleByW) * (chara.scale ?? 1.0);
+        const charaScale = Math.min(scaleByH, scaleByW) * chara.currentScale;
         const displayH = img.naturalHeight * charaScale;
         const displayW = img.naturalWidth * charaScale;
         // y: 0=上端基準, 1=下端基準（デフォルト1.0 = 画面下ぴったり）
@@ -945,8 +979,8 @@ export class ScenarioPlayer {
         this.ctx.drawImage(img, cx - displayW / 2, spriteY, displayW, displayH);
       } else {
         // 画像未ロード時のプレースホルダ（縦長の色付き矩形）
-        const phW = 110;
-        const phH = h * 0.75;
+        const phW = Math.round(110 * chara.currentScale);
+        const phH = Math.round(h * 0.75 * chara.currentScale);
         const phX = cx - phW / 2;
         const phY = h - phH;
         this.ctx.fillStyle = chara.color + 'cc';
