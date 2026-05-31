@@ -969,10 +969,14 @@ export class ScenarioPlayer {
 
       const img = this.charaImageCache.get(`${chara.id}_${chara.expr}`);
       if (img) {
-        // キャラ: 高さ85%・幅85%のうち小さいスケールを採用して縦画面でもはみ出さない
+        // キャラ: 高さ85%・幅85%を基準にdistanceスケールを乗算。
+        // ただし画面外へはみ出さないよう最終スケールを上限クランプ。
         const scaleByH = (h * 0.85) / img.naturalHeight;
         const scaleByW = (w * 0.85) / img.naturalWidth;
-        const charaScale = Math.min(scaleByH, scaleByW) * chara.currentScale;
+        const desired = Math.min(scaleByH, scaleByW) * chara.currentScale;
+        const maxByH  = (h * 0.97) / img.naturalHeight;
+        const maxByW  = (w * 0.97) / img.naturalWidth;
+        const charaScale = Math.min(desired, maxByH, maxByW);
         const displayH = img.naturalHeight * charaScale;
         const displayW = img.naturalWidth * charaScale;
         // y: 0=上端基準, 1=下端基準（デフォルト1.0 = 画面下ぴったり）
@@ -981,7 +985,7 @@ export class ScenarioPlayer {
       } else {
         // 画像未ロード時のプレースホルダ（縦長の色付き矩形）
         const phW = Math.round(110 * chara.currentScale);
-        const phH = Math.round(h * 0.75 * chara.currentScale);
+        const phH = Math.min(Math.round(h * 0.75 * chara.currentScale), Math.round(h * 0.97));
         const phX = cx - phW / 2;
         const phY = h - phH;
         this.ctx.fillStyle = chara.color + 'cc';
